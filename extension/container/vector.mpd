@@ -52,7 +52,7 @@ public struct Vector
         }
     }
 
-    public function begin() pointer
+    public function first() pointer
     {
         if (this.size > 0)
         {
@@ -61,7 +61,7 @@ public struct Vector
         return null;
     }
 
-    public function end() pointer
+    public function last() pointer
     {
         if (this.size > 0)
         {
@@ -107,10 +107,14 @@ public struct Vector
         }
     }
 
-    public function erase(position u32)
+    public function erase(position u32, destroy bool)
     {
         if (position < this.size)
         {
+            if (destroy)
+            {
+                free(this.elements[position]);
+            }
             for (var i u32 = position; i < this.size - 1; i++)
             {
                 this.elements[i] = this.elements[i + 1];
@@ -142,8 +146,15 @@ public struct Vector
         }
     }
 
-    function clear()
+    function clear(destroy bool)
     {
+        if (destroy && this.size > 0)
+        {
+            for (var i u32 = 0; i < this.size; i++)
+            {
+                free(this.elements[i]);
+            }
+        }
         this.allocator.deallocate();
         this.size = 0;
         this.capacity = 0;
