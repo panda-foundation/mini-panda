@@ -1,0 +1,25 @@
+namespace ast.expression;
+
+public enum ExpressionType
+{
+    LITERAL,
+    UNARY,
+    BINARY,
+    INCREMENT,
+    DECREMENT,
+    IDENTIFIER,
+    MEMBER_ACCESS,
+    SUBSCRIPTING,
+    PARENTHESES,
+    INVOCATION,
+    THIS
+}
+
+public struct Expression
+{
+    public var position i32;
+    public var type ExpressionType;
+    //public var token token.Token;
+    //public var x pointer<Expression>;
+    //public var y pointer<Expression>;
+}

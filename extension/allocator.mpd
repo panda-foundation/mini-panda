@@ -1,0 +1,44 @@
+namespace extension;
+
+public struct Allocator
+{
+    var size u32;
+    var address pointer;
+
+    public function allocate(size u32) pointer
+    {
+        this.deallocate();
+        this.address = calloc(size, 1);
+        this.size = size;
+        return this.address;
+    }
+
+    public function reallocate(size u32)
+    {
+        if (this.address == null)
+        {
+            return this.allocate(size);
+        }
+        this.address = realloc(this.address, size);
+        if (this.size < size)
+        {
+            memset(this.address + this.size, 0, (size - this.size))
+        }
+        this.size = size;
+        return this.address;
+    }
+
+    public function deallocate()
+    {
+        if (this.address != null)
+        {
+            free(this.address);
+            this.address = null;
+        }
+    }
+
+    public function capacity() u32
+    {
+        return this.size;
+    }
+}

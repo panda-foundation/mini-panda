@@ -1,0 +1,28 @@
+namespace extension;
+
+@extern
+function puts(text []u8) i32;
+
+@extern(variadic = true)
+function printf(format []u8) i32;
+
+@extern
+function malloc(size u32) pointer;
+
+@extern
+function calloc(number u32, size u32) pointer;
+
+@extern
+function realloc(address pointer, size u32) pointer;
+
+@extern
+function free(address pointer);
+
+@extern
+function memcmp(dest pointer, source pointer, size u32) u32;
+
+@extern
+function memcpy(dest pointer, source pointer, size u32);
+
+@extern
+function memset(source pointer, value u32, size u32);

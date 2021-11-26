@@ -1,0 +1,8 @@
+namespace ast.expression;
+
+import ast;
+
+public function is_constant(program *ast.Program, expression Expression) bool
+{
+    return false
+}

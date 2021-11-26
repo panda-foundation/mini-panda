@@ -1,0 +1,13 @@
+namespace;
+
+public struct Data
+{
+    public var integer u8;
+    public var float f32;
+    public var array [8]u8;
+}
+
+public function main()
+{
+    
+}

@@ -1,0 +1,152 @@
+namespace extension.container;
+
+import extension;
+
+const vector_init_size u32 = 8;
+
+public struct Vector
+{
+    var allocator extension.Allocator;
+    var size u32;
+    var capacity u32;
+    var elements []pointer;
+
+    public function get(position u32) position
+    {
+        if (this.size <= position)
+        {
+            return null;
+        }
+        return this.elements[position];
+    }
+    public function set(position u32, value pointer) pointer
+    {
+        if (this.size <= position)
+        {
+            return null;
+        }
+        this.elements[position] = value;
+        return value;
+    }
+
+    public function empty() bool
+    {
+        return this.size == 0;
+    }
+  
+    public function length() u32
+    {
+        return this.size;
+    }
+
+    public function shrink()
+    {
+        if (this.capacity > 0 && this.size > 0 && this.size < this.capacity)
+        {
+            var address pointer = this.allocator.reallocate(this.size * size_of(pointer));
+            if (address != null)
+            {
+                this.capacity = this.size;
+                this.elements = []pointer(address);
+            }
+        }
+    }
+
+    public function begin() pointer
+    {
+        if (this.size > 0)
+        {
+            return this.elements[0];
+        }
+        return null;
+    }
+
+    public function end() pointer
+    {
+        if (this.size > 0)
+        {
+            return this.elements[this.size - 1];
+        }
+        return null;
+    }
+
+    public function push(value pointer)
+    {
+        this.check_capacity();
+        if (this.size < this.capacity)
+        {
+            this.elements[this.size] = value;
+            this.size++;
+        }
+    }
+
+    public function pop() pointer
+    {
+        if (this.size > 0)
+        {
+            this.size--;
+            return this.elements[this.size];
+        }
+        return null;
+    }
+
+    public function insert(position u32, value pointer)
+    {
+        this.check_capacity();
+        if (this.size < this.capacity)
+        {
+            if (position < this.size)
+            {
+                for (var i u32 = this.size; i > position; i--)
+                {
+                    this.elements[i] = this.elements[i - 1];
+                }
+                this.elements[position] = value;
+                this.size++;
+            }
+        }
+    }
+
+    public function erase(position u32)
+    {
+        if (position < this.size)
+        {
+            for (var i u32 = position; i < this.size - 1; i++)
+            {
+                this.elements[i] = this.elements[i + 1];
+            }
+            this.size--;
+        }
+    }
+
+    function check_capacity()
+    {
+        if (this.capacity == 0)
+        {
+            var address pointer = this.allocator.allocate(vector_init_size * size_of(pointer));
+            if (address != null)
+            {
+                this.capacity = vector_init_size;
+                this.elements = []pointer(address);
+            }
+        }
+        if (this.size == this.capacity)
+        {
+            var new_capacity u32 = this.capacity * 2;
+            var address pointer = this.allocator.reallocate(new_capacity * size_of(pointer));
+            if (address != null)
+            {
+                this.capacity = new_capacity;
+                this.elements = []pointer(address);
+            }
+        }
+    }
+
+    function clear()
+    {
+        this.allocator.deallocate();
+        this.size = 0;
+        this.capacity = 0;
+        this.elements = null;
+    }
+}
