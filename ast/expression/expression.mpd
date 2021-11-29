@@ -2,17 +2,17 @@ namespace ast.expression;
 
 public enum ExpressionType
 {
-    LITERAL,
-    UNARY,
-    BINARY,
-    INCREMENT,
-    DECREMENT,
-    IDENTIFIER,
-    MEMBER_ACCESS,
-    SUBSCRIPTING,
-    PARENTHESES,
-    INVOCATION,
-    THIS
+    literal,
+    unary,
+    binary,
+    increment,
+    decrement,
+    identifier,
+    member_access,
+    subscripting,
+    parentheses,
+    invocation,
+    this
 }
 
 public struct Expression

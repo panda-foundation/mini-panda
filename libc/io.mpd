@@ -1,0 +1,7 @@
+namespace libc;
+
+@extern
+function puts(text []u8) i32;
+
+@extern(variadic = true)
+function printf(format []u8) i32;

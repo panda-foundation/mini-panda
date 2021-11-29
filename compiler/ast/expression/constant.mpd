@@ -1,5 +1,0 @@
-namespace ast.expression;
-
-import ast;
-
-public function

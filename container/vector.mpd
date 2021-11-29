@@ -1,6 +1,4 @@
-namespace extension.container;
-
-import extension;
+namespace container;
 
 const vector_init_size u32 = 8;
 
