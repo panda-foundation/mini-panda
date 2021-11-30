@@ -1,7 +1,7 @@
 namespace libc;
 
-@extern
+@extern(name = "puts")
 function puts(text []u8) i32;
 
-@extern(variadic = true)
+@extern(variadic = true, name = "printf")
 function printf(format []u8) i32;

@@ -1,10 +1,10 @@
 namespace libc;
 
-@extern
+@extern(name = "memcmp")
 function memcmp(dest pointer, source pointer, size u32) u32;
 
-@extern
+@extern(name = "memcpy")
 function memcpy(dest pointer, source pointer, size u32);
 
-@extern
+@extern(name = "memset")
 function memset(source pointer, value u32, size u32);

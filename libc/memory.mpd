@@ -1,13 +1,13 @@
 namespace libc;
 
-@extern
+@extern(name = "malloc")
 function malloc(size u32) pointer;
 
-@extern
+@extern(name = "calloc")
 function calloc(number u32, size u32) pointer;
 
-@extern
+@extern(name = "realloc")
 function realloc(address pointer, size u32) pointer;
 
-@extern
+@extern(name = "free")
 function free(address pointer);
