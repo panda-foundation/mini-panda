@@ -637,8 +637,25 @@ body:
 	%19 = load i8, i8* %18
 	%20 = sext i8 %19 to i32
 	%21 = call i32 (i8*, ...) @printf(i8* getelementptr ([20 x i8], [20 x i8]* @string.e839e54fd3fe1d952dd8a33030d97634, i32 0, i32 0), i32 %20)
-	%22 = load %global.Data, %global.Data* %0
-	call void @global.Data.print_integer(%global.Data %22)
+	call void @global.Data.print_integer(%global.Data* %0)
+	call void @global.call_print(%global.Data* %0)
+	br label %exit
+
+
+exit:
+	ret void
+
+}
+
+define void @global.call_print(%global.Data* %data) {
+entry:
+	br label %body
+
+
+body:
+	%0 = getelementptr %global.Data, %global.Data* %data, i32 0, i32 0
+	store i8 3, i8* %0
+	call void @global.Data.print_integer(%global.Data* %data)
 	br label %exit
 
 
@@ -663,16 +680,14 @@ exit:
 
 define void @global.Data.print_integer(%global.Data* %this) {
 entry:
-	%0 = alloca %global.Data*
-	store %global.Data* %this, %global.Data** %0
 	br label %body
 
 
 body:
-	%1 = getelementptr %global.Data, %global.Data** %0, i32 0, i32 0
-	%2 = load i8, i8* %1
-	%3 = sext i8 %2 to i32
-	%4 = call i32 (i8*, ...) @printf(i8* getelementptr ([19 x i8], [19 x i8]* @string.47b89087c0546b3ff5a4ec613cfd034c, i32 0, i32 0), i32 %3)
+	%0 = getelementptr %global.Data, %global.Data* %this, i32 0, i32 0
+	%1 = load i8, i8* %0
+	%2 = sext i8 %1 to i32
+	%3 = call i32 (i8*, ...) @printf(i8* getelementptr ([19 x i8], [19 x i8]* @string.47b89087c0546b3ff5a4ec613cfd034c, i32 0, i32 0), i32 %2)
 	br label %exit
 
 
