@@ -638,7 +638,7 @@ body:
 	%20 = sext i8 %19 to i32
 	%21 = call i32 (i8*, ...) @printf(i8* getelementptr ([20 x i8], [20 x i8]* @string.e839e54fd3fe1d952dd8a33030d97634, i32 0, i32 0), i32 %20)
 	%22 = load %global.Data, %global.Data* %0
-	call void @0(%global.Data %22)
+	call void @global.Data.print_integer(%global.Data %22)
 	br label %exit
 
 
@@ -661,7 +661,7 @@ exit:
 
 }
 
-define void @0(%global.Data* %this) {
+define void @global.Data.print_integer(%global.Data* %this) {
 entry:
 	%0 = alloca %global.Data*
 	store %global.Data* %this, %global.Data** %0
