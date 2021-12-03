@@ -4,6 +4,7 @@ source_filename = "../mini-panda/main.ll"
 @global.Color.r = local_unnamed_addr global i8 0
 @global.Color.g = local_unnamed_addr global i8 1
 @global.Color.b = local_unnamed_addr global i8 2
+@global.values = local_unnamed_addr global [5 x i8] c"\01\02\03\04\05"
 @string.cb091131e20d7842e7627e8736856b45 = constant [12 x i8] c"hello world\00"
 @string.17dc8feeedfe47c12c0d109e5e0da235 = constant [12 x i8] c"value: %d \0A\00"
 @string.328de3303ca25a967f81f9c8c805e8a1 = constant [13 x i8] c"1 + 2 = %d \0A\00"
@@ -37,6 +38,8 @@ source_filename = "../mini-panda/main.ll"
 @string.e509c213bf338f03d246b720ec617c01 = constant [11 x i8] c"loop: %d \0A\00"
 @string.ba86886fe05268c3936c4741a0d07a6e = local_unnamed_addr constant [14 x i8] c"switch case 0\00"
 @string.162d9796d41e74535694f9688ea21a49 = constant [14 x i8] c"switch case 3\00"
+@string.ba4ed99596c7e9aa2595a8f23577c2a9 = constant [16 x i8] c"values[0]: %d \0A\00"
+@string.291bd270faa3b66dd92c4af584f01044 = constant [16 x i8] c"values[4]: %d \0A\00"
 
 ; Function Attrs: nofree nounwind
 declare i32 @puts(i8* nocapture readonly) local_unnamed_addr #0
@@ -53,6 +56,15 @@ entry:
   %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([13 x i8], [13 x i8]* @string.328de3303ca25a967f81f9c8c805e8a1, i64 0, i64 0), i32 3) #2
   tail call void @global.expression()
   tail call void @global.statement()
+  %4 = load i8, i8* getelementptr inbounds ([5 x i8], [5 x i8]* @global.values, i64 0, i64 0), align 1
+  %5 = sext i8 %4 to i32
+  %6 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([16 x i8], [16 x i8]* @string.ba4ed99596c7e9aa2595a8f23577c2a9, i64 0, i64 0), i32 %5) #2
+  %7 = load i8, i8* getelementptr inbounds ([5 x i8], [5 x i8]* @global.values, i64 0, i64 4), align 1
+  %8 = sext i8 %7 to i32
+  %9 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([16 x i8], [16 x i8]* @string.291bd270faa3b66dd92c4af584f01044, i64 0, i64 0), i32 %8) #2
+  %10 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.5b8a1afb98c4b2718e7e1f29b27539e6, i64 0, i64 0), i32 1) #2
+  %11 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([17 x i8], [17 x i8]* @string.4703b4d82797dc9d0990618793a935a5, i64 0, i64 0), double 0x40091EB860000000) #2
+  %12 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([20 x i8], [20 x i8]* @string.e839e54fd3fe1d952dd8a33030d97634, i64 0, i64 0), i32 4) #2
   ret void
 }
 
@@ -236,9 +248,18 @@ entry:
   ret void
 }
 
-; Function Attrs: norecurse nounwind readnone
-define void @global.initializers() local_unnamed_addr #1 {
+; Function Attrs: nofree nounwind
+define void @global.initializers() local_unnamed_addr #0 {
 entry:
+  %0 = load i8, i8* getelementptr inbounds ([5 x i8], [5 x i8]* @global.values, i64 0, i64 0), align 1
+  %1 = sext i8 %0 to i32
+  %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([16 x i8], [16 x i8]* @string.ba4ed99596c7e9aa2595a8f23577c2a9, i64 0, i64 0), i32 %1)
+  %3 = load i8, i8* getelementptr inbounds ([5 x i8], [5 x i8]* @global.values, i64 0, i64 4), align 1
+  %4 = sext i8 %3 to i32
+  %5 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([16 x i8], [16 x i8]* @string.291bd270faa3b66dd92c4af584f01044, i64 0, i64 0), i32 %4)
+  %6 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.5b8a1afb98c4b2718e7e1f29b27539e6, i64 0, i64 0), i32 1)
+  %7 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([17 x i8], [17 x i8]* @string.4703b4d82797dc9d0990618793a935a5, i64 0, i64 0), double 0x40091EB860000000)
+  %8 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([20 x i8], [20 x i8]* @string.e839e54fd3fe1d952dd8a33030d97634, i64 0, i64 0), i32 4)
   ret void
 }
 
