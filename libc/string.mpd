@@ -1,5 +1,6 @@
 namespace libc;
 
+//TO-DO better to use llvm built-in function
 @extern(name = "memcmp")
 function memcmp(dest pointer, source pointer, size u32) u32;
 

@@ -9,6 +9,12 @@ public struct Data
     public var array [8]u8;
 }
 
+public struct NewData
+{
+    public var data Data;
+    public var value u8;
+}
+
 public enum Color
 {
     r,
@@ -18,15 +24,254 @@ public enum Color
 
 public function main()
 {
-    libc.puts("hello world");
-    //var number i32 = 1;
-    //print_number(number);
-    //libc.printf("value #3: %d \n", number);
+    extern();
+    expression();
+    statement();
+    pointers();
+    structs();
+    conversions();
+    initializers();
+    functions();
 }
-/*
-public function print_number(value i32)
+
+public function extern()
 {
-    libc.printf("value #1: %d \n", value);
+    libc.puts("hello world");
+    var value i32 = 1;
+    libc.printf("value: %d \n", value);
     value = 2;
-    libc.printf("value #2: %d \n", value);
-}*/
+    libc.printf("value: %d \n", value);
+    libc.printf("1 + 2 = %d \n", add(1, 2));
+}
+
+public function add(a i32, b i32) i32
+{
+    return a + b;
+}
+
+public function expression()
+{
+    unary();
+    increment_decrement();
+    binary();
+    parentheses();
+    literal();
+    subscripting();
+    member_access();
+}
+
+public function unary()
+{
+    var v1 i32 = +1;
+    libc.printf("v1: %d \n", v1);
+    var v2 i32 = -v1;
+    libc.printf("v2: %d \n", v2);
+    var v3 u32 = ~1;
+    libc.printf("v3: %u \n", v3);
+    var b1 bool = true;
+    libc.printf("b1: %d \n", b1);
+    var b2 bool = !b1;
+    libc.printf("b2: %d \n", b2);
+}
+
+public function increment_decrement()
+{
+    var v4 i32 = 10;
+    v4++;
+    libc.printf("v4: %u \n", v4);
+    v4 = 20;
+    v4--;
+    libc.printf("v4: %u \n", v4);
+}
+
+public function binary()
+{
+    var x i32 = 0;
+    // assign
+    x = 5;
+    libc.printf("x: %d \n", x);
+	// plus_assign
+    x += 5;
+    libc.printf("x: %d \n", x);
+	// minus_assign
+    x -= 1;
+    libc.printf("x: %d \n", x);
+	// mul_assign
+    x *= 2;
+    libc.printf("x: %d \n", x);
+	// div_assign
+    x /= 9;
+    libc.printf("x: %d \n", x);
+	// rem_assign
+    x = 11;
+    x %= 4;
+    libc.printf("x: %d \n", x);
+	// left_shift_assign
+    x <<= 2;
+    libc.printf("x: %d \n", x);
+	// right_shift_assign:
+    x >>= 1;
+    libc.printf("x: %d \n", x);
+	// or_assign
+    x |= 15;
+    libc.printf("x: %d \n", x);
+	// xor_assign
+    x ^= 8;
+    libc.printf("x: %d \n", x);
+	// and_assign
+    x &= 6;
+    libc.printf("x: %d \n", x);
+	// bit_or
+    libc.printf("x: %d \n", (15 | 8));
+	// bit_xor
+    libc.printf("x: %d \n", (15 ^ 8));
+	// bit_and
+    libc.printf("x: %d \n", (15 & 8));
+	// equal
+    libc.printf("x: %d \n", (10 == 10));
+    // not_equal
+    libc.printf("x: %d \n", (10 != 10));
+    // less
+    libc.printf("x: %d \n", (10 < 10));
+    // less_equal
+    libc.printf("x: %d \n", (10 <= 10));
+    // greater
+    libc.printf("x: %d \n", (10 > 10));
+    // greater_equal
+    libc.printf("x: %d \n", (10 >= 10));
+	// left_shift
+    libc.printf("x: %d \n", (10 << 3));
+	// right_shift
+    libc.printf("x: %d \n", (10 >> 1));
+	// plus
+    libc.printf("x: %d \n", (5 + 3));
+	// minus
+    libc.printf("x: %d \n", (5 - 3));
+	// mul
+    libc.printf("x: %d \n", (5 * 3));
+	// div
+    libc.printf("x: %d \n", (5 / 3));
+	// rem
+    libc.printf("x: %d \n", (5 % 3));
+    // or
+    libc.printf("bool: %d \n", (true || false));
+    // and
+    libc.printf("bool: %d \n", (true && false));
+}
+
+public function parentheses()
+{
+    libc.printf("parentheses: %d \n", ((5 + 6) * 3));
+}
+
+public function literal()
+{
+    var c u8 = 'a';
+    libc.printf("c: %d \n", c);
+    var b bool = true;
+    libc.printf("b: %d \n", b);
+    var i u8 = 123;
+    libc.printf("i: %d \n", i);
+    var f_16 f16 = 3.14;
+    libc.printf("f16: %f \n", f_16);
+    var f_32 f32 = 3.14;
+    libc.printf("f32: %f \n", f_32);
+    var f_64 f64 = 3.14;
+    libc.printf("f64: %f \n", f_64);
+    var str []u8 = "some string";
+    libc.puts(str);
+}
+
+public function subscripting()
+{
+    var array [8]u8;
+    libc.printf("array[0]: %d \n", array[0]);
+    array[3] = 3;
+    libc.printf("array[3]: %d \n", array[3]);
+}
+
+public function member_access()
+{
+    var data Data;
+    libc.printf("data.integer: %d \n", data.integer);
+    data.integer = 5;
+    libc.printf("data.integer: %d \n", data.integer);
+    data.float = 3.14;
+    libc.printf("data.float: %f \n", data.float);
+    data.array[3] = 3;
+    libc.printf("data.array[3]: %d \n", data.array[3]);
+
+    var new_data NewData;
+    new_data.value = 5;
+    libc.printf("new_data.value: %d \n", new_data.value);
+    new_data.data.integer = 8;
+    libc.printf("new_data.data.integer: %d \n", new_data.data.integer);
+    new_data.data.array[3] = 9;
+    libc.printf("new_data.data.array[3]: %d \n", new_data.data.array[3]);
+}
+
+public function statement()
+{
+    // if
+    var a u8 = 10;
+    if (a >= 10)
+    {
+        libc.printf("a(%d) >= 10 \n", a);
+    }
+    if (a > 100)
+    {
+        libc.puts("shouldn't happen");
+    }
+    else
+    {
+        libc.puts("I'm else");
+    }
+
+    // for
+    for (a = 0; a < 10; a++)
+    {
+        libc.printf("loop: %d \n", a);
+    }
+
+    // switch
+    a = 3;
+    switch (a)
+    {
+        case 0:
+        {
+            libc.puts("switch case 0");
+            break;
+        }
+
+        case 3:
+        {
+            libc.puts("switch case 3");
+            break;
+        }
+    }
+}
+
+public function pointers()
+{
+
+}
+
+public function structs()
+{
+
+}
+
+public function conversions()
+{
+
+}
+
+public function initializers()
+{
+
+}
+
+public function functions()
+{
+
+}
