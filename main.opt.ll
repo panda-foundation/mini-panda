@@ -42,6 +42,7 @@ source_filename = "../mini-panda/main.ll"
 @string.162d9796d41e74535694f9688ea21a49 = constant [14 x i8] c"switch case 3\00"
 @string.ba4ed99596c7e9aa2595a8f23577c2a9 = constant [16 x i8] c"values[0]: %d \0A\00"
 @string.291bd270faa3b66dd92c4af584f01044 = constant [16 x i8] c"values[4]: %d \0A\00"
+@string.bcfa829c5c86235c99443fb88b9d9699 = constant [15 x i8] c"array[2]: %d \0A\00"
 @string.47b89087c0546b3ff5a4ec613cfd034c = constant [19 x i8] c"this.integer: %d \0A\00"
 
 ; Function Attrs: nofree nounwind
@@ -70,6 +71,7 @@ entry:
   %12 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([20 x i8], [20 x i8]* @string.e839e54fd3fe1d952dd8a33030d97634, i64 0, i64 0), i32 4) #2
   %13 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.47b89087c0546b3ff5a4ec613cfd034c, i64 0, i64 0), i32 1) #2
   %14 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.47b89087c0546b3ff5a4ec613cfd034c, i64 0, i64 0), i32 3) #2
+  %15 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.bcfa829c5c86235c99443fb88b9d9699, i64 0, i64 0), i32 2) #2
   ret void
 }
 
@@ -261,6 +263,7 @@ entry:
   %8 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([20 x i8], [20 x i8]* @string.e839e54fd3fe1d952dd8a33030d97634, i64 0, i64 0), i32 4)
   %9 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.47b89087c0546b3ff5a4ec613cfd034c, i64 0, i64 0), i32 1) #2
   %10 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.47b89087c0546b3ff5a4ec613cfd034c, i64 0, i64 0), i32 3) #2
+  %11 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.bcfa829c5c86235c99443fb88b9d9699, i64 0, i64 0), i32 2) #2
   ret void
 }
 
@@ -270,6 +273,15 @@ entry:
   %0 = getelementptr %global.Data, %global.Data* %data, i64 0, i32 0
   store i8 3, i8* %0, align 1
   %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.47b89087c0546b3ff5a4ec613cfd034c, i64 0, i64 0), i32 3) #2
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+define void @global.call_array(i8* nocapture %data) local_unnamed_addr #0 {
+entry:
+  %0 = getelementptr i8, i8* %data, i64 2
+  store i8 2, i8* %0, align 1
+  %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.bcfa829c5c86235c99443fb88b9d9699, i64 0, i64 0), i32 2)
   ret void
 }
 

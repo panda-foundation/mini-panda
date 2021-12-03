@@ -40,6 +40,7 @@
 @string.162d9796d41e74535694f9688ea21a49 = constant [14 x i8] c"switch case 3\00"
 @string.ba4ed99596c7e9aa2595a8f23577c2a9 = constant [16 x i8] c"values[0]: %d \0A\00"
 @string.291bd270faa3b66dd92c4af584f01044 = constant [16 x i8] c"values[4]: %d \0A\00"
+@string.bcfa829c5c86235c99443fb88b9d9699 = constant [15 x i8] c"array[2]: %d \0A\00"
 @string.47b89087c0546b3ff5a4ec613cfd034c = constant [19 x i8] c"this.integer: %d \0A\00"
 
 declare i32 @puts(i8* %text)
@@ -639,6 +640,9 @@ body:
 	%21 = call i32 (i8*, ...) @printf(i8* getelementptr ([20 x i8], [20 x i8]* @string.e839e54fd3fe1d952dd8a33030d97634, i32 0, i32 0), i32 %20)
 	call void @global.Data.print_integer(%global.Data* %0)
 	call void @global.call_print(%global.Data* %0)
+	%22 = getelementptr %global.Data, %global.Data* %0, i32 0, i32 2
+	%23 = getelementptr [8 x i8], [8 x i8]* %22, i32 0, i32 0
+	call void @global.call_array(i8* %23)
 	br label %exit
 
 
@@ -656,6 +660,26 @@ body:
 	%0 = getelementptr %global.Data, %global.Data* %data, i32 0, i32 0
 	store i8 3, i8* %0
 	call void @global.Data.print_integer(%global.Data* %data)
+	br label %exit
+
+
+exit:
+	ret void
+
+}
+
+define void @global.call_array(i8* %data) {
+entry:
+	br label %body
+
+
+body:
+	%0 = getelementptr i8, i8* %data, i32 2
+	store i8 2, i8* %0
+	%1 = getelementptr i8, i8* %data, i32 2
+	%2 = load i8, i8* %1
+	%3 = sext i8 %2 to i32
+	%4 = call i32 (i8*, ...) @printf(i8* getelementptr ([15 x i8], [15 x i8]* @string.bcfa829c5c86235c99443fb88b9d9699, i32 0, i32 0), i32 %3)
 	br label %exit
 
 
