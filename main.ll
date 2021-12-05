@@ -67,6 +67,21 @@ entry:
 
 
 body:
+	call void @global.test()
+	br label %exit
+
+
+exit:
+	ret void
+
+}
+
+define void @global.test() {
+entry:
+	br label %body
+
+
+body:
 	call void @global.extern()
 	call void @global.expression()
 	call void @global.statement()

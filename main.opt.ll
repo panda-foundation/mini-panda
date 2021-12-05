@@ -54,6 +54,13 @@ declare i32 @printf(i8* nocapture readonly, ...) local_unnamed_addr #0
 ; Function Attrs: nofree nounwind
 define void @main() local_unnamed_addr #0 {
 entry:
+  tail call void @global.test()
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+define void @global.test() local_unnamed_addr #0 {
+entry:
   %0 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([12 x i8], [12 x i8]* @string.cb091131e20d7842e7627e8736856b45, i64 0, i64 0)) #2
   %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([12 x i8], [12 x i8]* @string.17dc8feeedfe47c12c0d109e5e0da235, i64 0, i64 0), i32 1) #2
   %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([12 x i8], [12 x i8]* @string.17dc8feeedfe47c12c0d109e5e0da235, i64 0, i64 0), i32 2) #2
