@@ -169,6 +169,8 @@ public function subscripting()
 public function member_access()
 {
     libc.printf("Color.g: %d \n", Color.g);
+    libc.printf("global_array[2]: %d \n", global_array[2]);
+    
     /*
     var data Data;
     libc.printf("data.integer: %d \n", data.integer);
