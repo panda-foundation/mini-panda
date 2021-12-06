@@ -1,7 +1,7 @@
 namespace test;
 
 import libc;
-
+//TO-DO []u8 inside struct
 public function pointers()
 {
 

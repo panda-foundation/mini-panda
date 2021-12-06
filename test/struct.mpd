@@ -2,20 +2,36 @@ namespace test;
 
 import libc;
 
+public struct Driver
+{
+    public var type u8;
+
+    public function print(message []u8)
+    {
+        //libc.puts(message);
+    }
+}
+
+public struct Printer
+{
+    public var line i32;
+    public var buffer [8]u8;
+    public var driver Driver;
+}
+
 public function structs()
 {
-    /*
-    libc.printf("values[0]: %d \n", values[0]);
-    libc.printf("values[4]: %d \n", values[4]);
+    libc.puts("============ test struct ============");
+    var printer Printer = {100, {1, 2, 3, 4, 5, 6, 7, 8}, {99}};
+    libc.printf("printer.line: %d \n", printer.line);
+    libc.printf("printer.buffer[7]: %d \n", printer.buffer[7]);
+    libc.printf("printer.driver.type: %d \n", printer.driver.type);
 
-    var data Data = {1, 3.14, {1, 2, 3, 4, 5, 6, 7, 8}};
-    libc.printf("data.integer: %d \n", data.integer);
-    libc.printf("data.float: %f \n", data.float);
-    libc.printf("data.array[3]: %d \n", data.array[3]);
+    /*
     data.print_integer();
     call_print(data);
-    call_array(data.array);
-    */
+    call_array(data.array);*/
+    
 
     //TO-DO initalizer
 }
