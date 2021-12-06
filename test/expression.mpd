@@ -166,7 +166,6 @@ public function subscripting()
     libc.printf("array[3]: %d \n", array[3]);
 
     var array2 []u8;
-    //TO-DO
     array2 = array;
     libc.printf("array2[0]: %d \n", array2[0]);
     libc.printf("array2[3]: %d \n", array2[3]);
@@ -177,16 +176,15 @@ public function member_access()
     libc.printf("Color.g: %d \n", Color.g);
     libc.printf("global_array[2]: %d \n", global_array[2]);
     
+    var sub SubData;
+    libc.printf("sub.integer: %d \n", sub.integer);
+    sub.integer = 5;
+    libc.printf("sub.integer: %d \n", sub.integer);
+    sub.float = 3.14;
+    libc.printf("sub.float: %f \n", sub.float);
+    sub.array[3] = 3;
+    libc.printf("sub.array[3]: %d \n", sub.array[3]);
     /*
-    var data Data;
-    libc.printf("data.integer: %d \n", data.integer);
-    data.integer = 5;
-    libc.printf("data.integer: %d \n", data.integer);
-    data.float = 3.14;
-    libc.printf("data.float: %f \n", data.float);
-    data.array[3] = 3;
-    libc.printf("data.array[3]: %d \n", data.array[3]);
-
     var new_data NewData;
     new_data.value = 5;
     libc.printf("new_data.value: %d \n", new_data.value);
