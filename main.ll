@@ -698,10 +698,16 @@ exit:
 
 define void @test.Driver.print(%test.Driver* %this, i8* %message) {
 entry:
+	%0 = alloca %test.Driver*
+	store %test.Driver* %this, %test.Driver** %0
+	%1 = alloca i8*
+	store i8* %message, i8** %1
 	br label %body
 
 
 body:
+	%2 = load i8*, i8** %1
+	%3 = call i32 @puts(i8* %2)
 	br label %exit
 
 

@@ -8,7 +8,7 @@ public struct Driver
 
     public function print(message []u8)
     {
-        //libc.puts(message);
+        libc.puts(message);
     }
 }
 

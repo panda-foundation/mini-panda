@@ -243,9 +243,10 @@ entry:
   ret void
 }
 
-; Function Attrs: norecurse nounwind readnone
-define void @test.Driver.print(%test.Driver* nocapture %this, i8* nocapture %message) local_unnamed_addr #1 {
+; Function Attrs: nofree nounwind
+define void @test.Driver.print(%test.Driver* nocapture readnone %this, i8* nocapture readonly %message) local_unnamed_addr #0 {
 entry:
+  %0 = tail call i32 @puts(i8* nonnull dereferenceable(1) %message)
   ret void
 }
 
