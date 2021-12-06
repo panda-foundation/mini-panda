@@ -1,6 +1,8 @@
 namespace;
 
+import test;
+
 public function main()
 {
-    test();
+    test.test();
 }

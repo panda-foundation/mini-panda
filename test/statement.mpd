@@ -1,0 +1,44 @@
+namespace test;
+
+import libc;
+
+public function statement()
+{
+    // if
+    var a u8 = 10;
+    if (a >= 10)
+    {
+        libc.printf("a(%d) >= 10 \n", a);
+    }
+    if (a > 100)
+    {
+        libc.puts("shouldn't happen");
+    }
+    else
+    {
+        libc.puts("I'm else");
+    }
+
+    // for
+    for (a = 0; a < 10; a++)
+    {
+        libc.printf("loop: %d \n", a);
+    }
+
+    // switch
+    a = 3;
+    switch (a)
+    {
+        case 0:
+        {
+            libc.puts("switch case 0");
+            break;
+        }
+
+        case 3:
+        {
+            libc.puts("switch case 3");
+            break;
+        }
+    }
+}

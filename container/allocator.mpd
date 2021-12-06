@@ -3,9 +3,9 @@ namespace container;
 public struct Allocator
 {
     var size u32;
-    var address pointer;
+    var address []u8;
 
-    public function allocate(size u32) pointer
+    public function allocate(size u32) []u8
     {
         this.deallocate();
         this.address = calloc(size, 1);
@@ -13,7 +13,7 @@ public struct Allocator
         return this.address;
     }
 
-    public function reallocate(size u32)
+    public function reallocate(size u32) []u8
     {
         if (this.address == null)
         {
@@ -22,7 +22,7 @@ public struct Allocator
         this.address = realloc(this.address, size);
         if (this.size < size)
         {
-            memset(this.address + this.size, 0, (size - this.size))
+            memset(this.address[this.size], 0, (size - this.size))
         }
         this.size = size;
         return this.address;
