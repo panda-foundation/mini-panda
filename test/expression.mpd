@@ -160,10 +160,16 @@ public function literal()
 
 public function subscripting()
 {
-    var array [8]u8;
+    var array [5]u8;
     libc.printf("array[0]: %d \n", array[0]);
     array[3] = 3;
     libc.printf("array[3]: %d \n", array[3]);
+
+    var array2 []u8;
+    //TO-DO
+    array2 = array;
+    libc.printf("array2[0]: %d \n", array2[0]);
+    libc.printf("array2[3]: %d \n", array2[3]);
 }
 
 public function member_access()

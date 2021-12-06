@@ -21,8 +21,11 @@
 @string.dd42ef93dc06a72b063baa72848d660c = constant [10 x i8] c"f16: %f \0A\00"
 @string.dc24ff6a55a1c588a346f9dff66c25a0 = constant [10 x i8] c"f32: %f \0A\00"
 @string.7a828f7c003ac662930a932d14c84f48 = constant [10 x i8] c"f64: %f \0A\00"
+@string.3aff445dea2b63e4d3b135c5219ba7dc = constant [12 x i8] c"some string\00"
 @string.ccbd06f65fb69a974bb7bbe132352fd5 = constant [15 x i8] c"array[0]: %d \0A\00"
 @string.502edb90c5d63a7982b92c4846005a12 = constant [15 x i8] c"array[3]: %d \0A\00"
+@string.f078cc2571d60d58e6a551d92df567c4 = constant [16 x i8] c"array2[0]: %d \0A\00"
+@string.966d3dfa4a8527741a06bd9fbaa21f93 = constant [16 x i8] c"array2[3]: %d \0A\00"
 @string.d18cb31ff3a37014a9ed64a2687344d4 = constant [14 x i8] c"Color.g: %d \0A\00"
 @string.9fcfb18ceb0d348e69c2e13fa41b241d = constant [22 x i8] c"global_array[2]: %d \0A\00"
 @string.5f0f1578abd44713c746ded55bf898ea = constant [41 x i8] c"============ test statement ============\00"
@@ -346,39 +349,44 @@ entry:
 	%3 = alloca half
 	%4 = alloca float
 	%5 = alloca double
+	%6 = alloca i8*
 	br label %body
 
 
 body:
 	store i8 97, i8* %0
-	%6 = getelementptr [8 x i8], [8 x i8]* @string.6815af516458351e77683ead5f501317, i32 0, i32 0
-	%7 = load i8, i8* %0
-	%8 = sext i8 %7 to i32
-	%9 = call i32 (i8*, ...) @printf(i8* %6, i32 %8)
+	%7 = getelementptr [8 x i8], [8 x i8]* @string.6815af516458351e77683ead5f501317, i32 0, i32 0
+	%8 = load i8, i8* %0
+	%9 = sext i8 %8 to i32
+	%10 = call i32 (i8*, ...) @printf(i8* %7, i32 %9)
 	store i1 true, i1* %1
-	%10 = getelementptr [8 x i8], [8 x i8]* @string.d58ddb72e75f1acfc4203e33bddc08a1, i32 0, i32 0
-	%11 = load i1, i1* %1
-	%12 = sext i1 %11 to i32
-	%13 = call i32 (i8*, ...) @printf(i8* %10, i32 %12)
+	%11 = getelementptr [8 x i8], [8 x i8]* @string.d58ddb72e75f1acfc4203e33bddc08a1, i32 0, i32 0
+	%12 = load i1, i1* %1
+	%13 = sext i1 %12 to i32
+	%14 = call i32 (i8*, ...) @printf(i8* %11, i32 %13)
 	store i8 123, i8* %2
-	%14 = getelementptr [8 x i8], [8 x i8]* @string.5b8b2fafadbddfa000cd0e716725d4a4, i32 0, i32 0
-	%15 = load i8, i8* %2
-	%16 = sext i8 %15 to i32
-	%17 = call i32 (i8*, ...) @printf(i8* %14, i32 %16)
+	%15 = getelementptr [8 x i8], [8 x i8]* @string.5b8b2fafadbddfa000cd0e716725d4a4, i32 0, i32 0
+	%16 = load i8, i8* %2
+	%17 = sext i8 %16 to i32
+	%18 = call i32 (i8*, ...) @printf(i8* %15, i32 %17)
 	store half 0x4009200000000000, half* %3
-	%18 = getelementptr [10 x i8], [10 x i8]* @string.dd42ef93dc06a72b063baa72848d660c, i32 0, i32 0
-	%19 = load half, half* %3
-	%20 = fpext half %19 to double
-	%21 = call i32 (i8*, ...) @printf(i8* %18, double %20)
+	%19 = getelementptr [10 x i8], [10 x i8]* @string.dd42ef93dc06a72b063baa72848d660c, i32 0, i32 0
+	%20 = load half, half* %3
+	%21 = fpext half %20 to double
+	%22 = call i32 (i8*, ...) @printf(i8* %19, double %21)
 	store float 0x40091EB860000000, float* %4
-	%22 = getelementptr [10 x i8], [10 x i8]* @string.dc24ff6a55a1c588a346f9dff66c25a0, i32 0, i32 0
-	%23 = load float, float* %4
-	%24 = fpext float %23 to double
-	%25 = call i32 (i8*, ...) @printf(i8* %22, double %24)
+	%23 = getelementptr [10 x i8], [10 x i8]* @string.dc24ff6a55a1c588a346f9dff66c25a0, i32 0, i32 0
+	%24 = load float, float* %4
+	%25 = fpext float %24 to double
+	%26 = call i32 (i8*, ...) @printf(i8* %23, double %25)
 	store double 0x40091EB851EB851F, double* %5
-	%26 = getelementptr [10 x i8], [10 x i8]* @string.7a828f7c003ac662930a932d14c84f48, i32 0, i32 0
-	%27 = load double, double* %5
-	%28 = call i32 (i8*, ...) @printf(i8* %26, double %27)
+	%27 = getelementptr [10 x i8], [10 x i8]* @string.7a828f7c003ac662930a932d14c84f48, i32 0, i32 0
+	%28 = load double, double* %5
+	%29 = call i32 (i8*, ...) @printf(i8* %27, double %28)
+	%30 = getelementptr [12 x i8], [12 x i8]* @string.3aff445dea2b63e4d3b135c5219ba7dc, i32 0, i32 0
+	store i8* %30, i8** %6
+	%31 = load i8*, i8** %6
+	%32 = call i32 @puts(i8* %31)
 	br label %exit
 
 
@@ -389,24 +397,40 @@ exit:
 
 define void @test.subscripting() {
 entry:
-	%0 = alloca [8 x i8]
+	%0 = alloca [5 x i8]
+	%1 = alloca i8*
 	br label %body
 
 
 body:
-	store [8 x i8] zeroinitializer, [8 x i8]* %0
-	%1 = getelementptr [15 x i8], [15 x i8]* @string.ccbd06f65fb69a974bb7bbe132352fd5, i32 0, i32 0
-	%2 = getelementptr [8 x i8], [8 x i8]* %0, i32 0, i32 0
-	%3 = load i8, i8* %2
-	%4 = sext i8 %3 to i32
-	%5 = call i32 (i8*, ...) @printf(i8* %1, i32 %4)
-	%6 = getelementptr [8 x i8], [8 x i8]* %0, i32 0, i32 3
-	store i8 3, i8* %6
-	%7 = getelementptr [15 x i8], [15 x i8]* @string.502edb90c5d63a7982b92c4846005a12, i32 0, i32 0
-	%8 = getelementptr [8 x i8], [8 x i8]* %0, i32 0, i32 3
-	%9 = load i8, i8* %8
-	%10 = sext i8 %9 to i32
-	%11 = call i32 (i8*, ...) @printf(i8* %7, i32 %10)
+	store [5 x i8] zeroinitializer, [5 x i8]* %0
+	%2 = getelementptr [15 x i8], [15 x i8]* @string.ccbd06f65fb69a974bb7bbe132352fd5, i32 0, i32 0
+	%3 = getelementptr [5 x i8], [5 x i8]* %0, i32 0, i32 0
+	%4 = load i8, i8* %3
+	%5 = sext i8 %4 to i32
+	%6 = call i32 (i8*, ...) @printf(i8* %2, i32 %5)
+	%7 = getelementptr [5 x i8], [5 x i8]* %0, i32 0, i32 3
+	store i8 3, i8* %7
+	%8 = getelementptr [15 x i8], [15 x i8]* @string.502edb90c5d63a7982b92c4846005a12, i32 0, i32 0
+	%9 = getelementptr [5 x i8], [5 x i8]* %0, i32 0, i32 3
+	%10 = load i8, i8* %9
+	%11 = sext i8 %10 to i32
+	%12 = call i32 (i8*, ...) @printf(i8* %8, i32 %11)
+	store i8* zeroinitializer, i8** %1
+	%13 = getelementptr [5 x i8], [5 x i8]* %0, i32 0, i32 0
+	store i8* %13, i8** %1
+	%14 = getelementptr [16 x i8], [16 x i8]* @string.f078cc2571d60d58e6a551d92df567c4, i32 0, i32 0
+	%15 = load i8*, i8** %1
+	%16 = getelementptr i8, i8* %15, i32 0
+	%17 = load i8, i8* %16
+	%18 = sext i8 %17 to i32
+	%19 = call i32 (i8*, ...) @printf(i8* %14, i32 %18)
+	%20 = getelementptr [16 x i8], [16 x i8]* @string.966d3dfa4a8527741a06bd9fbaa21f93, i32 0, i32 0
+	%21 = load i8*, i8** %1
+	%22 = getelementptr i8, i8* %21, i32 3
+	%23 = load i8, i8* %22
+	%24 = sext i8 %23 to i32
+	%25 = call i32 (i8*, ...) @printf(i8* %20, i32 %24)
 	br label %exit
 
 
