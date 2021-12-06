@@ -184,13 +184,12 @@ public function member_access()
     libc.printf("sub.float: %f \n", sub.float);
     sub.array[3] = 3;
     libc.printf("sub.array[3]: %d \n", sub.array[3]);
-    /*
-    var new_data NewData;
-    new_data.value = 5;
-    libc.printf("new_data.value: %d \n", new_data.value);
-    new_data.data.integer = 8;
-    libc.printf("new_data.data.integer: %d \n", new_data.data.integer);
-    new_data.data.array[3] = 9;
-    libc.printf("new_data.data.array[3]: %d \n", new_data.data.array[3]);
-    */
+
+    var data Data;
+    data.type = 5;
+    libc.printf("data.value: %d \n", data.type);
+    data.sub.integer = 8;
+    libc.printf("data.sub.integer: %d \n", data.sub.integer);
+    data.sub.array[3] = 9;
+    libc.printf("data.sub.array[3]: %d \n", data.sub.array[3]);
 }

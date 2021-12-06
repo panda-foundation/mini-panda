@@ -16,7 +16,10 @@ public function structs()
     call_print(data);
     call_array(data.array);
     */
+
+    //TO-DO initalizer
 }
+
 /*
 public function call_print(data Data)
 {
