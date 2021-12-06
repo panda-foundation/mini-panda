@@ -1,56 +1,11 @@
 namespace test;
 
-import libc;
-
-const values [5]u8 = {1, 2, 3, 4, 5};
-
-public struct Data
-{
-    public var integer u8;
-    public var float f32;
-    public var array [8]u8;
-
-    public function print_integer()
-    {
-        libc.printf("this.integer: %d \n", this.integer);
-    }
-}
-
-public struct NewData
-{
-    public var data Data;
-    public var value u8;
-}
-
-public enum Color
-{
-    r,
-    g,
-    b
-}
-
 public function test()
 {
-    extern();
     expression();
     statement();
     structs();
     pointers();
     conversions();
     functions();
-}
-
-public function extern()
-{
-    libc.puts("hello world");
-    var value i32 = 1;
-    libc.printf("value: %d \n", value);
-    value = 2;
-    libc.printf("value: %d \n", value);
-    libc.printf("1 + 2 = %d \n", add(1, 2));
-}
-
-public function add(a i32, b i32) i32
-{
-    return a + b;
 }

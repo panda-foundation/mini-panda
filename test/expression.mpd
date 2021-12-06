@@ -2,8 +2,31 @@ namespace test;
 
 import libc;
 
+const global_array [5]u8 = {1, 2, 3, 4, 5};
+
+public struct Data
+{
+    public var sub SubData;
+    public var type u8;
+}
+
+public struct SubData
+{
+    public var integer u8;
+    public var float f32;
+    public var array [5]u8;
+}
+
+public enum Color
+{
+    r,
+    g,
+    b
+}
+
 public function expression()
 {
+    libc.puts("============ test expression ============");
     unary();
     increment_decrement();
     binary();
@@ -145,6 +168,8 @@ public function subscripting()
 
 public function member_access()
 {
+    libc.printf("Color.g: %d \n", Color.g);
+    /*
     var data Data;
     libc.printf("data.integer: %d \n", data.integer);
     data.integer = 5;
@@ -161,4 +186,5 @@ public function member_access()
     libc.printf("new_data.data.integer: %d \n", new_data.data.integer);
     new_data.data.array[3] = 9;
     libc.printf("new_data.data.array[3]: %d \n", new_data.data.array[3]);
+    */
 }

@@ -4,6 +4,7 @@ import libc;
 
 public function statement()
 {
+    libc.puts("============ test statement ============");
     // if
     var a u8 = 10;
     if (a >= 10)

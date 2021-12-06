@@ -1,9 +1,12 @@
-%test.Data = type { i8, float, [8 x i8] }
-%test.NewData = type { %test.Data, i8 }
+%test.Data = type { %test.SubData, i8 }
+%test.SubData = type { i8, float, [5 x i8] }
 
 @test.Color.r = global i8 0
 @test.Color.g = global i8 1
 @test.Color.b = global i8 2
+@test.global_array = global [5 x i8] [i8 1, i8 2, i8 3, i8 4, i8 5]
+@string.4576fbff7ad2d9fa622f16573db7b286 = constant [42 x i8] c"============ test expression ============\00"
+@string.b3d07c6ed065e98d1f68c8339262934b = constant [42 x i8] c"=========================================\00"
 @string.f9b6d891c5ca674309c459ad55eb01c8 = constant [9 x i8] c"v1: %d \0A\00"
 @string.f52c63a936a31e2b2d03c5c746b8d5b9 = constant [9 x i8] c"v2: %d \0A\00"
 @string.da88a2e8a843d3d238dc43a4378c6887 = constant [9 x i8] c"v3: %u \0A\00"
@@ -22,24 +25,15 @@
 @string.3aff445dea2b63e4d3b135c5219ba7dc = constant [12 x i8] c"some string\00"
 @string.ccbd06f65fb69a974bb7bbe132352fd5 = constant [15 x i8] c"array[0]: %d \0A\00"
 @string.502edb90c5d63a7982b92c4846005a12 = constant [15 x i8] c"array[3]: %d \0A\00"
-@string.5b8a1afb98c4b2718e7e1f29b27539e6 = constant [19 x i8] c"data.integer: %d \0A\00"
-@string.4703b4d82797dc9d0990618793a935a5 = constant [17 x i8] c"data.float: %f \0A\00"
-@string.e839e54fd3fe1d952dd8a33030d97634 = constant [20 x i8] c"data.array[3]: %d \0A\00"
-@string.7499c41e0f87337e5f3f93200f97701e = constant [21 x i8] c"new_data.value: %d \0A\00"
-@string.5c65bb89388b87cc845b7ed6cc4e0933 = constant [28 x i8] c"new_data.data.integer: %d \0A\00"
-@string.18fc68733fbf6df1ade57d0706714eec = constant [29 x i8] c"new_data.data.array[3]: %d \0A\00"
+@string.d18cb31ff3a37014a9ed64a2687344d4 = constant [14 x i8] c"Color.g: %d \0A\00"
+@string.5f0f1578abd44713c746ded55bf898ea = constant [41 x i8] c"============ test statement ============\00"
 @string.07af74d61c4bcfd65e300c22c36df6a3 = constant [14 x i8] c"a(%d) >= 10 \0A\00"
 @string.12625b519c0ef75b350a9963cafc3f42 = constant [17 x i8] c"shouldn't happen\00"
 @string.7c13f0ed550e89d5fe0dab15a8790a6b = constant [9 x i8] c"I'm else\00"
 @string.e509c213bf338f03d246b720ec617c01 = constant [11 x i8] c"loop: %d \0A\00"
 @string.ba86886fe05268c3936c4741a0d07a6e = constant [14 x i8] c"switch case 0\00"
 @string.162d9796d41e74535694f9688ea21a49 = constant [14 x i8] c"switch case 3\00"
-@string.bcfa829c5c86235c99443fb88b9d9699 = constant [15 x i8] c"array[2]: %d \0A\00"
-@test.values = global [5 x i8] [i8 1, i8 2, i8 3, i8 4, i8 5]
-@string.cb091131e20d7842e7627e8736856b45 = constant [12 x i8] c"hello world\00"
-@string.17dc8feeedfe47c12c0d109e5e0da235 = constant [12 x i8] c"value: %d \0A\00"
-@string.328de3303ca25a967f81f9c8c805e8a1 = constant [13 x i8] c"1 + 2 = %d \0A\00"
-@string.47b89087c0546b3ff5a4ec613cfd034c = constant [19 x i8] c"this.integer: %d \0A\00"
+@string.7075c7a2cf104c828efd167315b7d1b2 = constant [41 x i8] c"========================================\00"
 
 declare i32 @puts(i8* %text)
 
@@ -94,6 +88,7 @@ entry:
 
 
 body:
+	%0 = call i32 @puts(i8* getelementptr ([42 x i8], [42 x i8]* @string.4576fbff7ad2d9fa622f16573db7b286, i32 0, i32 0))
 	call void @test.unary()
 	call void @test.increment_decrement()
 	call void @test.binary()
@@ -101,6 +96,7 @@ body:
 	call void @test.literal()
 	call void @test.subscripting()
 	call void @test.member_access()
+	%1 = call i32 @puts(i8* getelementptr ([42 x i8], [42 x i8]* @string.b3d07c6ed065e98d1f68c8339262934b, i32 0, i32 0))
 	br label %exit
 
 
@@ -382,62 +378,13 @@ exit:
 
 define void @test.member_access() {
 entry:
-	%0 = alloca %test.Data
-	%1 = alloca %test.NewData
 	br label %body
 
 
 body:
-	store %test.Data zeroinitializer, %test.Data* %0
-	%2 = getelementptr %test.Data, %test.Data* %0, i32 0, i32 0
-	%3 = load i8, i8* %2
-	%4 = sext i8 %3 to i32
-	%5 = call i32 (i8*, ...) @printf(i8* getelementptr ([19 x i8], [19 x i8]* @string.5b8a1afb98c4b2718e7e1f29b27539e6, i32 0, i32 0), i32 %4)
-	%6 = getelementptr %test.Data, %test.Data* %0, i32 0, i32 0
-	store i8 5, i8* %6
-	%7 = getelementptr %test.Data, %test.Data* %0, i32 0, i32 0
-	%8 = load i8, i8* %7
-	%9 = sext i8 %8 to i32
-	%10 = call i32 (i8*, ...) @printf(i8* getelementptr ([19 x i8], [19 x i8]* @string.5b8a1afb98c4b2718e7e1f29b27539e6, i32 0, i32 0), i32 %9)
-	%11 = getelementptr %test.Data, %test.Data* %0, i32 0, i32 1
-	store float 0x40091EB860000000, float* %11
-	%12 = getelementptr %test.Data, %test.Data* %0, i32 0, i32 1
-	%13 = load float, float* %12
-	%14 = fpext float %13 to double
-	%15 = call i32 (i8*, ...) @printf(i8* getelementptr ([17 x i8], [17 x i8]* @string.4703b4d82797dc9d0990618793a935a5, i32 0, i32 0), double %14)
-	%16 = getelementptr %test.Data, %test.Data* %0, i32 0, i32 2
-	%17 = getelementptr [8 x i8], [8 x i8]* %16, i32 0, i32 3
-	store i8 3, i8* %17
-	%18 = getelementptr %test.Data, %test.Data* %0, i32 0, i32 2
-	%19 = getelementptr [8 x i8], [8 x i8]* %18, i32 0, i32 3
-	%20 = load i8, i8* %19
-	%21 = sext i8 %20 to i32
-	%22 = call i32 (i8*, ...) @printf(i8* getelementptr ([20 x i8], [20 x i8]* @string.e839e54fd3fe1d952dd8a33030d97634, i32 0, i32 0), i32 %21)
-	store %test.NewData zeroinitializer, %test.NewData* %1
-	%23 = getelementptr %test.NewData, %test.NewData* %1, i32 0, i32 1
-	store i8 5, i8* %23
-	%24 = getelementptr %test.NewData, %test.NewData* %1, i32 0, i32 1
-	%25 = load i8, i8* %24
-	%26 = sext i8 %25 to i32
-	%27 = call i32 (i8*, ...) @printf(i8* getelementptr ([21 x i8], [21 x i8]* @string.7499c41e0f87337e5f3f93200f97701e, i32 0, i32 0), i32 %26)
-	%28 = getelementptr %test.NewData, %test.NewData* %1, i32 0, i32 0
-	%29 = getelementptr %test.Data, %test.Data* %28, i32 0, i32 0
-	store i8 8, i8* %29
-	%30 = getelementptr %test.NewData, %test.NewData* %1, i32 0, i32 0
-	%31 = getelementptr %test.Data, %test.Data* %30, i32 0, i32 0
-	%32 = load i8, i8* %31
-	%33 = sext i8 %32 to i32
-	%34 = call i32 (i8*, ...) @printf(i8* getelementptr ([28 x i8], [28 x i8]* @string.5c65bb89388b87cc845b7ed6cc4e0933, i32 0, i32 0), i32 %33)
-	%35 = getelementptr %test.NewData, %test.NewData* %1, i32 0, i32 0
-	%36 = getelementptr %test.Data, %test.Data* %35, i32 0, i32 2
-	%37 = getelementptr [8 x i8], [8 x i8]* %36, i32 0, i32 3
-	store i8 9, i8* %37
-	%38 = getelementptr %test.NewData, %test.NewData* %1, i32 0, i32 0
-	%39 = getelementptr %test.Data, %test.Data* %38, i32 0, i32 2
-	%40 = getelementptr [8 x i8], [8 x i8]* %39, i32 0, i32 3
-	%41 = load i8, i8* %40
-	%42 = sext i8 %41 to i32
-	%43 = call i32 (i8*, ...) @printf(i8* getelementptr ([29 x i8], [29 x i8]* @string.18fc68733fbf6df1ade57d0706714eec, i32 0, i32 0), i32 %42)
+	%0 = load i8, i8* @test.Color.g
+	%1 = sext i8 %0 to i32
+	%2 = call i32 (i8*, ...) @printf(i8* getelementptr ([14 x i8], [14 x i8]* @string.d18cb31ff3a37014a9ed64a2687344d4, i32 0, i32 0), i32 %1)
 	br label %exit
 
 
@@ -481,89 +428,91 @@ entry:
 
 
 body:
+	%1 = call i32 @puts(i8* getelementptr ([41 x i8], [41 x i8]* @string.5f0f1578abd44713c746ded55bf898ea, i32 0, i32 0))
 	store i8 10, i8* %0
-	%1 = load i8, i8* %0
-	%2 = icmp uge i8 %1, 10
-	br i1 %2, label %6, label %3
+	%2 = load i8, i8* %0
+	%3 = icmp uge i8 %2, 10
+	br i1 %3, label %7, label %4
 
 
 exit:
 	ret void
 
 
-3:
-	%4 = load i8, i8* %0
-	%5 = icmp ugt i8 %4, 100
-	br i1 %5, label %11, label %13
+4:
+	%5 = load i8, i8* %0
+	%6 = icmp ugt i8 %5, 100
+	br i1 %6, label %12, label %14
 
 
-6:
-	%7 = load i8, i8* %0
-	%8 = sext i8 %7 to i32
-	%9 = call i32 (i8*, ...) @printf(i8* getelementptr ([14 x i8], [14 x i8]* @string.07af74d61c4bcfd65e300c22c36df6a3, i32 0, i32 0), i32 %8)
-	br label %3
-
-
-10:
-	store i8 0, i8* %0
-	br label %17
+7:
+	%8 = load i8, i8* %0
+	%9 = sext i8 %8 to i32
+	%10 = call i32 (i8*, ...) @printf(i8* getelementptr ([14 x i8], [14 x i8]* @string.07af74d61c4bcfd65e300c22c36df6a3, i32 0, i32 0), i32 %9)
+	br label %4
 
 
 11:
-	%12 = call i32 @puts(i8* getelementptr ([17 x i8], [17 x i8]* @string.12625b519c0ef75b350a9963cafc3f42, i32 0, i32 0))
-	br label %10
+	store i8 0, i8* %0
+	br label %18
 
 
-13:
-	%14 = call i32 @puts(i8* getelementptr ([9 x i8], [9 x i8]* @string.7c13f0ed550e89d5fe0dab15a8790a6b, i32 0, i32 0))
-	br label %10
+12:
+	%13 = call i32 @puts(i8* getelementptr ([17 x i8], [17 x i8]* @string.12625b519c0ef75b350a9963cafc3f42, i32 0, i32 0))
+	br label %11
 
 
-15:
+14:
+	%15 = call i32 @puts(i8* getelementptr ([9 x i8], [9 x i8]* @string.7c13f0ed550e89d5fe0dab15a8790a6b, i32 0, i32 0))
+	br label %11
+
+
+16:
 	store i8 3, i8* %0
-	%16 = load i8, i8* %0
-	switch i8 %16, label %28 [
-		i8 0, label %29
-		i8 3, label %31
+	%17 = load i8, i8* %0
+	switch i8 %17, label %30 [
+		i8 0, label %31
+		i8 3, label %33
 	]
 
 
-17:
-	%18 = load i8, i8* %0
-	%19 = icmp ult i8 %18, 10
-	br i1 %19, label %23, label %15
+18:
+	%19 = load i8, i8* %0
+	%20 = icmp ult i8 %19, 10
+	br i1 %20, label %24, label %16
 
 
-20:
-	%21 = load i8, i8* %0
-	%22 = add i8 %21, 1
-	store i8 %22, i8* %0
-	br label %17
+21:
+	%22 = load i8, i8* %0
+	%23 = add i8 %22, 1
+	store i8 %23, i8* %0
+	br label %18
 
 
-23:
-	%24 = load i8, i8* %0
-	%25 = sext i8 %24 to i32
-	%26 = call i32 (i8*, ...) @printf(i8* getelementptr ([11 x i8], [11 x i8]* @string.e509c213bf338f03d246b720ec617c01, i32 0, i32 0), i32 %25)
-	br label %20
-
-
-27:
-	br label %exit
+24:
+	%25 = load i8, i8* %0
+	%26 = sext i8 %25 to i32
+	%27 = call i32 (i8*, ...) @printf(i8* getelementptr ([11 x i8], [11 x i8]* @string.e509c213bf338f03d246b720ec617c01, i32 0, i32 0), i32 %26)
+	br label %21
 
 
 28:
-	br label %27
+	%29 = call i32 @puts(i8* getelementptr ([41 x i8], [41 x i8]* @string.7075c7a2cf104c828efd167315b7d1b2, i32 0, i32 0))
+	br label %exit
 
 
-29:
-	%30 = call i32 @puts(i8* getelementptr ([14 x i8], [14 x i8]* @string.ba86886fe05268c3936c4741a0d07a6e, i32 0, i32 0))
-	br label %27
+30:
+	br label %28
 
 
 31:
-	%32 = call i32 @puts(i8* getelementptr ([14 x i8], [14 x i8]* @string.162d9796d41e74535694f9688ea21a49, i32 0, i32 0))
-	br label %27
+	%32 = call i32 @puts(i8* getelementptr ([14 x i8], [14 x i8]* @string.ba86886fe05268c3936c4741a0d07a6e, i32 0, i32 0))
+	br label %28
+
+
+33:
+	%34 = call i32 @puts(i8* getelementptr ([14 x i8], [14 x i8]* @string.162d9796d41e74535694f9688ea21a49, i32 0, i32 0))
+	br label %28
 
 }
 
@@ -581,122 +530,18 @@ exit:
 
 }
 
-define void @test.call_print(%test.Data* %data) {
-entry:
-	br label %body
-
-
-body:
-	%0 = getelementptr %test.Data, %test.Data* %data, i32 0, i32 0
-	store i8 3, i8* %0
-	call void @test.Data.print_integer(%test.Data* %data)
-	br label %exit
-
-
-exit:
-	ret void
-
-}
-
-define void @test.call_array(i8* %data) {
-entry:
-	br label %body
-
-
-body:
-	%0 = getelementptr i8, i8* %data, i32 2
-	store i8 2, i8* %0
-	%1 = getelementptr i8, i8* %data, i32 2
-	%2 = load i8, i8* %1
-	%3 = sext i8 %2 to i32
-	%4 = call i32 (i8*, ...) @printf(i8* getelementptr ([15 x i8], [15 x i8]* @string.bcfa829c5c86235c99443fb88b9d9699, i32 0, i32 0), i32 %3)
-	br label %exit
-
-
-exit:
-	ret void
-
-}
-
 define void @test.test() {
 entry:
 	br label %body
 
 
 body:
-	call void @test.extern()
 	call void @test.expression()
 	call void @test.statement()
 	call void @test.structs()
 	call void @test.pointers()
 	call void @test.conversions()
 	call void @test.functions()
-	br label %exit
-
-
-exit:
-	ret void
-
-}
-
-define void @test.extern() {
-entry:
-	%0 = alloca i32
-	br label %body
-
-
-body:
-	%1 = call i32 @puts(i8* getelementptr ([12 x i8], [12 x i8]* @string.cb091131e20d7842e7627e8736856b45, i32 0, i32 0))
-	store i32 1, i32* %0
-	%2 = load i32, i32* %0
-	%3 = call i32 (i8*, ...) @printf(i8* getelementptr ([12 x i8], [12 x i8]* @string.17dc8feeedfe47c12c0d109e5e0da235, i32 0, i32 0), i32 %2)
-	store i32 2, i32* %0
-	%4 = load i32, i32* %0
-	%5 = call i32 (i8*, ...) @printf(i8* getelementptr ([12 x i8], [12 x i8]* @string.17dc8feeedfe47c12c0d109e5e0da235, i32 0, i32 0), i32 %4)
-	%6 = call i32 @test.add(i32 1, i32 2)
-	%7 = call i32 (i8*, ...) @printf(i8* getelementptr ([13 x i8], [13 x i8]* @string.328de3303ca25a967f81f9c8c805e8a1, i32 0, i32 0), i32 %6)
-	br label %exit
-
-
-exit:
-	ret void
-
-}
-
-define i32 @test.add(i32 %a, i32 %b) {
-entry:
-	%0 = alloca i32
-	store i32 %a, i32* %0
-	%1 = alloca i32
-	store i32 %b, i32* %1
-	%2 = alloca i32
-	br label %body
-
-
-body:
-	%3 = load i32, i32* %0
-	%4 = load i32, i32* %1
-	%5 = add i32 %3, %4
-	store i32 %5, i32* %2
-	br label %exit
-
-
-exit:
-	%6 = load i32, i32* %2
-	ret i32 %6
-
-}
-
-define void @test.Data.print_integer(%test.Data* %this) {
-entry:
-	br label %body
-
-
-body:
-	%0 = getelementptr %test.Data, %test.Data* %this, i32 0, i32 0
-	%1 = load i8, i8* %0
-	%2 = sext i8 %1 to i32
-	%3 = call i32 (i8*, ...) @printf(i8* getelementptr ([19 x i8], [19 x i8]* @string.47b89087c0546b3ff5a4ec613cfd034c, i32 0, i32 0), i32 %2)
 	br label %exit
 
 

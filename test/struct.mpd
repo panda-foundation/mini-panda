@@ -17,7 +17,7 @@ public function structs()
     call_array(data.array);
     */
 }
-
+/*
 public function call_print(data Data)
 {
     data.integer = 3;
@@ -28,4 +28,4 @@ public function call_array(data []u8)
 {
     data[2] = 2;
     libc.printf("array[2]: %d \n", data[2]);
-}
+}*/
