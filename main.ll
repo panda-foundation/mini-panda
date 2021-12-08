@@ -48,6 +48,7 @@
 @string.c316f30584ee0ac304e8eed7e3af175f = constant [24 x i8] c"printer.buffer[7]: %d \0A\00"
 @string.09e58fc876babc8908c9040bd77d8624 = constant [26 x i8] c"printer.driver.type: %d \0A\00"
 @string.263c2d145bd0257bade41874fd5a73ec = constant [15 x i8] c"hello printer!\00"
+@string.f229d6156f4a2e6f6e5c4ee96406192b = constant [10 x i8] c"type:%d \0A\00"
 
 declare i32 @puts(i8* %text)
 
@@ -715,6 +716,12 @@ entry:
 body:
 	%2 = load i8*, i8** %1
 	%3 = call i32 @puts(i8* %2)
+	%4 = getelementptr [10 x i8], [10 x i8]* @string.f229d6156f4a2e6f6e5c4ee96406192b, i32 0, i32 0
+	%5 = load %test.Driver*, %test.Driver** %0
+	%6 = getelementptr %test.Driver, %test.Driver* %5, i32 0, i32 0
+	%7 = load i8, i8* %6
+	%8 = sext i8 %7 to i32
+	%9 = call i32 (i8*, ...) @printf(i8* %4, i32 %8)
 	br label %exit
 
 

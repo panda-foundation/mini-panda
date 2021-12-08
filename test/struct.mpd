@@ -41,6 +41,8 @@ public function structs()
     
 
     //TO-DO initalizer
+
+    //TO-DO const variable from const struct, array
 }
 
 /*
