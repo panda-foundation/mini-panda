@@ -47,6 +47,7 @@
 @string.8c16759f16bae00294081efad1d55ec3 = constant [19 x i8] c"printer.line: %d \0A\00"
 @string.c316f30584ee0ac304e8eed7e3af175f = constant [24 x i8] c"printer.buffer[7]: %d \0A\00"
 @string.09e58fc876babc8908c9040bd77d8624 = constant [26 x i8] c"printer.driver.type: %d \0A\00"
+@string.263c2d145bd0257bade41874fd5a73ec = constant [15 x i8] c"hello printer!\00"
 
 declare i32 @puts(i8* %text)
 
@@ -688,6 +689,12 @@ body:
 	%16 = load i8, i8* %15
 	%17 = sext i8 %16 to i32
 	%18 = call i32 (i8*, ...) @printf(i8* %13, i32 %17)
+	%19 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 2
+	%20 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 2
+	%21 = alloca %test.Driver*
+	%22 = load %test.Driver*, %test.Driver** %21
+	%23 = getelementptr [15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i32 0, i32 0
+	call void @test.Driver.print(%test.Driver* %22, i8* %23)
 	br label %exit
 
 

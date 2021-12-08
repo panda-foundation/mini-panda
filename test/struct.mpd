@@ -9,6 +9,7 @@ public struct Driver
     public function print(message []u8)
     {
         libc.puts(message);
+        libc.printf("type:%d \n", this.type);
     }
 }
 
@@ -20,7 +21,7 @@ public struct Printer
 
     public function print(message []u8)
     {
-        this.driver.print(message);
+        //this.driver.print(message);
     }
 }
 
@@ -32,7 +33,8 @@ public function structs()
     libc.printf("printer.buffer[7]: %d \n", printer.buffer[7]);
     libc.printf("printer.driver.type: %d \n", printer.driver.type);
 
-    printer.print("hello printer!");
+    printer.driver.print("hello printer!");
+    //printer.print("hello printer!");
     /*
     call_print(data);
     call_array(data.array);*/

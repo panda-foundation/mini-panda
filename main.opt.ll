@@ -48,6 +48,7 @@ source_filename = "../mini-panda/main.ll"
 @string.8c16759f16bae00294081efad1d55ec3 = constant [19 x i8] c"printer.line: %d \0A\00"
 @string.c316f30584ee0ac304e8eed7e3af175f = constant [24 x i8] c"printer.buffer[7]: %d \0A\00"
 @string.09e58fc876babc8908c9040bd77d8624 = constant [26 x i8] c"printer.driver.type: %d \0A\00"
+@string.263c2d145bd0257bade41874fd5a73ec = constant [15 x i8] c"hello printer!\00"
 
 ; Function Attrs: nofree nounwind
 declare i32 @puts(i8* nocapture readonly) local_unnamed_addr #0
@@ -64,6 +65,7 @@ entry:
   %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.8c16759f16bae00294081efad1d55ec3, i64 0, i64 0), i32 100) #2
   %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([24 x i8], [24 x i8]* @string.c316f30584ee0ac304e8eed7e3af175f, i64 0, i64 0), i32 8) #2
   %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @string.09e58fc876babc8908c9040bd77d8624, i64 0, i64 0), i32 99) #2
+  %4 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i64 0, i64 0)) #2
   ret void
 }
 
@@ -247,6 +249,7 @@ entry:
   %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.8c16759f16bae00294081efad1d55ec3, i64 0, i64 0), i32 100)
   %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([24 x i8], [24 x i8]* @string.c316f30584ee0ac304e8eed7e3af175f, i64 0, i64 0), i32 8)
   %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @string.09e58fc876babc8908c9040bd77d8624, i64 0, i64 0), i32 99)
+  %4 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i64 0, i64 0)) #2
   ret void
 }
 
@@ -272,6 +275,7 @@ entry:
   %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.8c16759f16bae00294081efad1d55ec3, i64 0, i64 0), i32 100) #2
   %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([24 x i8], [24 x i8]* @string.c316f30584ee0ac304e8eed7e3af175f, i64 0, i64 0), i32 8) #2
   %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @string.09e58fc876babc8908c9040bd77d8624, i64 0, i64 0), i32 99) #2
+  %4 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i64 0, i64 0)) #2
   ret void
 }
 
