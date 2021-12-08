@@ -17,6 +17,11 @@ public struct Printer
     public var line i32;
     public var buffer [8]u8;
     public var driver Driver;
+
+    public function print(message []u8)
+    {
+        //this.driver.print(message);
+    }
 }
 
 public function structs()
@@ -27,8 +32,8 @@ public function structs()
     libc.printf("printer.buffer[7]: %d \n", printer.buffer[7]);
     libc.printf("printer.driver.type: %d \n", printer.driver.type);
 
+    //printer.print("hello printer!");
     /*
-    data.print_integer();
     call_print(data);
     call_array(data.array);*/
     

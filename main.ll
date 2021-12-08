@@ -3,9 +3,9 @@
 %test.Driver = type { i8 }
 %test.Printer = type { i32, [8 x i8], %test.Driver }
 
-@test.Color.r = global i8 0
-@test.Color.g = global i8 1
-@test.Color.b = global i8 2
+@test.Color.r = constant i8 0
+@test.Color.g = constant i8 1
+@test.Color.b = constant i8 2
 @test.global_array = constant [5 x i8] [i8 1, i8 2, i8 3, i8 4, i8 5]
 @string.4576fbff7ad2d9fa622f16573db7b286 = constant [42 x i8] c"============ test expression ============\00"
 @string.f9b6d891c5ca674309c459ad55eb01c8 = constant [9 x i8] c"v1: %d \0A\00"
@@ -708,6 +708,24 @@ entry:
 body:
 	%2 = load i8*, i8** %1
 	%3 = call i32 @puts(i8* %2)
+	br label %exit
+
+
+exit:
+	ret void
+
+}
+
+define void @test.Printer.print(%test.Printer* %this, i8* %message) {
+entry:
+	%0 = alloca %test.Printer*
+	store %test.Printer* %this, %test.Printer** %0
+	%1 = alloca i8*
+	store i8* %message, i8** %1
+	br label %body
+
+
+body:
 	br label %exit
 
 
