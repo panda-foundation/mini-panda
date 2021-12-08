@@ -2,6 +2,9 @@ namespace test;
 
 import libc;
 
+public const global_printer Printer = {80, {1, 2, 3, 4, 5, 6, 7, 8}, {88}};
+public const global_printer_line i32 = global_printer.line;
+
 public struct Driver
 {
     public var type u8;
@@ -38,12 +41,12 @@ public function structs()
     p.print("hello pointer!");
 
     pass_struct_pointer(&printer);
-    //call_array(data.array);
-    
+    pass_array(printer.buffer);
 
-    //TO-DO initalizer
-
-    //TO-DO const variable from const struct, array
+    libc.printf("global_printer.line: %d \n", global_printer.line);
+    libc.printf("global_printer.buffer[7]: %d \n", global_printer.buffer[7]);
+    libc.printf("global_printer.driver.type: %d \n", global_printer.driver.type);
+    libc.printf("global_printer_line: %d \n", global_printer_line);
 }
 
 public function pass_struct_pointer(printer pointer<Printer>)
@@ -52,8 +55,8 @@ public function pass_struct_pointer(printer pointer<Printer>)
     printer.print("hello printer!");
 }
 
-public function pass_array(data []u8)
+public function pass_array(buffer []u8)
 {
-    data[2] = 2;
-    libc.printf("array[2]: %d \n", data[2]);
+    buffer[2] = 2;
+    libc.printf("buffer[2]: %d \n", buffer[2]);
 }
