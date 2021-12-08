@@ -1,8 +1,8 @@
 ; ModuleID = '../mini-panda/main.ll'
 source_filename = "../mini-panda/main.ll"
 
-%test.Driver = type { i8 }
 %test.Printer = type { i32, [8 x i8], %test.Driver }
+%test.Driver = type { i8 }
 
 @test.Color.r = local_unnamed_addr constant i8 0
 @test.Color.g = local_unnamed_addr constant i8 1
@@ -49,6 +49,7 @@ source_filename = "../mini-panda/main.ll"
 @string.c316f30584ee0ac304e8eed7e3af175f = constant [24 x i8] c"printer.buffer[7]: %d \0A\00"
 @string.09e58fc876babc8908c9040bd77d8624 = constant [26 x i8] c"printer.driver.type: %d \0A\00"
 @string.263c2d145bd0257bade41874fd5a73ec = constant [15 x i8] c"hello printer!\00"
+@string.bcfa829c5c86235c99443fb88b9d9699 = constant [15 x i8] c"array[2]: %d \0A\00"
 @string.f229d6156f4a2e6f6e5c4ee96406192b = constant [10 x i8] c"type:%d \0A\00"
 
 ; Function Attrs: nofree nounwind
@@ -62,12 +63,7 @@ define void @main() local_unnamed_addr #0 {
 entry:
   tail call void @test.expression() #2
   tail call void @test.statement() #2
-  %0 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([38 x i8], [38 x i8]* @string.91a35f7e30ee87849a8fb990c35dabf1, i64 0, i64 0)) #2
-  %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.8c16759f16bae00294081efad1d55ec3, i64 0, i64 0), i32 100) #2
-  %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([24 x i8], [24 x i8]* @string.c316f30584ee0ac304e8eed7e3af175f, i64 0, i64 0), i32 8) #2
-  %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @string.09e58fc876babc8908c9040bd77d8624, i64 0, i64 0), i32 99) #2
-  %4 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i64 0, i64 0)) #2
-  %5 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([10 x i8], [10 x i8]* @string.f229d6156f4a2e6f6e5c4ee96406192b, i64 0, i64 0), i32 99) #2
+  tail call void @test.structs() #2
   ret void
 }
 
@@ -253,6 +249,31 @@ entry:
   %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @string.09e58fc876babc8908c9040bd77d8624, i64 0, i64 0), i32 99)
   %4 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i64 0, i64 0)) #2
   %5 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([10 x i8], [10 x i8]* @string.f229d6156f4a2e6f6e5c4ee96406192b, i64 0, i64 0), i32 99) #2
+  %6 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i64 0, i64 0)) #2
+  %7 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([10 x i8], [10 x i8]* @string.f229d6156f4a2e6f6e5c4ee96406192b, i64 0, i64 0), i32 99) #2
+  %8 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i64 0, i64 0)) #2
+  %9 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([10 x i8], [10 x i8]* @string.f229d6156f4a2e6f6e5c4ee96406192b, i64 0, i64 0), i32 3) #2
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+define void @test.pass_struct_pointer(%test.Printer* nocapture %printer) local_unnamed_addr #0 {
+entry:
+  %0 = getelementptr %test.Printer, %test.Printer* %printer, i64 0, i32 2, i32 0
+  store i8 3, i8* %0, align 1
+  %1 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i64 0, i64 0)) #2
+  %2 = load i8, i8* %0, align 1
+  %3 = sext i8 %2 to i32
+  %4 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([10 x i8], [10 x i8]* @string.f229d6156f4a2e6f6e5c4ee96406192b, i64 0, i64 0), i32 %3) #2
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+define void @test.pass_array(i8* nocapture %data) local_unnamed_addr #0 {
+entry:
+  %0 = getelementptr i8, i8* %data, i64 2
+  store i8 2, i8* %0, align 1
+  %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.bcfa829c5c86235c99443fb88b9d9699, i64 0, i64 0), i32 2)
   ret void
 }
 
@@ -267,9 +288,14 @@ entry:
   ret void
 }
 
-; Function Attrs: norecurse nounwind readnone
-define void @test.Printer.print(%test.Printer* nocapture %this, i8* nocapture %message) local_unnamed_addr #1 {
+; Function Attrs: nofree nounwind
+define void @test.Printer.print(%test.Printer* nocapture readonly %this, i8* nocapture readonly %message) local_unnamed_addr #0 {
 entry:
+  %0 = tail call i32 @puts(i8* nonnull dereferenceable(1) %message) #2
+  %1 = getelementptr %test.Printer, %test.Printer* %this, i64 0, i32 2, i32 0
+  %2 = load i8, i8* %1, align 1
+  %3 = sext i8 %2 to i32
+  %4 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([10 x i8], [10 x i8]* @string.f229d6156f4a2e6f6e5c4ee96406192b, i64 0, i64 0), i32 %3) #2
   ret void
 }
 
@@ -278,12 +304,7 @@ define void @test.test() local_unnamed_addr #0 {
 entry:
   tail call void @test.expression()
   tail call void @test.statement()
-  %0 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([38 x i8], [38 x i8]* @string.91a35f7e30ee87849a8fb990c35dabf1, i64 0, i64 0)) #2
-  %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.8c16759f16bae00294081efad1d55ec3, i64 0, i64 0), i32 100) #2
-  %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([24 x i8], [24 x i8]* @string.c316f30584ee0ac304e8eed7e3af175f, i64 0, i64 0), i32 8) #2
-  %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @string.09e58fc876babc8908c9040bd77d8624, i64 0, i64 0), i32 99) #2
-  %4 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i64 0, i64 0)) #2
-  %5 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([10 x i8], [10 x i8]* @string.f229d6156f4a2e6f6e5c4ee96406192b, i64 0, i64 0), i32 99) #2
+  tail call void @test.structs()
   ret void
 }
 
