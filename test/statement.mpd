@@ -42,4 +42,10 @@ public function statement()
             break;
         }
     }
+
+    // declaration
+    // TO-DO
+    var a0 i32 = 123;
+    var a1 i32 = a0;
+    libc.printf("a1: %d \n", a1);
 }

@@ -43,11 +43,13 @@
 @string.e509c213bf338f03d246b720ec617c01 = constant [11 x i8] c"loop: %d \0A\00"
 @string.ba86886fe05268c3936c4741a0d07a6e = constant [14 x i8] c"switch case 0\00"
 @string.162d9796d41e74535694f9688ea21a49 = constant [14 x i8] c"switch case 3\00"
+@string.ec374cb30dabe78ccd41f1bcfddac7db = constant [9 x i8] c"a1: %d \0A\00"
 @string.91a35f7e30ee87849a8fb990c35dabf1 = constant [38 x i8] c"============ test struct ============\00"
 @string.8c16759f16bae00294081efad1d55ec3 = constant [19 x i8] c"printer.line: %d \0A\00"
 @string.c316f30584ee0ac304e8eed7e3af175f = constant [24 x i8] c"printer.buffer[7]: %d \0A\00"
 @string.09e58fc876babc8908c9040bd77d8624 = constant [26 x i8] c"printer.driver.type: %d \0A\00"
 @string.263c2d145bd0257bade41874fd5a73ec = constant [15 x i8] c"hello printer!\00"
+@string.8c85cb3ae23186673c0ee88126a99c83 = constant [15 x i8] c"hello pointer!\00"
 @string.bcfa829c5c86235c99443fb88b9d9699 = constant [15 x i8] c"array[2]: %d \0A\00"
 @string.f229d6156f4a2e6f6e5c4ee96406192b = constant [10 x i8] c"type:%d \0A\00"
 
@@ -567,146 +569,163 @@ exit:
 define void @test.statement() {
 entry:
 	%0 = alloca i8
+	%1 = alloca i32
+	%2 = alloca i32
 	br label %body
 
 
 body:
-	%1 = getelementptr [41 x i8], [41 x i8]* @string.5f0f1578abd44713c746ded55bf898ea, i32 0, i32 0
-	%2 = call i32 @puts(i8* %1)
+	%3 = getelementptr [41 x i8], [41 x i8]* @string.5f0f1578abd44713c746ded55bf898ea, i32 0, i32 0
+	%4 = call i32 @puts(i8* %3)
 	store i8 10, i8* %0
-	%3 = load i8, i8* %0
-	%4 = icmp uge i8 %3, 10
-	br i1 %4, label %8, label %5
+	%5 = load i8, i8* %0
+	%6 = icmp uge i8 %5, 10
+	br i1 %6, label %10, label %7
 
 
 exit:
 	ret void
 
 
-5:
-	%6 = load i8, i8* %0
-	%7 = icmp ugt i8 %6, 100
-	br i1 %7, label %14, label %17
+7:
+	%8 = load i8, i8* %0
+	%9 = icmp ugt i8 %8, 100
+	br i1 %9, label %16, label %19
 
 
-8:
-	%9 = getelementptr [14 x i8], [14 x i8]* @string.07af74d61c4bcfd65e300c22c36df6a3, i32 0, i32 0
-	%10 = load i8, i8* %0
-	%11 = sext i8 %10 to i32
-	%12 = call i32 (i8*, ...) @printf(i8* %9, i32 %11)
-	br label %5
+10:
+	%11 = getelementptr [14 x i8], [14 x i8]* @string.07af74d61c4bcfd65e300c22c36df6a3, i32 0, i32 0
+	%12 = load i8, i8* %0
+	%13 = sext i8 %12 to i32
+	%14 = call i32 (i8*, ...) @printf(i8* %11, i32 %13)
+	br label %7
 
 
-13:
+15:
 	store i8 0, i8* %0
-	br label %22
+	br label %24
 
 
-14:
-	%15 = getelementptr [17 x i8], [17 x i8]* @string.12625b519c0ef75b350a9963cafc3f42, i32 0, i32 0
-	%16 = call i32 @puts(i8* %15)
-	br label %13
+16:
+	%17 = getelementptr [17 x i8], [17 x i8]* @string.12625b519c0ef75b350a9963cafc3f42, i32 0, i32 0
+	%18 = call i32 @puts(i8* %17)
+	br label %15
 
 
-17:
-	%18 = getelementptr [9 x i8], [9 x i8]* @string.7c13f0ed550e89d5fe0dab15a8790a6b, i32 0, i32 0
-	%19 = call i32 @puts(i8* %18)
-	br label %13
-
-
-20:
-	store i8 3, i8* %0
-	%21 = load i8, i8* %0
-	switch i8 %21, label %34 [
-		i8 0, label %35
-		i8 3, label %38
-	]
+19:
+	%20 = getelementptr [9 x i8], [9 x i8]* @string.7c13f0ed550e89d5fe0dab15a8790a6b, i32 0, i32 0
+	%21 = call i32 @puts(i8* %20)
+	br label %15
 
 
 22:
+	store i8 3, i8* %0
 	%23 = load i8, i8* %0
-	%24 = icmp ult i8 %23, 10
-	br i1 %24, label %28, label %20
+	switch i8 %23, label %40 [
+		i8 0, label %41
+		i8 3, label %44
+	]
 
 
-25:
-	%26 = load i8, i8* %0
-	%27 = add i8 %26, 1
-	store i8 %27, i8* %0
-	br label %22
+24:
+	%25 = load i8, i8* %0
+	%26 = icmp ult i8 %25, 10
+	br i1 %26, label %30, label %22
 
 
-28:
-	%29 = getelementptr [11 x i8], [11 x i8]* @string.e509c213bf338f03d246b720ec617c01, i32 0, i32 0
-	%30 = load i8, i8* %0
-	%31 = sext i8 %30 to i32
-	%32 = call i32 (i8*, ...) @printf(i8* %29, i32 %31)
-	br label %25
+27:
+	%28 = load i8, i8* %0
+	%29 = add i8 %28, 1
+	store i8 %29, i8* %0
+	br label %24
 
 
-33:
-	br label %exit
-
-
-34:
-	br label %33
+30:
+	%31 = getelementptr [11 x i8], [11 x i8]* @string.e509c213bf338f03d246b720ec617c01, i32 0, i32 0
+	%32 = load i8, i8* %0
+	%33 = sext i8 %32 to i32
+	%34 = call i32 (i8*, ...) @printf(i8* %31, i32 %33)
+	br label %27
 
 
 35:
-	%36 = getelementptr [14 x i8], [14 x i8]* @string.ba86886fe05268c3936c4741a0d07a6e, i32 0, i32 0
-	%37 = call i32 @puts(i8* %36)
-	br label %33
+	store i32 123, i32* %1
+	%36 = load i32, i32* %1
+	store i32 %36, i32* %2
+	%37 = getelementptr [9 x i8], [9 x i8]* @string.ec374cb30dabe78ccd41f1bcfddac7db, i32 0, i32 0
+	%38 = load i32, i32* %2
+	%39 = call i32 (i8*, ...) @printf(i8* %37, i32 %38)
+	br label %exit
 
 
-38:
-	%39 = getelementptr [14 x i8], [14 x i8]* @string.162d9796d41e74535694f9688ea21a49, i32 0, i32 0
-	%40 = call i32 @puts(i8* %39)
-	br label %33
+40:
+	br label %35
+
+
+41:
+	%42 = getelementptr [14 x i8], [14 x i8]* @string.ba86886fe05268c3936c4741a0d07a6e, i32 0, i32 0
+	%43 = call i32 @puts(i8* %42)
+	br label %35
+
+
+44:
+	%45 = getelementptr [14 x i8], [14 x i8]* @string.162d9796d41e74535694f9688ea21a49, i32 0, i32 0
+	%46 = call i32 @puts(i8* %45)
+	br label %35
 
 }
 
 define void @test.structs() {
 entry:
 	%0 = alloca %test.Printer
+	%1 = alloca %test.Printer*
 	br label %body
 
 
 body:
-	%1 = getelementptr [38 x i8], [38 x i8]* @string.91a35f7e30ee87849a8fb990c35dabf1, i32 0, i32 0
-	%2 = call i32 @puts(i8* %1)
+	%2 = getelementptr [38 x i8], [38 x i8]* @string.91a35f7e30ee87849a8fb990c35dabf1, i32 0, i32 0
+	%3 = call i32 @puts(i8* %2)
 	store %test.Printer { i32 100, [8 x i8] [i8 1, i8 2, i8 3, i8 4, i8 5, i8 6, i8 7, i8 8], %test.Driver { i8 99 } }, %test.Printer* %0
-	%3 = getelementptr [19 x i8], [19 x i8]* @string.8c16759f16bae00294081efad1d55ec3, i32 0, i32 0
-	%4 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 0
-	%5 = load i32, i32* %4
-	%6 = call i32 (i8*, ...) @printf(i8* %3, i32 %5)
-	%7 = getelementptr [24 x i8], [24 x i8]* @string.c316f30584ee0ac304e8eed7e3af175f, i32 0, i32 0
-	%8 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 1
-	%9 = getelementptr [8 x i8], [8 x i8]* %8, i32 0, i32 7
-	%10 = load i8, i8* %9
-	%11 = sext i8 %10 to i32
-	%12 = call i32 (i8*, ...) @printf(i8* %7, i32 %11)
-	%13 = getelementptr [26 x i8], [26 x i8]* @string.09e58fc876babc8908c9040bd77d8624, i32 0, i32 0
-	%14 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 2
-	%15 = getelementptr %test.Driver, %test.Driver* %14, i32 0, i32 0
-	%16 = load i8, i8* %15
-	%17 = sext i8 %16 to i32
-	%18 = call i32 (i8*, ...) @printf(i8* %13, i32 %17)
-	%19 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 2
+	%4 = getelementptr [19 x i8], [19 x i8]* @string.8c16759f16bae00294081efad1d55ec3, i32 0, i32 0
+	%5 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 0
+	%6 = load i32, i32* %5
+	%7 = call i32 (i8*, ...) @printf(i8* %4, i32 %6)
+	%8 = getelementptr [24 x i8], [24 x i8]* @string.c316f30584ee0ac304e8eed7e3af175f, i32 0, i32 0
+	%9 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 1
+	%10 = getelementptr [8 x i8], [8 x i8]* %9, i32 0, i32 7
+	%11 = load i8, i8* %10
+	%12 = sext i8 %11 to i32
+	%13 = call i32 (i8*, ...) @printf(i8* %8, i32 %12)
+	%14 = getelementptr [26 x i8], [26 x i8]* @string.09e58fc876babc8908c9040bd77d8624, i32 0, i32 0
+	%15 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 2
+	%16 = getelementptr %test.Driver, %test.Driver* %15, i32 0, i32 0
+	%17 = load i8, i8* %16
+	%18 = sext i8 %17 to i32
+	%19 = call i32 (i8*, ...) @printf(i8* %14, i32 %18)
 	%20 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 2
-	%21 = alloca %test.Driver*
-	store %test.Driver* %20, %test.Driver** %21
-	%22 = load %test.Driver*, %test.Driver** %21
-	%23 = getelementptr [15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i32 0, i32 0
-	call void @test.Driver.print(%test.Driver* %22, i8* %23)
-	%24 = alloca %test.Printer*
-	store %test.Printer* %0, %test.Printer** %24
-	%25 = load %test.Printer*, %test.Printer** %24
-	%26 = getelementptr [15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i32 0, i32 0
-	call void @test.Printer.print(%test.Printer* %25, i8* %26)
-	%27 = alloca %test.Printer*
-	store %test.Printer* %0, %test.Printer** %27
-	%28 = load %test.Printer*, %test.Printer** %27
-	call void @test.pass_struct_pointer(%test.Printer* %28)
+	%21 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 2
+	%22 = alloca %test.Driver*
+	store %test.Driver* %21, %test.Driver** %22
+	%23 = load %test.Driver*, %test.Driver** %22
+	%24 = getelementptr [15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i32 0, i32 0
+	call void @test.Driver.print(%test.Driver* %23, i8* %24)
+	%25 = alloca %test.Printer*
+	store %test.Printer* %0, %test.Printer** %25
+	%26 = load %test.Printer*, %test.Printer** %25
+	%27 = getelementptr [15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i32 0, i32 0
+	call void @test.Printer.print(%test.Printer* %26, i8* %27)
+	%28 = alloca %test.Printer*
+	store %test.Printer* %0, %test.Printer** %28
+	%29 = load %test.Printer*, %test.Printer** %28
+	store %test.Printer* %29, %test.Printer** %1
+	%30 = load %test.Printer*, %test.Printer** %1
+	%31 = load %test.Printer*, %test.Printer** %1
+	%32 = getelementptr [15 x i8], [15 x i8]* @string.8c85cb3ae23186673c0ee88126a99c83, i32 0, i32 0
+	call void @test.Printer.print(%test.Printer* %31, i8* %32)
+	%33 = alloca %test.Printer*
+	store %test.Printer* %0, %test.Printer** %33
+	%34 = load %test.Printer*, %test.Printer** %33
+	call void @test.pass_struct_pointer(%test.Printer* %34)
 	br label %exit
 
 
