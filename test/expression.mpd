@@ -173,6 +173,11 @@ public function subscripting()
     libc.printf("array3[0]: %d \n", array3[0]);
     libc.printf("array3[3]: %d \n", array3[3]);
 
+    var array4 []u8;
+    array4 = array3;
+    libc.printf("array4[0]: %d \n", array4[0]);
+    libc.printf("array4[3]: %d \n", array4[3]);
+
     var new_array [5]u8 = {1, 2, 3, 4, 5};
     libc.printf("new_array[0]: %d \n", new_array[0]);
     libc.printf("new_array[3]: %d \n", new_array[3]);
