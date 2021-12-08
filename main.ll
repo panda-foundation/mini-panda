@@ -693,6 +693,7 @@ body:
 	%19 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 2
 	%20 = getelementptr %test.Printer, %test.Printer* %0, i32 0, i32 2
 	%21 = alloca %test.Driver*
+	store %test.Driver* %20, %test.Driver** %21
 	%22 = load %test.Driver*, %test.Driver** %21
 	%23 = getelementptr [15 x i8], [15 x i8]* @string.263c2d145bd0257bade41874fd5a73ec, i32 0, i32 0
 	call void @test.Driver.print(%test.Driver* %22, i8* %23)
