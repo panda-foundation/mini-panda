@@ -165,10 +165,17 @@ public function subscripting()
     array[3] = 3;
     libc.printf("array[3]: %d \n", array[3]);
 
-    var array2 []u8;
-    array2 = array;
+    var array2 []u8 = array;
     libc.printf("array2[0]: %d \n", array2[0]);
     libc.printf("array2[3]: %d \n", array2[3]);
+
+    var array3 []u8 = array2;
+    libc.printf("array3[0]: %d \n", array3[0]);
+    libc.printf("array3[3]: %d \n", array3[3]);
+
+    var new_array [5]u8 = {1, 2, 3, 4, 5};
+    libc.printf("new_array[0]: %d \n", new_array[0]);
+    libc.printf("new_array[3]: %d \n", new_array[3]);
 }
 
 public function member_access()
