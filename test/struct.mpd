@@ -3,7 +3,6 @@ namespace test;
 import libc;
 
 public const global_printer Printer = {80, {1, 2, 3, 4, 5, 6, 7, 8}, {88}};
-public const global_printer_line i32 = global_printer.line;
 
 public struct Driver
 {
@@ -46,7 +45,6 @@ public function structs()
     libc.printf("global_printer.line: %d \n", global_printer.line);
     libc.printf("global_printer.buffer[7]: %d \n", global_printer.buffer[7]);
     libc.printf("global_printer.driver.type: %d \n", global_printer.driver.type);
-    libc.printf("global_printer_line: %d \n", global_printer_line);
 }
 
 public function pass_struct_pointer(printer pointer<Printer>)

@@ -51,7 +51,6 @@
 @string.162d9796d41e74535694f9688ea21a49 = constant [14 x i8] c"switch case 3\00"
 @string.ec374cb30dabe78ccd41f1bcfddac7db = constant [9 x i8] c"a1: %d \0A\00"
 @test.global_printer = constant %test.Printer { i32 80, [8 x i8] [i8 1, i8 2, i8 3, i8 4, i8 5, i8 6, i8 7, i8 8], %test.Driver { i8 88 } }
-@test.global_printer_line = constant i32* getelementptr (%test.Printer, %test.Printer* @test.global_printer, i32 0, i32 0)
 @string.91a35f7e30ee87849a8fb990c35dabf1 = constant [38 x i8] c"============ test struct ============\00"
 @string.8c16759f16bae00294081efad1d55ec3 = constant [19 x i8] c"printer.line: %d \0A\00"
 @string.c316f30584ee0ac304e8eed7e3af175f = constant [24 x i8] c"printer.buffer[7]: %d \0A\00"
@@ -61,7 +60,6 @@
 @string.6e04f1d448592af0a363c48cd79347e3 = constant [26 x i8] c"global_printer.line: %d \0A\00"
 @string.569e8d7da8dcd242b4520ca536accffb = constant [31 x i8] c"global_printer.buffer[7]: %d \0A\00"
 @string.e1297fae8db86112c4fd38cff8aca961 = constant [33 x i8] c"global_printer.driver.type: %d \0A\00"
-@string.9362c33ec0e11a873c261011fe5b91d7 = constant [26 x i8] c"global_printer_line: %d \0A\00"
 @string.b5abd14716ff1d42a2c76d0bae14c3cf = constant [16 x i8] c"buffer[2]: %d \0A\00"
 @string.f229d6156f4a2e6f6e5c4ee96406192b = constant [10 x i8] c"type:%d \0A\00"
 
@@ -799,9 +797,6 @@ body:
 	%50 = load i8, i8* %49
 	%51 = sext i8 %50 to i32
 	%52 = call i32 (i8*, ...) @printf(i8* %47, i32 %51)
-	%53 = getelementptr [26 x i8], [26 x i8]* @string.9362c33ec0e11a873c261011fe5b91d7, i32 0, i32 0
-	%54 = load i32*, i32** @test.global_printer_line
-	%55 = call i32 (i8*, ...) @printf(i8* %53, i32* %54)
 	br label %exit
 
 
