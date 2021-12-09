@@ -11,7 +11,7 @@ source_filename = "../mini-panda/main.ll"
 @string.4576fbff7ad2d9fa622f16573db7b286 = constant [42 x i8] c"============ test expression ============\00"
 @string.f9b6d891c5ca674309c459ad55eb01c8 = constant [9 x i8] c"v1: %d \0A\00"
 @string.f52c63a936a31e2b2d03c5c746b8d5b9 = constant [9 x i8] c"v2: %d \0A\00"
-@string.da88a2e8a843d3d238dc43a4378c6887 = constant [9 x i8] c"v3: %u \0A\00"
+@string.67c5acbbce37db2c12b92a427bc08a84 = constant [9 x i8] c"v3: %d \0A\00"
 @string.c3c4ff0f83dad5387535d315826c22f8 = constant [9 x i8] c"b1: %d \0A\00"
 @string.e40a403ffbdf9c2c70921d6bb7739cd8 = constant [9 x i8] c"b2: %d \0A\00"
 @string.2dcc97a590ca083991ffe9b43c08dd02 = constant [9 x i8] c"v4: %u \0A\00"
@@ -51,7 +51,8 @@ source_filename = "../mini-panda/main.ll"
 @string.ba86886fe05268c3936c4741a0d07a6e = local_unnamed_addr constant [14 x i8] c"switch case 0\00"
 @string.162d9796d41e74535694f9688ea21a49 = constant [14 x i8] c"switch case 3\00"
 @string.ec374cb30dabe78ccd41f1bcfddac7db = constant [9 x i8] c"a1: %d \0A\00"
-@test.global_printer = local_unnamed_addr constant %test.Printer { i32 80, [8 x i8] c"\01\02\03\04\05\06\07\08", %test.Driver { i8 88 } }
+@test.global_printer = constant %test.Printer { i32 80, [8 x i8] c"\01\02\03\04\05\06\07\08", %test.Driver { i8 88 } }
+@test.global_printer_line = local_unnamed_addr constant i32* getelementptr inbounds (%test.Printer, %test.Printer* @test.global_printer, i64 0, i32 0)
 @string.91a35f7e30ee87849a8fb990c35dabf1 = constant [38 x i8] c"============ test struct ============\00"
 @string.8c16759f16bae00294081efad1d55ec3 = constant [19 x i8] c"printer.line: %d \0A\00"
 @string.c316f30584ee0ac304e8eed7e3af175f = constant [24 x i8] c"printer.buffer[7]: %d \0A\00"
@@ -61,6 +62,7 @@ source_filename = "../mini-panda/main.ll"
 @string.6e04f1d448592af0a363c48cd79347e3 = constant [26 x i8] c"global_printer.line: %d \0A\00"
 @string.569e8d7da8dcd242b4520ca536accffb = constant [31 x i8] c"global_printer.buffer[7]: %d \0A\00"
 @string.e1297fae8db86112c4fd38cff8aca961 = constant [33 x i8] c"global_printer.driver.type: %d \0A\00"
+@string.9362c33ec0e11a873c261011fe5b91d7 = constant [26 x i8] c"global_printer_line: %d \0A\00"
 @string.b5abd14716ff1d42a2c76d0bae14c3cf = constant [16 x i8] c"buffer[2]: %d \0A\00"
 @string.f229d6156f4a2e6f6e5c4ee96406192b = constant [10 x i8] c"type:%d \0A\00"
 
@@ -91,7 +93,7 @@ entry:
   %0 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([42 x i8], [42 x i8]* @string.4576fbff7ad2d9fa622f16573db7b286, i64 0, i64 0))
   %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.f9b6d891c5ca674309c459ad55eb01c8, i64 0, i64 0), i32 1) #2
   %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.f52c63a936a31e2b2d03c5c746b8d5b9, i64 0, i64 0), i32 -1) #2
-  %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.da88a2e8a843d3d238dc43a4378c6887, i64 0, i64 0), i32 -2) #2
+  %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.67c5acbbce37db2c12b92a427bc08a84, i64 0, i64 0), i32 -2) #2
   %4 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.c3c4ff0f83dad5387535d315826c22f8, i64 0, i64 0), i32 -1) #2
   %5 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.e40a403ffbdf9c2c70921d6bb7739cd8, i64 0, i64 0), i32 0) #2
   %6 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.2dcc97a590ca083991ffe9b43c08dd02, i64 0, i64 0), i32 11) #2
@@ -123,7 +125,7 @@ define void @test.unary() local_unnamed_addr #0 {
 entry:
   %0 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.f9b6d891c5ca674309c459ad55eb01c8, i64 0, i64 0), i32 1)
   %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.f52c63a936a31e2b2d03c5c746b8d5b9, i64 0, i64 0), i32 -1)
-  %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.da88a2e8a843d3d238dc43a4378c6887, i64 0, i64 0), i32 -2)
+  %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.67c5acbbce37db2c12b92a427bc08a84, i64 0, i64 0), i32 -2)
   %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.c3c4ff0f83dad5387535d315826c22f8, i64 0, i64 0), i32 -1)
   %4 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([9 x i8], [9 x i8]* @string.e40a403ffbdf9c2c70921d6bb7739cd8, i64 0, i64 0), i32 0)
   ret void
@@ -275,6 +277,7 @@ entry:
   %13 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @string.6e04f1d448592af0a363c48cd79347e3, i64 0, i64 0), i32 80)
   %14 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([31 x i8], [31 x i8]* @string.569e8d7da8dcd242b4520ca536accffb, i64 0, i64 0), i32 8)
   %15 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([33 x i8], [33 x i8]* @string.e1297fae8db86112c4fd38cff8aca961, i64 0, i64 0), i32 88)
+  %16 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @string.9362c33ec0e11a873c261011fe5b91d7, i64 0, i64 0), i32* getelementptr inbounds (%test.Printer, %test.Printer* @test.global_printer, i64 0, i32 0))
   ret void
 }
 

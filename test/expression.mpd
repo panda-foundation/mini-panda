@@ -43,7 +43,7 @@ public function unary()
     var v2 i32 = -v1;
     libc.printf("v2: %d \n", v2);
     var v3 u32 = ~1;
-    libc.printf("v3: %u \n", v3);
+    libc.printf("v3: %d \n", v3);
     var b1 bool = true;
     libc.printf("b1: %d \n", b1);
     var b2 bool = !b1;
