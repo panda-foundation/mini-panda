@@ -246,12 +246,6 @@ entry:
   ret void
 }
 
-; Function Attrs: norecurse nounwind readnone
-define void @test.pointers() local_unnamed_addr #1 {
-entry:
-  ret void
-}
-
 ; Function Attrs: nofree nounwind
 define void @test.statement() local_unnamed_addr #0 {
 entry:

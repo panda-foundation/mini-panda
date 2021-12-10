@@ -636,20 +636,6 @@ exit:
 
 }
 
-define void @test.pointers() {
-entry:
-	br label %body
-
-
-body:
-	br label %exit
-
-
-exit:
-	ret void
-
-}
-
 define void @test.statement() {
 entry:
 	%0 = alloca i8
@@ -948,7 +934,6 @@ body:
 	call void @test.expression()
 	call void @test.statement()
 	call void @test.structs()
-	call void @test.pointers()
 	call void @test.conversions()
 	call void @test.functions()
 	br label %exit
