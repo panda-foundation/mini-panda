@@ -42,6 +42,10 @@
 @string.84ad90c9c520f1a4e80779cfa15248b6 = constant [17 x i8] c"data.value: %d \0A\00"
 @string.07ce14d972194d598243322dc9f50250 = constant [23 x i8] c"data.sub.integer: %d \0A\00"
 @string.6db0fbcde59d77fa7fc3126dc45321f0 = constant [24 x i8] c"data.sub.array[3]: %d \0A\00"
+@test.ff = global void (i8*)* @test.do_something
+@string.80c523c134f2b89c9ec7f6652a2dbdd7 = constant [40 x i8] c"============ test function ============\00"
+@string.44083ed8ce984d51a6ecfdba2a6c2105 = constant [15 x i8] c"do something 1\00"
+@string.b5b7eec21a3c4ab41dc70340c8ae1d93 = constant [15 x i8] c"do something 2\00"
 @string.5f0f1578abd44713c746ded55bf898ea = constant [41 x i8] c"============ test statement ============\00"
 @string.07af74d61c4bcfd65e300c22c36df6a3 = constant [14 x i8] c"a(%d) >= 10 \0A\00"
 @string.12625b519c0ef75b350a9963cafc3f42 = constant [17 x i8] c"shouldn't happen\00"
@@ -592,10 +596,38 @@ exit:
 
 define void @test.functions() {
 entry:
+	%0 = alloca void (i8*)*
 	br label %body
 
 
 body:
+	%1 = getelementptr [40 x i8], [40 x i8]* @string.80c523c134f2b89c9ec7f6652a2dbdd7, i32 0, i32 0
+	%2 = call i32 @puts(i8* %1)
+	store void (i8*)* @test.do_something, void (i8*)** %0
+	%3 = load void (i8*)*, void (i8*)** %0
+	%4 = getelementptr [15 x i8], [15 x i8]* @string.44083ed8ce984d51a6ecfdba2a6c2105, i32 0, i32 0
+	call void %3(i8* %4)
+	%5 = load void (i8*)*, void (i8*)** @test.ff
+	%6 = getelementptr [15 x i8], [15 x i8]* @string.b5b7eec21a3c4ab41dc70340c8ae1d93, i32 0, i32 0
+	call void %5(i8* %6)
+	br label %exit
+
+
+exit:
+	ret void
+
+}
+
+define void @test.do_something(i8* %msg) {
+entry:
+	%0 = alloca i8*
+	store i8* %msg, i8** %0
+	br label %body
+
+
+body:
+	%1 = load i8*, i8** %0
+	%2 = call i32 @puts(i8* %1)
 	br label %exit
 
 

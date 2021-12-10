@@ -2,7 +2,18 @@ namespace test;
 
 import libc;
 
+public function void_function(msg []u8);
+public var ff void_function = do_something;
+
 public function functions()
 {
+    libc.puts("============ test function ============");
+    var f void_function = do_something;
+    f("do something 1");
+    ff("do something 2");
+}
 
+public function do_something(msg []u8)
+{
+    libc.puts(msg);
 }

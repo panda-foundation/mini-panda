@@ -43,6 +43,10 @@ source_filename = "../mini-panda/main.ll"
 @string.84ad90c9c520f1a4e80779cfa15248b6 = constant [17 x i8] c"data.value: %d \0A\00"
 @string.07ce14d972194d598243322dc9f50250 = constant [23 x i8] c"data.sub.integer: %d \0A\00"
 @string.6db0fbcde59d77fa7fc3126dc45321f0 = constant [24 x i8] c"data.sub.array[3]: %d \0A\00"
+@test.ff = local_unnamed_addr global void (i8*)* @test.do_something
+@string.80c523c134f2b89c9ec7f6652a2dbdd7 = constant [40 x i8] c"============ test function ============\00"
+@string.44083ed8ce984d51a6ecfdba2a6c2105 = constant [15 x i8] c"do something 1\00"
+@string.b5b7eec21a3c4ab41dc70340c8ae1d93 = constant [15 x i8] c"do something 2\00"
 @string.5f0f1578abd44713c746ded55bf898ea = constant [41 x i8] c"============ test statement ============\00"
 @string.07af74d61c4bcfd65e300c22c36df6a3 = constant [14 x i8] c"a(%d) >= 10 \0A\00"
 @string.12625b519c0ef75b350a9963cafc3f42 = local_unnamed_addr constant [17 x i8] c"shouldn't happen\00"
@@ -70,12 +74,15 @@ declare i32 @puts(i8* nocapture readonly) local_unnamed_addr #0
 ; Function Attrs: nofree nounwind
 declare i32 @printf(i8* nocapture readonly, ...) local_unnamed_addr #0
 
-; Function Attrs: nofree nounwind
-define void @main() local_unnamed_addr #0 {
+define void @main() local_unnamed_addr {
 entry:
-  tail call void @test.expression() #2
-  tail call void @test.statement() #2
-  tail call void @test.structs() #2
+  tail call void @test.expression()
+  tail call void @test.statement()
+  tail call void @test.structs()
+  %0 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([40 x i8], [40 x i8]* @string.80c523c134f2b89c9ec7f6652a2dbdd7, i64 0, i64 0))
+  %1 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.44083ed8ce984d51a6ecfdba2a6c2105, i64 0, i64 0)) #2
+  %2 = load void (i8*)*, void (i8*)** @test.ff, align 8
+  tail call void %2(i8* getelementptr inbounds ([15 x i8], [15 x i8]* @string.b5b7eec21a3c4ab41dc70340c8ae1d93, i64 0, i64 0))
   ret void
 }
 
@@ -223,9 +230,19 @@ entry:
   ret void
 }
 
-; Function Attrs: norecurse nounwind readnone
-define void @test.functions() local_unnamed_addr #1 {
+define void @test.functions() local_unnamed_addr {
 entry:
+  %0 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([40 x i8], [40 x i8]* @string.80c523c134f2b89c9ec7f6652a2dbdd7, i64 0, i64 0))
+  %1 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.44083ed8ce984d51a6ecfdba2a6c2105, i64 0, i64 0)) #2
+  %2 = load void (i8*)*, void (i8*)** @test.ff, align 8
+  tail call void %2(i8* getelementptr inbounds ([15 x i8], [15 x i8]* @string.b5b7eec21a3c4ab41dc70340c8ae1d93, i64 0, i64 0))
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+define void @test.do_something(i8* nocapture readonly %msg) #0 {
+entry:
+  %0 = tail call i32 @puts(i8* nonnull dereferenceable(1) %msg)
   ret void
 }
 
@@ -321,12 +338,15 @@ entry:
   ret void
 }
 
-; Function Attrs: nofree nounwind
-define void @test.test() local_unnamed_addr #0 {
+define void @test.test() local_unnamed_addr {
 entry:
   tail call void @test.expression()
   tail call void @test.statement()
   tail call void @test.structs()
+  %0 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([40 x i8], [40 x i8]* @string.80c523c134f2b89c9ec7f6652a2dbdd7, i64 0, i64 0))
+  %1 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @string.44083ed8ce984d51a6ecfdba2a6c2105, i64 0, i64 0)) #2
+  %2 = load void (i8*)*, void (i8*)** @test.ff, align 8
+  tail call void %2(i8* getelementptr inbounds ([15 x i8], [15 x i8]* @string.b5b7eec21a3c4ab41dc70340c8ae1d93, i64 0, i64 0))
   ret void
 }
 
