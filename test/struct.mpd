@@ -45,6 +45,12 @@ public function structs()
     libc.printf("global_printer.line: %d \n", global_printer.line);
     libc.printf("global_printer.buffer[7]: %d \n", global_printer.buffer[7]);
     libc.printf("global_printer.driver.type: %d \n", global_printer.driver.type);
+
+    libc.printf("sizeof i32: %d \n", sizeof(i32));
+    libc.printf("sizeof f64: %d \n", sizeof(f64));
+    libc.printf("sizeof pointer: %d \n", sizeof(pointer));
+    libc.printf("sizeof printer: %d \n", sizeof(Printer));
+    libc.printf("sizeof array[5]: %d \n", sizeof([5]u8));
 }
 
 public function pass_struct_pointer(printer pointer<Printer>)
