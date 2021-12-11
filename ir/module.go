@@ -32,9 +32,6 @@ func (m *Module) WriteTo(w io.Writer) (n int64, err error) {
 		fw.Fprint("\n")
 	}
 	for _, t := range m.TypeDefs {
-		// Name=LocalIdent '=' 'type' Typ=OpaqueType
-		//
-		// Name=LocalIdent '=' 'type' Typ=Type
 		fw.Fprintf("%s = type %s\n", t, t.LLString())
 	}
 	// Global declarations and definitions.

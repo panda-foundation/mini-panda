@@ -12,14 +12,14 @@ public enum ExpressionType
     subscripting,
     parentheses,
     invocation,
-    struct_this
+    conversion,
+    _this,
+    _sizeof
 }
 
 public struct Expression
 {
     public var position i32;
-    public var type ExpressionType;
-    //public var token token.Token;
-    //public var x pointer<Expression>;
-    //public var y pointer<Expression>;
+    //public var type ExpressionType;
+    public var expression pointer;
 }

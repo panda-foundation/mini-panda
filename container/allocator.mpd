@@ -1,5 +1,7 @@
 namespace container;
 
+import libc;
+
 public struct Allocator
 {
     var size u32;
@@ -8,7 +10,7 @@ public struct Allocator
     public function allocate(size u32) []u8
     {
         this.deallocate();
-        this.address = calloc(size, 1);
+        this.address = libc.calloc(size, 1);
         this.size = size;
         return this.address;
     }
@@ -19,10 +21,10 @@ public struct Allocator
         {
             return this.allocate(size);
         }
-        this.address = realloc(this.address, size);
+        this.address = libc.realloc(this.address, size);
         if (this.size < size)
         {
-            memset(this.address[this.size], 0, (size - this.size));
+            libc.memset(this.address[this.size], 0, (size - this.size));
         }
         this.size = size;
         return this.address;
@@ -32,7 +34,7 @@ public struct Allocator
     {
         if (this.address != null)
         {
-            free(this.address);
+            libc.free(this.address);
             this.address = null;
         }
     }

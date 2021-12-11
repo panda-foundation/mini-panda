@@ -1,5 +1,7 @@
 namespace container;
 
+import libc;
+
 const vector_init_size u32 = 8;
 
 public struct Vector
@@ -9,7 +11,22 @@ public struct Vector
     var capacity u32;
     var elements []pointer;
 
-    public function get(position u32) position
+    public function initialize(count u32)
+    {
+        this.clear(true);
+        if (count == 0)
+        {
+            count = vector_init_size;
+        }
+        var address pointer = this.allocator.allocate(count * sizeof(pointer));
+        if (address != null)
+        {
+            this.capacity = count;
+            this.elements = []pointer(address);
+        }
+    }
+
+    public function get(position u32) pointer
     {
         if (this.count <= position)
         {
@@ -17,14 +34,13 @@ public struct Vector
         }
         return this.elements[position];
     }
-    public function set(position u32, value pointer) pointer
+
+    public function set(position u32, value pointer)
     {
-        if (this.count <= position)
+        if (this.count > position)
         {
-            return null;
+            this.elements[position] = value;
         }
-        this.elements[position] = value;
-        return value;
     }
 
     public function empty() bool
@@ -111,7 +127,7 @@ public struct Vector
         {
             if (destroy)
             {
-                free(this.elements[position]);
+                libc.free(this.elements[position]);
             }
             for (var i u32 = position; i < this.count - 1; i++)
             {
@@ -150,7 +166,7 @@ public struct Vector
         {
             for (var i u32 = 0; i < this.count; i++)
             {
-                free(this.elements[i]);
+                libc.free(this.elements[i]);
             }
         }
         this.allocator.deallocate();
