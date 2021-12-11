@@ -34,6 +34,7 @@ public function expression()
     literal();
     subscripting();
     member_access();
+    conversion();
 }
 
 public function unary()
@@ -204,4 +205,11 @@ public function member_access()
     libc.printf("data.sub.integer: %d \n", data.sub.integer);
     data.sub.array[3] = 9;
     libc.printf("data.sub.array[3]: %d \n", data.sub.array[3]);
+}
+
+public function conversion()
+{
+    var a i16 = 123;
+    var b i32 = i32(a);
+    libc.printf("convert i16 to i32: %d \n", b);
 }

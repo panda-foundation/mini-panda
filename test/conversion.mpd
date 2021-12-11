@@ -1,8 +1,0 @@
-namespace test;
-
-import libc;
-
-public function conversions()
-{
-
-}
