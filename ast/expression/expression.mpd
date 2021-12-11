@@ -12,7 +12,7 @@ public enum ExpressionType
     subscripting,
     parentheses,
     invocation,
-    this
+    struct_this
 }
 
 public struct Expression

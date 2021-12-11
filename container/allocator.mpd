@@ -22,7 +22,7 @@ public struct Allocator
         this.address = realloc(this.address, size);
         if (this.size < size)
         {
-            memset(this.address[this.size], 0, (size - this.size))
+            memset(this.address[this.size], 0, (size - this.size));
         }
         this.size = size;
         return this.address;

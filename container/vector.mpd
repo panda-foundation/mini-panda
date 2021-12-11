@@ -41,7 +41,7 @@ public struct Vector
     {
         if (this.capacity > 0 && this.count > 0 && this.count < this.capacity)
         {
-            var address pointer = this.allocator.reallocate(this.count * size_of(pointer));
+            var address pointer = this.allocator.reallocate(this.count * sizeof(pointer));
             if (address != null)
             {
                 this.capacity = this.count;
@@ -125,7 +125,7 @@ public struct Vector
     {
         if (this.capacity == 0)
         {
-            var address pointer = this.allocator.allocate(vector_init_size * size_of(pointer));
+            var address pointer = this.allocator.allocate(vector_init_size * sizeof(pointer));
             if (address != null)
             {
                 this.capacity = vector_init_size;
@@ -135,7 +135,7 @@ public struct Vector
         if (this.count == this.capacity)
         {
             var new_capacity u32 = this.capacity * 2;
-            var address pointer = this.allocator.reallocate(new_capacity * size_of(pointer));
+            var address pointer = this.allocator.reallocate(new_capacity * sizeof(pointer));
             if (address != null)
             {
                 this.capacity = new_capacity;
