@@ -138,51 +138,6 @@ func AttrGroupID(id int64) string {
 	return "#" + strconv.FormatInt(id, 10)
 }
 
-// ComdatName encodes a comdat name to its LLVM IR assembly representation.
-//
-// Examples:
-//    "foo" -> $%foo"
-//    "a b" -> `$"a b"`
-//    "世" -> `$"\E4\B8\96"`
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
-func ComdatName(name string) string {
-	return "$" + EscapeIdent(name)
-}
-
-// MetadataName encodes a metadata name to its LLVM IR assembly representation.
-//
-// Examples:
-//    "foo" -> "!foo"
-//    "a b" -> `!a\20b`
-//    "世" -> `!\E4\B8\96`
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
-func MetadataName(name string) string {
-	valid := func(b byte) bool {
-		return strings.IndexByte(tail, b) != -1
-	}
-	if strings.ContainsRune(decimal, rune(name[0])) {
-		// Escape first character if digit, to distinguish named from unnamed
-		// metadata.
-		return "!" + `\3` + name[:1] + string(Escape([]byte(name[1:]), valid))
-	}
-	return "!" + string(Escape([]byte(name), valid))
-}
-
-// MetadataID encodes a metadata ID to its LLVM IR assembly representation.
-//
-// Examples:
-//    "42" -> "!42"
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
-func MetadataID(id int64) string {
-	return "!" + strconv.FormatInt(id, 10)
-}
-
 const (
 	// decimal specifies the decimal digit characters.
 	decimal = "0123456789"

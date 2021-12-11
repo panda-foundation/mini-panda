@@ -16,10 +16,6 @@ import (
 //    *types.IntType        // https://godoc.org/github.com/llir/llvm/ir/types#IntType
 //    *types.FloatType      // https://godoc.org/github.com/llir/llvm/ir/types#FloatType
 //    *types.PointerType    // https://godoc.org/github.com/llir/llvm/ir/types#PointerType
-//    *types.VectorType     // https://godoc.org/github.com/llir/llvm/ir/types#VectorType
-//    *types.LabelType      // https://godoc.org/github.com/llir/llvm/ir/types#LabelType
-//    *types.TokenType      // https://godoc.org/github.com/llir/llvm/ir/types#TokenType
-//    *types.MetadataType   // https://godoc.org/github.com/llir/llvm/ir/types#MetadataType
 //    *types.ArrayType      // https://godoc.org/github.com/llir/llvm/ir/types#ArrayType
 //    *types.StructType     // https://godoc.org/github.com/llir/llvm/ir/types#StructType
 
@@ -34,9 +30,7 @@ type Type interface {
 // Convenience types.
 var (
 	// Basic types.
-	Void  = &VoidType{}  // void
-	Label = &LabelType{} // label
-	Token = &TokenType{} // token
+	Void = &VoidType{} // void
 
 	// Integer types.
 	I1   = &IntType{BitSize: 1}                  // i1
@@ -102,24 +96,6 @@ func IsNumber(t Type) bool {
 // IsPointer reports whether the given type is a pointer type.
 func IsPointer(t Type) bool {
 	_, ok := t.(*PointerType)
-	return ok
-}
-
-// IsVector reports whether the given type is a vector type.
-func IsVector(t Type) bool {
-	_, ok := t.(*VectorType)
-	return ok
-}
-
-// IsLabel reports whether the given type is a label type.
-func IsLabel(t Type) bool {
-	_, ok := t.(*LabelType)
-	return ok
-}
-
-// IsToken reports whether the given type is a token type.
-func IsToken(t Type) bool {
-	_, ok := t.(*TokenType)
 	return ok
 }
 
@@ -437,159 +413,6 @@ func (t *PointerType) SetName(name string) {
 // Name returns the type name of the type.
 func (t *PointerType) Name() string {
 	return t.TypeName
-}
-
-// --- [ Vector types ] --------------------------------------------------------
-
-// VectorType is an LLVM IR vector type.
-type VectorType struct {
-	// Type name; or empty if not present.
-	TypeName string
-	// Scalable vector type.
-	Scalable bool
-	// Vector length.
-	Len uint64
-	// Element type.
-	ElemType Type
-}
-
-// NewVectorType returns a new vector type based on the given vector length and
-// element type.
-func NewVectorType(len uint64, elemType Type) *VectorType {
-	return &VectorType{
-		Len:      len,
-		ElemType: elemType,
-	}
-}
-
-// Equal reports whether t and u are of equal type.
-func (t *VectorType) Equal(u Type) bool {
-	if u, ok := u.(*VectorType); ok {
-		if t.Scalable != u.Scalable {
-			return false
-		}
-		if t.Len != u.Len {
-			return false
-		}
-		return t.ElemType.Equal(u.ElemType)
-	}
-	return false
-}
-
-// String returns the string representation of the vector type.
-func (t *VectorType) String() string {
-	if len(t.TypeName) > 0 {
-		return TypeName(t.TypeName)
-	}
-	return t.LLString()
-}
-
-// LLString returns the LLVM syntax representation of the definition of the
-// type.
-//
-// scalable: '<' 'vscale' 'x' Len=UintLit 'x' Elem=Type '>'
-// non-scalable: '<' Len=UintLit 'x' Elem=Type '>'
-func (t *VectorType) LLString() string {
-	if t.Scalable {
-		// '<' 'vscale' 'x' Len=UintLit 'x' Elem=Type '>'
-		return fmt.Sprintf("<vscale x %d x %s>", t.Len, t.ElemType)
-	}
-	// '<' Len=UintLit 'x' Elem=Type '>'
-	return fmt.Sprintf("<%d x %s>", t.Len, t.ElemType)
-}
-
-// Name returns the type name of the type.
-func (t *VectorType) Name() string {
-	return t.TypeName
-}
-
-// SetName sets the type name of the type.
-func (t *VectorType) SetName(name string) {
-	t.TypeName = name
-}
-
-// --- [ Label types ] ---------------------------------------------------------
-
-// LabelType is an LLVM IR label type, which is used for basic block values.
-type LabelType struct {
-	// Type name; or empty if not present.
-	TypeName string
-}
-
-// Equal reports whether t and u are of equal type.
-func (t *LabelType) Equal(u Type) bool {
-	if _, ok := u.(*LabelType); ok {
-		return true
-	}
-	return false
-}
-
-// String returns the string representation of the label type.
-func (t *LabelType) String() string {
-	if len(t.TypeName) > 0 {
-		return TypeName(t.TypeName)
-	}
-	return t.LLString()
-}
-
-// LLString returns the LLVM syntax representation of the definition of the
-// type.
-//
-// 'label'
-func (t *LabelType) LLString() string {
-	return "label"
-}
-
-// Name returns the type name of the type.
-func (t *LabelType) Name() string {
-	return t.TypeName
-}
-
-// SetName sets the type name of the type.
-func (t *LabelType) SetName(name string) {
-	t.TypeName = name
-}
-
-// --- [ Token types ] ---------------------------------------------------------
-
-// TokenType is an LLVM IR token type.
-type TokenType struct {
-	// Type name; or empty if not present.
-	TypeName string
-}
-
-// Equal reports whether t and u are of equal type.
-func (t *TokenType) Equal(u Type) bool {
-	if _, ok := u.(*TokenType); ok {
-		return true
-	}
-	return false
-}
-
-// String returns the string representation of the token type.
-func (t *TokenType) String() string {
-	if len(t.TypeName) > 0 {
-		return TypeName(t.TypeName)
-	}
-	return t.LLString()
-}
-
-// LLString returns the LLVM syntax representation of the definition of the
-// type.
-//
-// 'token'
-func (t *TokenType) LLString() string {
-	return "token"
-}
-
-// Name returns the type name of the type.
-func (t *TokenType) Name() string {
-	return t.TypeName
-}
-
-// SetName sets the type name of the type.
-func (t *TokenType) SetName(name string) {
-	t.TypeName = name
 }
 
 // --- [ Array types ] ---------------------------------------------------------
