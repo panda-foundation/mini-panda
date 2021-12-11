@@ -209,7 +209,9 @@ public function member_access()
 
 public function conversion()
 {
-    var a i16 = 123;
-    var b i32 = i32(a);
-    libc.printf("convert i16 to i32: %d \n", b);
+    var a0 i32 = 65636;
+    var a1 i16 = i16(a0);
+    var a2 i8 = i8(a1);
+    libc.printf("convert i32 to i16: %d \n", a1);
+    libc.printf("convert i16 to i8: %d \n", a2);
 }

@@ -42,6 +42,8 @@
 @string.84ad90c9c520f1a4e80779cfa15248b6 = constant [17 x i8] c"data.value: %d \0A\00"
 @string.07ce14d972194d598243322dc9f50250 = constant [23 x i8] c"data.sub.integer: %d \0A\00"
 @string.6db0fbcde59d77fa7fc3126dc45321f0 = constant [24 x i8] c"data.sub.array[3]: %d \0A\00"
+@string.3ef4b443add330c8a95ca5f96c0ff649 = constant [25 x i8] c"convert i32 to i16: %d \0A\00"
+@string.4ed512d2145b6a7ca1372858fd18ec55 = constant [24 x i8] c"convert i16 to i8: %d \0A\00"
 @test.ff = global void (i8*)* @test.do_something
 @string.80c523c134f2b89c9ec7f6652a2dbdd7 = constant [40 x i8] c"============ test function ============\00"
 @string.44083ed8ce984d51a6ecfdba2a6c2105 = constant [15 x i8] c"do something 1\00"
@@ -100,20 +102,6 @@ exit:
 
 }
 
-define void @test.conversions() {
-entry:
-	br label %body
-
-
-body:
-	br label %exit
-
-
-exit:
-	ret void
-
-}
-
 define void @test.expression() {
 entry:
 	br label %body
@@ -129,6 +117,7 @@ body:
 	call void @test.literal()
 	call void @test.subscripting()
 	call void @test.member_access()
+	call void @test.conversion()
 	br label %exit
 
 
@@ -594,6 +583,38 @@ exit:
 
 }
 
+define void @test.conversion() {
+entry:
+	%0 = alloca i32
+	%1 = alloca i16
+	%2 = alloca i8
+	br label %body
+
+
+body:
+	store i32 65636, i32* %0
+	%3 = load i32, i32* %0
+	%4 = trunc i32 %3 to i16
+	store i16 %4, i16* %1
+	%5 = load i16, i16* %1
+	%6 = trunc i16 %5 to i8
+	store i8 %6, i8* %2
+	%7 = getelementptr [25 x i8], [25 x i8]* @string.3ef4b443add330c8a95ca5f96c0ff649, i32 0, i32 0
+	%8 = load i16, i16* %1
+	%9 = sext i16 %8 to i32
+	%10 = call i32 (i8*, ...) @printf(i8* %7, i32 %9)
+	%11 = getelementptr [24 x i8], [24 x i8]* @string.4ed512d2145b6a7ca1372858fd18ec55, i32 0, i32 0
+	%12 = load i8, i8* %2
+	%13 = sext i8 %12 to i32
+	%14 = call i32 (i8*, ...) @printf(i8* %11, i32 %13)
+	br label %exit
+
+
+exit:
+	ret void
+
+}
+
 define void @test.functions() {
 entry:
 	%0 = alloca void (i8*)*
@@ -934,7 +955,6 @@ body:
 	call void @test.expression()
 	call void @test.statement()
 	call void @test.structs()
-	call void @test.conversions()
 	call void @test.functions()
 	br label %exit
 
