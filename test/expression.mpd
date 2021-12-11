@@ -211,7 +211,28 @@ public function conversion()
 {
     var a0 i32 = 65636;
     var a1 i16 = i16(a0);
-    var a2 i8 = i8(a1);
     libc.printf("convert i32 to i16: %d \n", a1);
+    var a2 i8 = i8(a1);
     libc.printf("convert i16 to i8: %d \n", a2);
+    var a3 f32 = -3.14;
+    var a4 i8 = i8(a3);
+    libc.printf("convert float to i8: %d \n", a4);
+    var a5 u8 = u8(a3);
+    libc.printf("convert float to u8: %d \n", a5);
+    var a6 u8 = u8(-a3);
+    libc.printf("convert float to u8: %d \n", a6);
+    var a7 f16 = f16(a3);
+    libc.printf("convert f32 to f16: %f \n", a7);
+    var a8 f64 = f64(a3);
+    libc.printf("convert f32 to f64: %f \n", a8);
+    var a9 f32 = f32(a0);
+    libc.printf("convert i32 to f32: %f \n", a9);
+    var a10 pointer<f32> = &a3;
+    libc.printf("address to f32: %d \n", a10);
+    var a11 pointer<i32> = pointer<i32>(a10);
+    libc.printf("address to i32: %d \n", a11);
+    var a12 []i32 = a11;
+    libc.printf("bits of f32: %d \n", a12[0]);
+    var a13 []i32 = []i32(a10);
+    libc.printf("bits of f32: %d \n", a13[0]);
 }

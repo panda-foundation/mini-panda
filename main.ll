@@ -44,6 +44,14 @@
 @string.6db0fbcde59d77fa7fc3126dc45321f0 = constant [24 x i8] c"data.sub.array[3]: %d \0A\00"
 @string.3ef4b443add330c8a95ca5f96c0ff649 = constant [25 x i8] c"convert i32 to i16: %d \0A\00"
 @string.4ed512d2145b6a7ca1372858fd18ec55 = constant [24 x i8] c"convert i16 to i8: %d \0A\00"
+@string.22f4c765769b2c3e259cdec04f7ab9fc = constant [26 x i8] c"convert float to i8: %d \0A\00"
+@string.b8daa6164c5a20e98d469e71a9da3125 = constant [26 x i8] c"convert float to u8: %d \0A\00"
+@string.c3c73595ffd209f6a04a209eb631fdd3 = constant [25 x i8] c"convert f32 to f16: %f \0A\00"
+@string.68c37f72a2c1fdcc1cdcc2f848d60eae = constant [25 x i8] c"convert f32 to f64: %f \0A\00"
+@string.ef448b1e1b7d3a83d28a1ce23787d883 = constant [25 x i8] c"convert i32 to f32: %f \0A\00"
+@string.b0cbe247e2f4af55fd9dcce28109e925 = constant [21 x i8] c"address to f32: %d \0A\00"
+@string.b25abb667c59353b4d5e4cda2e7cc58e = constant [21 x i8] c"address to i32: %d \0A\00"
+@string.825793f8ecd43c3dc72996595a4131e4 = constant [18 x i8] c"bits of f32: %d \0A\00"
 @test.ff = global void (i8*)* @test.do_something
 @string.80c523c134f2b89c9ec7f6652a2dbdd7 = constant [40 x i8] c"============ test function ============\00"
 @string.44083ed8ce984d51a6ecfdba2a6c2105 = constant [15 x i8] c"do something 1\00"
@@ -588,25 +596,108 @@ entry:
 	%0 = alloca i32
 	%1 = alloca i16
 	%2 = alloca i8
+	%3 = alloca float
+	%4 = alloca i8
+	%5 = alloca i8
+	%6 = alloca i8
+	%7 = alloca half
+	%8 = alloca double
+	%9 = alloca float
+	%10 = alloca float*
+	%11 = alloca i32*
+	%12 = alloca i32*
+	%13 = alloca i32*
 	br label %body
 
 
 body:
 	store i32 65636, i32* %0
-	%3 = load i32, i32* %0
-	%4 = trunc i32 %3 to i16
-	store i16 %4, i16* %1
-	%5 = load i16, i16* %1
-	%6 = trunc i16 %5 to i8
-	store i8 %6, i8* %2
-	%7 = getelementptr [25 x i8], [25 x i8]* @string.3ef4b443add330c8a95ca5f96c0ff649, i32 0, i32 0
-	%8 = load i16, i16* %1
-	%9 = sext i16 %8 to i32
-	%10 = call i32 (i8*, ...) @printf(i8* %7, i32 %9)
-	%11 = getelementptr [24 x i8], [24 x i8]* @string.4ed512d2145b6a7ca1372858fd18ec55, i32 0, i32 0
-	%12 = load i8, i8* %2
-	%13 = sext i8 %12 to i32
-	%14 = call i32 (i8*, ...) @printf(i8* %11, i32 %13)
+	%14 = load i32, i32* %0
+	%15 = trunc i32 %14 to i16
+	store i16 %15, i16* %1
+	%16 = getelementptr [25 x i8], [25 x i8]* @string.3ef4b443add330c8a95ca5f96c0ff649, i32 0, i32 0
+	%17 = load i16, i16* %1
+	%18 = sext i16 %17 to i32
+	%19 = call i32 (i8*, ...) @printf(i8* %16, i32 %18)
+	%20 = load i16, i16* %1
+	%21 = trunc i16 %20 to i8
+	store i8 %21, i8* %2
+	%22 = getelementptr [24 x i8], [24 x i8]* @string.4ed512d2145b6a7ca1372858fd18ec55, i32 0, i32 0
+	%23 = load i8, i8* %2
+	%24 = sext i8 %23 to i32
+	%25 = call i32 (i8*, ...) @printf(i8* %22, i32 %24)
+	%26 = fsub float 0x0, 0x40091EB860000000
+	store float %26, float* %3
+	%27 = load float, float* %3
+	%28 = fptosi float %27 to i8
+	store i8 %28, i8* %4
+	%29 = getelementptr [26 x i8], [26 x i8]* @string.22f4c765769b2c3e259cdec04f7ab9fc, i32 0, i32 0
+	%30 = load i8, i8* %4
+	%31 = sext i8 %30 to i32
+	%32 = call i32 (i8*, ...) @printf(i8* %29, i32 %31)
+	%33 = load float, float* %3
+	%34 = fptoui float %33 to i8
+	store i8 %34, i8* %5
+	%35 = getelementptr [26 x i8], [26 x i8]* @string.b8daa6164c5a20e98d469e71a9da3125, i32 0, i32 0
+	%36 = load i8, i8* %5
+	%37 = sext i8 %36 to i32
+	%38 = call i32 (i8*, ...) @printf(i8* %35, i32 %37)
+	%39 = load float, float* %3
+	%40 = fsub float 0x0, %39
+	%41 = fptoui float %40 to i8
+	store i8 %41, i8* %6
+	%42 = getelementptr [26 x i8], [26 x i8]* @string.b8daa6164c5a20e98d469e71a9da3125, i32 0, i32 0
+	%43 = load i8, i8* %6
+	%44 = sext i8 %43 to i32
+	%45 = call i32 (i8*, ...) @printf(i8* %42, i32 %44)
+	%46 = load float, float* %3
+	%47 = fptrunc float %46 to half
+	store half %47, half* %7
+	%48 = getelementptr [25 x i8], [25 x i8]* @string.c3c73595ffd209f6a04a209eb631fdd3, i32 0, i32 0
+	%49 = load half, half* %7
+	%50 = fpext half %49 to double
+	%51 = call i32 (i8*, ...) @printf(i8* %48, double %50)
+	%52 = load float, float* %3
+	%53 = fpext float %52 to double
+	store double %53, double* %8
+	%54 = getelementptr [25 x i8], [25 x i8]* @string.68c37f72a2c1fdcc1cdcc2f848d60eae, i32 0, i32 0
+	%55 = load double, double* %8
+	%56 = call i32 (i8*, ...) @printf(i8* %54, double %55)
+	%57 = load i32, i32* %0
+	%58 = sitofp i32 %57 to float
+	store float %58, float* %9
+	%59 = getelementptr [25 x i8], [25 x i8]* @string.ef448b1e1b7d3a83d28a1ce23787d883, i32 0, i32 0
+	%60 = load float, float* %9
+	%61 = fpext float %60 to double
+	%62 = call i32 (i8*, ...) @printf(i8* %59, double %61)
+	%63 = alloca float*
+	store float* %3, float** %63
+	%64 = load float*, float** %63
+	store float* %64, float** %10
+	%65 = getelementptr [21 x i8], [21 x i8]* @string.b0cbe247e2f4af55fd9dcce28109e925, i32 0, i32 0
+	%66 = load float*, float** %10
+	%67 = call i32 (i8*, ...) @printf(i8* %65, float* %66)
+	%68 = load float*, float** %10
+	%69 = bitcast float* %68 to i32*
+	store i32* %69, i32** %11
+	%70 = getelementptr [21 x i8], [21 x i8]* @string.b25abb667c59353b4d5e4cda2e7cc58e, i32 0, i32 0
+	%71 = load i32*, i32** %11
+	%72 = call i32 (i8*, ...) @printf(i8* %70, i32* %71)
+	%73 = load i32*, i32** %11
+	store i32* %73, i32** %12
+	%74 = getelementptr [18 x i8], [18 x i8]* @string.825793f8ecd43c3dc72996595a4131e4, i32 0, i32 0
+	%75 = load i32*, i32** %12
+	%76 = getelementptr i32, i32* %75, i32 0
+	%77 = load i32, i32* %76
+	%78 = call i32 (i8*, ...) @printf(i8* %74, i32 %77)
+	%79 = load float*, float** %10
+	%80 = bitcast float* %79 to i32*
+	store i32* %80, i32** %13
+	%81 = getelementptr [18 x i8], [18 x i8]* @string.825793f8ecd43c3dc72996595a4131e4, i32 0, i32 0
+	%82 = load i32*, i32** %13
+	%83 = getelementptr i32, i32* %82, i32 0
+	%84 = load i32, i32* %83
+	%85 = call i32 (i8*, ...) @printf(i8* %81, i32 %84)
 	br label %exit
 
 
