@@ -115,22 +115,38 @@ entry:
   %2 = icmp eq i8* %1, null
   %3 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 0
   %4 = load i32, i32* %3, align 4
-  br i1 %2, label %container.Allocator.allocate.exit, label %6
+  br i1 %2, label %container.Allocator.allocate.exit, label %5
 
-exit:                                             ; preds = %6, %container.Allocator.allocate.exit
-  %storemerge = phi i8* [ %8, %6 ], [ %9, %container.Allocator.allocate.exit ]
-  store i8* %storemerge, i8** %0, align 8
-  %5 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 1
-  store i32 %count, i32* %5, align 4
-  ret i8* %storemerge
+exit:                                             ; preds = %5, %13, %container.Allocator.allocate.exit
+  %.sink = phi i32* [ %12, %container.Allocator.allocate.exit ], [ %8, %13 ], [ %8, %5 ]
+  %.0 = phi i8* [ %11, %container.Allocator.allocate.exit ], [ %.pre, %13 ], [ %7, %5 ]
+  store i32 %count, i32* %.sink, align 4
+  ret i8* %.0
 
-6:                                                ; preds = %entry
-  %7 = mul i32 %4, %count
-  %8 = tail call i8* @realloc(i8* nonnull %1, i32 %7)
-  br label %exit
+5:                                                ; preds = %entry
+  %6 = mul i32 %4, %count
+  %7 = tail call i8* @realloc(i8* nonnull %1, i32 %6)
+  store i8* %7, i8** %0, align 8
+  %8 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 1
+  %9 = load i32, i32* %8, align 4
+  %10 = icmp ult i32 %9, %count
+  br i1 %10, label %13, label %exit
 
 container.Allocator.allocate.exit:                ; preds = %entry
-  %9 = tail call i8* @calloc(i32 %4, i32 %count) #0
+  %11 = tail call i8* @calloc(i32 %4, i32 %count) #0
+  store i8* %11, i8** %0, align 8
+  %12 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 1
+  br label %exit
+
+13:                                               ; preds = %5
+  %14 = load i32, i32* %3, align 4
+  %15 = mul i32 %14, %9
+  %16 = sext i32 %15 to i64
+  %17 = getelementptr i8, i8* %7, i64 %16
+  %18 = sub i32 %count, %9
+  %19 = mul i32 %14, %18
+  tail call void @llvm.memset.p0i8.i32(i8* %17, i8 0, i32 %19, i1 true)
+  %.pre = load i8*, i8** %0, align 8
   br label %exit
 }
 
@@ -152,22 +168,88 @@ exit:                                             ; preds = %entry, %3
   br label %exit
 }
 
-; Function Attrs: norecurse nounwind readnone
-define noalias i8* @container.Allocator.at(%container.Allocator* nocapture readnone %this, i32 %index) local_unnamed_addr #1 {
+; Function Attrs: norecurse nounwind readonly
+define i8* @container.Allocator.at(%container.Allocator* nocapture readonly %this, i32 %index) local_unnamed_addr #1 {
 entry:
-  ret i8* null
+  %0 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 1
+  %1 = load i32, i32* %0, align 4
+  %2 = icmp ugt i32 %1, %index
+  br i1 %2, label %3, label %exit
+
+exit:                                             ; preds = %entry, %3
+  %.0 = phi i8* [ %10, %3 ], [ null, %entry ]
+  ret i8* %.0
+
+3:                                                ; preds = %entry
+  %4 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 2
+  %5 = load i8*, i8** %4, align 8
+  %6 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 0
+  %7 = load i32, i32* %6, align 4
+  %8 = mul i32 %7, %index
+  %9 = sext i32 %8 to i64
+  %10 = getelementptr i8, i8* %5, i64 %9
+  br label %exit
 }
 
-; Function Attrs: norecurse nounwind readnone
-define void @container.Allocator.copy(%container.Allocator* nocapture %this, i32 %from, i32 %to) local_unnamed_addr #1 {
+; Function Attrs: nounwind
+define void @container.Allocator.copy(%container.Allocator* nocapture readonly %this, i32 %from, i32 %to) local_unnamed_addr #0 {
 entry:
+  %0 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 1
+  %1 = load i32, i32* %0, align 4
+  %2 = icmp ugt i32 %1, %from
+  %3 = icmp ugt i32 %1, %to
+  %4 = and i1 %2, %3
+  %5 = icmp ne i32 %from, %to
+  %6 = and i1 %5, %4
+  br i1 %6, label %7, label %exit
+
+exit:                                             ; preds = %7, %entry
   ret void
+
+7:                                                ; preds = %entry
+  %8 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 2
+  %9 = load i8*, i8** %8, align 8
+  %10 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 0
+  %11 = load i32, i32* %10, align 4
+  %12 = mul i32 %11, %to
+  %13 = sext i32 %12 to i64
+  %14 = getelementptr i8, i8* %9, i64 %13
+  %15 = mul i32 %11, %from
+  %16 = sext i32 %15 to i64
+  %17 = getelementptr i8, i8* %9, i64 %16
+  tail call void @llvm.memcpy.p0i8.p0i8.i32(i8* %14, i8* %17, i32 %11, i1 true)
+  br label %exit
 }
 
-; Function Attrs: norecurse nounwind readnone
-define void @container.Allocator.move(%container.Allocator* nocapture %this, i32 %from, i32 %to, i32 %count) local_unnamed_addr #1 {
+; Function Attrs: nounwind
+define void @container.Allocator.move(%container.Allocator* nocapture readonly %this, i32 %from, i32 %to, i32 %count) local_unnamed_addr #0 {
 entry:
+  %0 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 1
+  %1 = load i32, i32* %0, align 4
+  %2 = icmp ugt i32 %1, %from
+  %3 = icmp ugt i32 %1, %to
+  %4 = and i1 %2, %3
+  %5 = icmp ne i32 %from, %to
+  %6 = and i1 %5, %4
+  br i1 %6, label %7, label %exit
+
+exit:                                             ; preds = %7, %entry
   ret void
+
+7:                                                ; preds = %entry
+  %8 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 2
+  %9 = load i8*, i8** %8, align 8
+  %10 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 0
+  %11 = load i32, i32* %10, align 4
+  %12 = mul i32 %11, %to
+  %13 = sext i32 %12 to i64
+  %14 = getelementptr i8, i8* %9, i64 %13
+  %15 = mul i32 %11, %from
+  %16 = sext i32 %15 to i64
+  %17 = getelementptr i8, i8* %9, i64 %16
+  %18 = mul i32 %11, %count
+  tail call void @llvm.memmove.p0i8.p0i8.i32(i8* %14, i8* %17, i32 %18, i1 true)
+  br label %exit
 }
 
 ; Function Attrs: nofree nounwind
@@ -183,6 +265,15 @@ declare i8* @realloc(i8*, i32) local_unnamed_addr
 
 ; Function Attrs: nounwind
 declare void @free(i8* nocapture) local_unnamed_addr #0
+
+; Function Attrs: argmemonly nounwind willreturn
+declare void @llvm.memcpy.p0i8.p0i8.i32(i8* noalias nocapture writeonly, i8* noalias nocapture readonly, i32, i1 immarg) #3
+
+; Function Attrs: argmemonly nounwind willreturn
+declare void @llvm.memmove.p0i8.p0i8.i32(i8* nocapture, i8* nocapture readonly, i32, i1 immarg) #3
+
+; Function Attrs: argmemonly nounwind willreturn
+declare void @llvm.memset.p0i8.i32(i8* nocapture writeonly, i8, i32, i1 immarg) #3
 
 define void @main() local_unnamed_addr {
 entry:
@@ -481,6 +572,6 @@ entry:
 declare void @llvm.memset.p0i8.i64(i8* nocapture writeonly, i8, i64, i1 immarg) #3
 
 attributes #0 = { nounwind }
-attributes #1 = { norecurse nounwind readnone }
+attributes #1 = { norecurse nounwind readonly }
 attributes #2 = { nofree nounwind }
 attributes #3 = { argmemonly nounwind willreturn }

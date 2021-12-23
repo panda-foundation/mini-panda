@@ -195,6 +195,30 @@ exit:
 
 
 40:
+	%41 = load %container.Allocator*, %container.Allocator** %0
+	%42 = getelementptr %container.Allocator, %container.Allocator* %41, i32 0, i32 2
+	%43 = load i8*, i8** %42
+	%44 = load %container.Allocator*, %container.Allocator** %0
+	%45 = getelementptr %container.Allocator, %container.Allocator* %44, i32 0, i32 0
+	%46 = load %container.Allocator*, %container.Allocator** %0
+	%47 = getelementptr %container.Allocator, %container.Allocator* %46, i32 0, i32 1
+	%48 = load i32, i32* %45
+	%49 = load i32, i32* %47
+	%50 = mul i32 %48, %49
+	%51 = getelementptr i8, i8* %43, i32 %50
+	%52 = alloca i8*
+	store i8* %51, i8** %52
+	%53 = load i8*, i8** %52
+	%54 = load %container.Allocator*, %container.Allocator** %0
+	%55 = getelementptr %container.Allocator, %container.Allocator* %54, i32 0, i32 1
+	%56 = load i32, i32* %1
+	%57 = load i32, i32* %55
+	%58 = sub i32 %56, %57
+	%59 = load %container.Allocator*, %container.Allocator** %0
+	%60 = getelementptr %container.Allocator, %container.Allocator* %59, i32 0, i32 0
+	%61 = load i32, i32* %60
+	%62 = mul i32 %58, %61
+	call void @llvm.memset.p0i8.i32(i8* %53, i8 0, i32 %62, i1 true)
 	br label %33
 
 }
@@ -270,7 +294,20 @@ exit:
 
 
 10:
-	br label %9
+	%11 = load %container.Allocator*, %container.Allocator** %0
+	%12 = getelementptr %container.Allocator, %container.Allocator* %11, i32 0, i32 2
+	%13 = load i8*, i8** %12
+	%14 = load %container.Allocator*, %container.Allocator** %0
+	%15 = getelementptr %container.Allocator, %container.Allocator* %14, i32 0, i32 0
+	%16 = load i32, i32* %1
+	%17 = load i32, i32* %15
+	%18 = mul i32 %16, %17
+	%19 = getelementptr i8, i8* %13, i32 %18
+	%20 = alloca i8*
+	store i8* %19, i8** %20
+	%21 = load i8*, i8** %20
+	store i8* %21, i8** %2
+	br label %exit
 
 }
 
@@ -313,6 +350,34 @@ exit:
 
 
 19:
+	%20 = load %container.Allocator*, %container.Allocator** %0
+	%21 = getelementptr %container.Allocator, %container.Allocator* %20, i32 0, i32 2
+	%22 = load i8*, i8** %21
+	%23 = load %container.Allocator*, %container.Allocator** %0
+	%24 = getelementptr %container.Allocator, %container.Allocator* %23, i32 0, i32 0
+	%25 = load i32, i32* %2
+	%26 = load i32, i32* %24
+	%27 = mul i32 %25, %26
+	%28 = getelementptr i8, i8* %22, i32 %27
+	%29 = alloca i8*
+	store i8* %28, i8** %29
+	%30 = load i8*, i8** %29
+	%31 = load %container.Allocator*, %container.Allocator** %0
+	%32 = getelementptr %container.Allocator, %container.Allocator* %31, i32 0, i32 2
+	%33 = load i8*, i8** %32
+	%34 = load %container.Allocator*, %container.Allocator** %0
+	%35 = getelementptr %container.Allocator, %container.Allocator* %34, i32 0, i32 0
+	%36 = load i32, i32* %1
+	%37 = load i32, i32* %35
+	%38 = mul i32 %36, %37
+	%39 = getelementptr i8, i8* %33, i32 %38
+	%40 = alloca i8*
+	store i8* %39, i8** %40
+	%41 = load i8*, i8** %40
+	%42 = load %container.Allocator*, %container.Allocator** %0
+	%43 = getelementptr %container.Allocator, %container.Allocator* %42, i32 0, i32 0
+	%44 = load i32, i32* %43
+	call void @llvm.memcpy.p0i8.p0i8.i32(i8* %30, i8* %41, i32 %44, i1 true)
 	br label %18
 
 }
@@ -358,6 +423,36 @@ exit:
 
 
 20:
+	%21 = load %container.Allocator*, %container.Allocator** %0
+	%22 = getelementptr %container.Allocator, %container.Allocator* %21, i32 0, i32 2
+	%23 = load i8*, i8** %22
+	%24 = load %container.Allocator*, %container.Allocator** %0
+	%25 = getelementptr %container.Allocator, %container.Allocator* %24, i32 0, i32 0
+	%26 = load i32, i32* %2
+	%27 = load i32, i32* %25
+	%28 = mul i32 %26, %27
+	%29 = getelementptr i8, i8* %23, i32 %28
+	%30 = alloca i8*
+	store i8* %29, i8** %30
+	%31 = load i8*, i8** %30
+	%32 = load %container.Allocator*, %container.Allocator** %0
+	%33 = getelementptr %container.Allocator, %container.Allocator* %32, i32 0, i32 2
+	%34 = load i8*, i8** %33
+	%35 = load %container.Allocator*, %container.Allocator** %0
+	%36 = getelementptr %container.Allocator, %container.Allocator* %35, i32 0, i32 0
+	%37 = load i32, i32* %1
+	%38 = load i32, i32* %36
+	%39 = mul i32 %37, %38
+	%40 = getelementptr i8, i8* %34, i32 %39
+	%41 = alloca i8*
+	store i8* %40, i8** %41
+	%42 = load i8*, i8** %41
+	%43 = load %container.Allocator*, %container.Allocator** %0
+	%44 = getelementptr %container.Allocator, %container.Allocator* %43, i32 0, i32 0
+	%45 = load i32, i32* %44
+	%46 = load i32, i32* %3
+	%47 = mul i32 %45, %46
+	call void @llvm.memmove.p0i8.p0i8.i32(i8* %31, i8* %42, i32 %47, i1 true)
 	br label %19
 
 }
