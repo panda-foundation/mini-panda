@@ -7,9 +7,9 @@ public struct Allocator
 {
     var size u32;
     var count u32;
-    var address []u8;
+    var address pointer;
 
-    public function allocate(size u32, count u32) []u8
+    public function allocate(size u32, count u32) pointer
     {
         this.deallocate();
         this.address = libc.calloc(size, count);
@@ -18,7 +18,7 @@ public struct Allocator
         return this.address;
     }
 
-    public function reallocate(count u32) []u8
+    public function reallocate(count u32) pointer
     {
         if (this.address == null)
         {
@@ -27,7 +27,7 @@ public struct Allocator
         this.address = libc.realloc(this.address, this.size * count);
         if (this.count < count)
         {
-            llvm.memset(this.address[this.size * this.count], 0, (count - this.count) * this.size, true);
+            llvm.memset(offset(this.address, this.size * this.count), 0, (count - this.count) * this.size, true);
         }
         this.count = count;
         return this.address;
@@ -48,7 +48,7 @@ public struct Allocator
     {
         if (index < this.count)
         {
-            return this.address[index * this.size];
+            return offset(this.address, index * this.size);
         }
         return null;
     }
@@ -57,7 +57,7 @@ public struct Allocator
     {
         if (from < this.count && to < this.count && from != to)
         {
-            llvm.memcpy(this.address[to * this.size], this.address[from * this.size], this.size, true);
+            llvm.memcpy(offset(this.address, to * this.size), offset(this.address, from * this.size), this.size, true);
         }
     }
 
@@ -65,7 +65,7 @@ public struct Allocator
     {
         if (from < this.count && to < this.count && from != to)
         {
-            llvm.memmove(this.address[to * this.size], this.address[from * this.size], this.size * count, true);
+            llvm.memmove(offset(this.address, to * this.size), offset(this.address, from * this.size), this.size * count, true);
         }
     }
 }
