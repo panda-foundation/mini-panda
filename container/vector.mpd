@@ -57,7 +57,7 @@ public struct Vector
     {
         if (this.capacity > 0 && this.count > 0 && this.count < this.capacity)
         {
-            var address pointer = this.allocator.reallocate(this.count * sizeof(pointer));
+            var address pointer = this.allocator.reallocate(this.count * sizeof(pointer));//?
             if (address != null)
             {
                 this.capacity = this.count;

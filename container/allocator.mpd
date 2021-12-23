@@ -1,32 +1,35 @@
 namespace container;
 
 import libc;
+import llvm;
 
 public struct Allocator
 {
     var size u32;
+    var count u32;
     var address []u8;
 
-    public function allocate(size u32) []u8
+    public function allocate(size u32, count u32) []u8
     {
         this.deallocate();
-        this.address = libc.calloc(size, 1);
+        this.address = libc.calloc(size, count);
         this.size = size;
+        this.count = count;
         return this.address;
     }
 
-    public function reallocate(size u32) []u8
+    public function reallocate(count u32) []u8
     {
         if (this.address == null)
         {
-            return this.allocate(size);
+            return this.allocate(this.size, count);
         }
-        this.address = libc.realloc(this.address, size);
-        if (this.size < size)
+        this.address = libc.realloc(this.address, this.size * count);
+        if (this.count < count)
         {
-            libc.memset(this.address[this.size], 0, (size - this.size));
+            llvm.memset(this.address[this.size * this.count], 0, (count - this.count) * this.size, true);
         }
-        this.size = size;
+        this.count = count;
         return this.address;
     }
 
@@ -36,11 +39,33 @@ public struct Allocator
         {
             libc.free(this.address);
             this.address = null;
+            this.count = 0;
+            this.size = 0;
         }
     }
 
-    public function capacity() u32
+    public function at(index u32) pointer
     {
-        return this.size;
+        if (index < this.count)
+        {
+            return this.address[index * this.size];
+        }
+        return null;
+    }
+
+    public function copy(from u32, to u32)
+    {
+        if (from < this.count && to < this.count && from != to)
+        {
+            llvm.memcpy(this.address[to * this.size], this.address[from * this.size], this.size, true);
+        }
+    }
+
+    public function move(from u32, to u32, count u32)
+    {
+        if (from < this.count && to < this.count && from != to)
+        {
+            llvm.memmove(this.address[to * this.size], this.address[from * this.size], this.size * count, true);
+        }
     }
 }

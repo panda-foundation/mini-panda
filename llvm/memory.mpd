@@ -1,0 +1,11 @@
+namespace llvm;
+
+@extern(name = "llvm.memcpy.p0i8.p0i8.i32")
+function memcpy(dest pointer, source pointer, size u32, is_volatile bool);
+
+// allow overlap
+@extern(name = "llvm.memmove.p0i8.p0i8.i32")
+function memmove(dest pointer, source pointer, size u32, is_volatile bool);
+
+@extern(name = "llvm.memset.p0i8.i32")
+function memset(dest pointer, value u8, size u32, is_volatile bool);
