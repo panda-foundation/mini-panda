@@ -5,15 +5,15 @@ import llvm;
 
 public struct Allocator
 {
-    var size u32;
+    var element_size u32;
     var count u32;
-    var address pointer;
+    var address []u8;
 
-    public function allocate(size u32, count u32) pointer
+    public function allocate(element_size u32, count u32) pointer
     {
         this.deallocate();
-        this.address = libc.calloc(size, count);
-        this.size = size;
+        this.address = libc.calloc(element_size, count);
+        this.element_size = element_size;
         this.count = count;
         return this.address;
     }
@@ -22,12 +22,12 @@ public struct Allocator
     {
         if (this.address == null)
         {
-            return this.allocate(this.size, count);
+            return this.allocate(this.element_size, count);
         }
-        this.address = libc.realloc(this.address, this.size * count);
+        this.address = libc.realloc(this.address, this.element_size * count);
         if (this.count < count)
         {
-            llvm.memset(offset(this.address, this.size * this.count), 0, (count - this.count) * this.size, true);
+            llvm.memset(&this.address[this.element_size * this.count], 0, (count - this.count) * this.element_size, true);
         }
         this.count = count;
         return this.address;
@@ -40,7 +40,7 @@ public struct Allocator
             libc.free(this.address);
             this.address = null;
             this.count = 0;
-            this.size = 0;
+            this.element_size = 0;
         }
     }
 
@@ -48,7 +48,7 @@ public struct Allocator
     {
         if (index < this.count)
         {
-            return offset(this.address, index * this.size);
+            return &this.address[index * this.element_size];
         }
         return null;
     }
@@ -57,7 +57,7 @@ public struct Allocator
     {
         if (from < this.count && to < this.count && from != to)
         {
-            llvm.memcpy(offset(this.address, to * this.size), offset(this.address, from * this.size), this.size, true);
+            llvm.memcpy(&this.address[to * this.element_size], &this.address[from * this.element_size], this.element_size, true);
         }
     }
 
@@ -65,7 +65,7 @@ public struct Allocator
     {
         if (from < this.count && to < this.count && from != to)
         {
-            llvm.memmove(offset(this.address, to * this.size), offset(this.address, from * this.size), this.size * count, true);
+            llvm.memmove(&this.address[to * this.element_size], &this.address[from * this.element_size], this.element_size * count, true);
         }
     }
 }

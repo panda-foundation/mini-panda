@@ -85,7 +85,7 @@ source_filename = "../mini-panda/main.ll"
 @string.f229d6156f4a2e6f6e5c4ee96406192b = constant [10 x i8] c"type:%d \0A\00"
 
 ; Function Attrs: nounwind
-define i8* @container.Allocator.allocate(%container.Allocator* nocapture %this, i32 %size, i32 %count) local_unnamed_addr #0 {
+define i8* @container.Allocator.allocate(%container.Allocator* nocapture %this, i32 %element_size, i32 %count) local_unnamed_addr #0 {
 entry:
   %0 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 2
   %1 = load i8*, i8** %0, align 8
@@ -99,10 +99,10 @@ entry:
   br label %container.Allocator.deallocate.exit
 
 container.Allocator.deallocate.exit:              ; preds = %entry, %3
-  %5 = tail call i8* @calloc(i32 %size, i32 %count)
+  %5 = tail call i8* @calloc(i32 %element_size, i32 %count)
   store i8* %5, i8** %0, align 8
   %6 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 0
-  store i32 %size, i32* %6, align 4
+  store i32 %element_size, i32* %6, align 4
   %7 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 1
   store i32 %count, i32* %7, align 4
   ret i8* %5

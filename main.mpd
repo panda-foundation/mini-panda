@@ -1,6 +1,7 @@
 namespace;
 
 import test;
+import libc;
 
 public function main()
 {

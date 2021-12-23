@@ -83,12 +83,12 @@
 @string.b5abd14716ff1d42a2c76d0bae14c3cf = constant [16 x i8] c"buffer[2]: %d \0A\00"
 @string.f229d6156f4a2e6f6e5c4ee96406192b = constant [10 x i8] c"type:%d \0A\00"
 
-define i8* @container.Allocator.allocate(%container.Allocator* %this, i32 %size, i32 %count) {
+define i8* @container.Allocator.allocate(%container.Allocator* %this, i32 %element_size, i32 %count) {
 entry:
 	%0 = alloca %container.Allocator*
 	store %container.Allocator* %this, %container.Allocator** %0
 	%1 = alloca i32
-	store i32 %size, i32* %1
+	store i32 %element_size, i32* %1
 	%2 = alloca i32
 	store i32 %count, i32* %2
 	%3 = alloca i8*
