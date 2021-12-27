@@ -4,9 +4,9 @@
 %test.Driver = type { i8 }
 %test.Printer = type { i32, [8 x i8], %test.Driver }
 
-@test.Color.r = constant i8 0
-@test.Color.g = constant i8 1
-@test.Color.b = constant i8 2
+@test.Enum.r = constant i8 0
+@test.Enum.g = constant i8 1
+@test.Enum.b = constant i8 2
 @test.global_array = constant [5 x i8] [i8 1, i8 2, i8 3, i8 4, i8 5]
 @string.4576fbff7ad2d9fa622f16573db7b286 = constant [42 x i8] c"============ test expression ============\00"
 @string.f9b6d891c5ca674309c459ad55eb01c8 = constant [9 x i8] c"v1: %d \0A\00"
@@ -35,7 +35,6 @@
 @string.5f0dc37317410eea89a43776ec4ac6e1 = constant [16 x i8] c"array4[3]: %d \0A\00"
 @string.db08573c403e33d25bb325d1df98c844 = constant [19 x i8] c"new_array[0]: %d \0A\00"
 @string.b1faf43818ca0e7e4b4b1e24b441f795 = constant [19 x i8] c"new_array[3]: %d \0A\00"
-@string.d18cb31ff3a37014a9ed64a2687344d4 = constant [14 x i8] c"Color.g: %d \0A\00"
 @string.9fcfb18ceb0d348e69c2e13fa41b241d = constant [22 x i8] c"global_array[2]: %d \0A\00"
 @string.1daf4144552c4db57e99d55450ed346e = constant [18 x i8] c"sub.integer: %d \0A\00"
 @string.560e3347d8fe3fd15f15ce5db418664f = constant [16 x i8] c"sub.float: %f \0A\00"
@@ -899,72 +898,68 @@ entry:
 
 
 body:
-	%2 = getelementptr [14 x i8], [14 x i8]* @string.d18cb31ff3a37014a9ed64a2687344d4, i32 0, i32 0
-	%3 = load i8, i8* @test.Color.g
-	%4 = sext i8 %3 to i32
-	%5 = call i32 (i8*, ...) @printf(i8* %2, i32 %4)
-	%6 = getelementptr [22 x i8], [22 x i8]* @string.9fcfb18ceb0d348e69c2e13fa41b241d, i32 0, i32 0
-	%7 = getelementptr [5 x i8], [5 x i8]* @test.global_array, i32 0, i32 2
-	%8 = load i8, i8* %7
-	%9 = sext i8 %8 to i32
-	%10 = call i32 (i8*, ...) @printf(i8* %6, i32 %9)
+	%2 = getelementptr [22 x i8], [22 x i8]* @string.9fcfb18ceb0d348e69c2e13fa41b241d, i32 0, i32 0
+	%3 = getelementptr [5 x i8], [5 x i8]* @test.global_array, i32 0, i32 2
+	%4 = load i8, i8* %3
+	%5 = sext i8 %4 to i32
+	%6 = call i32 (i8*, ...) @printf(i8* %2, i32 %5)
 	store %test.SubData zeroinitializer, %test.SubData* %0
-	%11 = getelementptr [18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i32 0, i32 0
+	%7 = getelementptr [18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i32 0, i32 0
+	%8 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 0
+	%9 = load i8, i8* %8
+	%10 = sext i8 %9 to i32
+	%11 = call i32 (i8*, ...) @printf(i8* %7, i32 %10)
 	%12 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 0
-	%13 = load i8, i8* %12
-	%14 = sext i8 %13 to i32
-	%15 = call i32 (i8*, ...) @printf(i8* %11, i32 %14)
-	%16 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 0
-	store i8 5, i8* %16
-	%17 = getelementptr [18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i32 0, i32 0
-	%18 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 0
-	%19 = load i8, i8* %18
-	%20 = sext i8 %19 to i32
-	%21 = call i32 (i8*, ...) @printf(i8* %17, i32 %20)
-	%22 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 1
-	store float 0x40091EB860000000, float* %22
-	%23 = getelementptr [16 x i8], [16 x i8]* @string.560e3347d8fe3fd15f15ce5db418664f, i32 0, i32 0
-	%24 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 1
-	%25 = load float, float* %24
-	%26 = fpext float %25 to double
-	%27 = call i32 (i8*, ...) @printf(i8* %23, double %26)
-	%28 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 2
-	%29 = getelementptr [5 x i8], [5 x i8]* %28, i32 0, i32 3
-	store i8 3, i8* %29
-	%30 = getelementptr [19 x i8], [19 x i8]* @string.b585a7adc3e8d68bbf60cb859044df1e, i32 0, i32 0
-	%31 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 2
-	%32 = getelementptr [5 x i8], [5 x i8]* %31, i32 0, i32 3
-	%33 = load i8, i8* %32
-	%34 = sext i8 %33 to i32
-	%35 = call i32 (i8*, ...) @printf(i8* %30, i32 %34)
+	store i8 5, i8* %12
+	%13 = getelementptr [18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i32 0, i32 0
+	%14 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 0
+	%15 = load i8, i8* %14
+	%16 = sext i8 %15 to i32
+	%17 = call i32 (i8*, ...) @printf(i8* %13, i32 %16)
+	%18 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 1
+	store float 0x40091EB860000000, float* %18
+	%19 = getelementptr [16 x i8], [16 x i8]* @string.560e3347d8fe3fd15f15ce5db418664f, i32 0, i32 0
+	%20 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 1
+	%21 = load float, float* %20
+	%22 = fpext float %21 to double
+	%23 = call i32 (i8*, ...) @printf(i8* %19, double %22)
+	%24 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 2
+	%25 = getelementptr [5 x i8], [5 x i8]* %24, i32 0, i32 3
+	store i8 3, i8* %25
+	%26 = getelementptr [19 x i8], [19 x i8]* @string.b585a7adc3e8d68bbf60cb859044df1e, i32 0, i32 0
+	%27 = getelementptr %test.SubData, %test.SubData* %0, i32 0, i32 2
+	%28 = getelementptr [5 x i8], [5 x i8]* %27, i32 0, i32 3
+	%29 = load i8, i8* %28
+	%30 = sext i8 %29 to i32
+	%31 = call i32 (i8*, ...) @printf(i8* %26, i32 %30)
 	store %test.Data zeroinitializer, %test.Data* %1
-	%36 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 1
-	store i8 5, i8* %36
-	%37 = getelementptr [17 x i8], [17 x i8]* @string.84ad90c9c520f1a4e80779cfa15248b6, i32 0, i32 0
-	%38 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 1
-	%39 = load i8, i8* %38
-	%40 = sext i8 %39 to i32
-	%41 = call i32 (i8*, ...) @printf(i8* %37, i32 %40)
-	%42 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 0
-	%43 = getelementptr %test.SubData, %test.SubData* %42, i32 0, i32 0
-	store i8 8, i8* %43
-	%44 = getelementptr [23 x i8], [23 x i8]* @string.07ce14d972194d598243322dc9f50250, i32 0, i32 0
-	%45 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 0
-	%46 = getelementptr %test.SubData, %test.SubData* %45, i32 0, i32 0
-	%47 = load i8, i8* %46
-	%48 = sext i8 %47 to i32
-	%49 = call i32 (i8*, ...) @printf(i8* %44, i32 %48)
+	%32 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 1
+	store i8 5, i8* %32
+	%33 = getelementptr [17 x i8], [17 x i8]* @string.84ad90c9c520f1a4e80779cfa15248b6, i32 0, i32 0
+	%34 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 1
+	%35 = load i8, i8* %34
+	%36 = sext i8 %35 to i32
+	%37 = call i32 (i8*, ...) @printf(i8* %33, i32 %36)
+	%38 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 0
+	%39 = getelementptr %test.SubData, %test.SubData* %38, i32 0, i32 0
+	store i8 8, i8* %39
+	%40 = getelementptr [23 x i8], [23 x i8]* @string.07ce14d972194d598243322dc9f50250, i32 0, i32 0
+	%41 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 0
+	%42 = getelementptr %test.SubData, %test.SubData* %41, i32 0, i32 0
+	%43 = load i8, i8* %42
+	%44 = sext i8 %43 to i32
+	%45 = call i32 (i8*, ...) @printf(i8* %40, i32 %44)
+	%46 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 0
+	%47 = getelementptr %test.SubData, %test.SubData* %46, i32 0, i32 2
+	%48 = getelementptr [5 x i8], [5 x i8]* %47, i32 0, i32 3
+	store i8 9, i8* %48
+	%49 = getelementptr [24 x i8], [24 x i8]* @string.6db0fbcde59d77fa7fc3126dc45321f0, i32 0, i32 0
 	%50 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 0
 	%51 = getelementptr %test.SubData, %test.SubData* %50, i32 0, i32 2
 	%52 = getelementptr [5 x i8], [5 x i8]* %51, i32 0, i32 3
-	store i8 9, i8* %52
-	%53 = getelementptr [24 x i8], [24 x i8]* @string.6db0fbcde59d77fa7fc3126dc45321f0, i32 0, i32 0
-	%54 = getelementptr %test.Data, %test.Data* %1, i32 0, i32 0
-	%55 = getelementptr %test.SubData, %test.SubData* %54, i32 0, i32 2
-	%56 = getelementptr [5 x i8], [5 x i8]* %55, i32 0, i32 3
-	%57 = load i8, i8* %56
-	%58 = sext i8 %57 to i32
-	%59 = call i32 (i8*, ...) @printf(i8* %53, i32 %58)
+	%53 = load i8, i8* %52
+	%54 = sext i8 %53 to i32
+	%55 = call i32 (i8*, ...) @printf(i8* %49, i32 %54)
 	br label %exit
 
 

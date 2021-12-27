@@ -5,9 +5,9 @@ source_filename = "../mini-panda/main.ll"
 %test.Driver = type { i8 }
 %container.Allocator = type { i32, i32, i8* }
 
-@test.Color.r = local_unnamed_addr constant i8 0
-@test.Color.g = local_unnamed_addr constant i8 1
-@test.Color.b = local_unnamed_addr constant i8 2
+@test.Enum.r = local_unnamed_addr constant i8 0
+@test.Enum.g = local_unnamed_addr constant i8 1
+@test.Enum.b = local_unnamed_addr constant i8 2
 @test.global_array = local_unnamed_addr constant [5 x i8] c"\01\02\03\04\05"
 @string.4576fbff7ad2d9fa622f16573db7b286 = constant [42 x i8] c"============ test expression ============\00"
 @string.f9b6d891c5ca674309c459ad55eb01c8 = constant [9 x i8] c"v1: %d \0A\00"
@@ -36,7 +36,6 @@ source_filename = "../mini-panda/main.ll"
 @string.5f0dc37317410eea89a43776ec4ac6e1 = constant [16 x i8] c"array4[3]: %d \0A\00"
 @string.db08573c403e33d25bb325d1df98c844 = constant [19 x i8] c"new_array[0]: %d \0A\00"
 @string.b1faf43818ca0e7e4b4b1e24b441f795 = constant [19 x i8] c"new_array[3]: %d \0A\00"
-@string.d18cb31ff3a37014a9ed64a2687344d4 = constant [14 x i8] c"Color.g: %d \0A\00"
 @string.9fcfb18ceb0d348e69c2e13fa41b241d = constant [22 x i8] c"global_array[2]: %d \0A\00"
 @string.1daf4144552c4db57e99d55450ed346e = constant [18 x i8] c"sub.integer: %d \0A\00"
 @string.560e3347d8fe3fd15f15ce5db418664f = constant [16 x i8] c"sub.float: %f \0A\00"
@@ -308,15 +307,14 @@ entry:
   %14 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([10 x i8], [10 x i8]* @string.7a828f7c003ac662930a932d14c84f48, i64 0, i64 0), double 3.140000e+00) #0
   %15 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([12 x i8], [12 x i8]* @string.3aff445dea2b63e4d3b135c5219ba7dc, i64 0, i64 0)) #0
   tail call void @test.subscripting()
-  %16 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([14 x i8], [14 x i8]* @string.d18cb31ff3a37014a9ed64a2687344d4, i64 0, i64 0), i32 1) #0
-  %17 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([22 x i8], [22 x i8]* @string.9fcfb18ceb0d348e69c2e13fa41b241d, i64 0, i64 0), i32 3) #0
-  %18 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i64 0, i64 0), i32 0) #0
-  %19 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i64 0, i64 0), i32 5) #0
-  %20 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([16 x i8], [16 x i8]* @string.560e3347d8fe3fd15f15ce5db418664f, i64 0, i64 0), double 0x40091EB860000000) #0
-  %21 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.b585a7adc3e8d68bbf60cb859044df1e, i64 0, i64 0), i32 3) #0
-  %22 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([17 x i8], [17 x i8]* @string.84ad90c9c520f1a4e80779cfa15248b6, i64 0, i64 0), i32 5) #0
-  %23 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([23 x i8], [23 x i8]* @string.07ce14d972194d598243322dc9f50250, i64 0, i64 0), i32 8) #0
-  %24 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([24 x i8], [24 x i8]* @string.6db0fbcde59d77fa7fc3126dc45321f0, i64 0, i64 0), i32 9) #0
+  %16 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([22 x i8], [22 x i8]* @string.9fcfb18ceb0d348e69c2e13fa41b241d, i64 0, i64 0), i32 3) #0
+  %17 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i64 0, i64 0), i32 0) #0
+  %18 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i64 0, i64 0), i32 5) #0
+  %19 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([16 x i8], [16 x i8]* @string.560e3347d8fe3fd15f15ce5db418664f, i64 0, i64 0), double 0x40091EB860000000) #0
+  %20 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.b585a7adc3e8d68bbf60cb859044df1e, i64 0, i64 0), i32 3) #0
+  %21 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([17 x i8], [17 x i8]* @string.84ad90c9c520f1a4e80779cfa15248b6, i64 0, i64 0), i32 5) #0
+  %22 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([23 x i8], [23 x i8]* @string.07ce14d972194d598243322dc9f50250, i64 0, i64 0), i32 8) #0
+  %23 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([24 x i8], [24 x i8]* @string.6db0fbcde59d77fa7fc3126dc45321f0, i64 0, i64 0), i32 9) #0
   tail call void @test.conversion()
   ret void
 }
@@ -414,15 +412,14 @@ entry:
 ; Function Attrs: nofree nounwind
 define void @test.member_access() local_unnamed_addr #2 {
 entry:
-  %0 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([14 x i8], [14 x i8]* @string.d18cb31ff3a37014a9ed64a2687344d4, i64 0, i64 0), i32 1)
-  %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([22 x i8], [22 x i8]* @string.9fcfb18ceb0d348e69c2e13fa41b241d, i64 0, i64 0), i32 3)
-  %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i64 0, i64 0), i32 0)
-  %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i64 0, i64 0), i32 5)
-  %4 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([16 x i8], [16 x i8]* @string.560e3347d8fe3fd15f15ce5db418664f, i64 0, i64 0), double 0x40091EB860000000)
-  %5 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.b585a7adc3e8d68bbf60cb859044df1e, i64 0, i64 0), i32 3)
-  %6 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([17 x i8], [17 x i8]* @string.84ad90c9c520f1a4e80779cfa15248b6, i64 0, i64 0), i32 5)
-  %7 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([23 x i8], [23 x i8]* @string.07ce14d972194d598243322dc9f50250, i64 0, i64 0), i32 8)
-  %8 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([24 x i8], [24 x i8]* @string.6db0fbcde59d77fa7fc3126dc45321f0, i64 0, i64 0), i32 9)
+  %0 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([22 x i8], [22 x i8]* @string.9fcfb18ceb0d348e69c2e13fa41b241d, i64 0, i64 0), i32 3)
+  %1 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i64 0, i64 0), i32 0)
+  %2 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([18 x i8], [18 x i8]* @string.1daf4144552c4db57e99d55450ed346e, i64 0, i64 0), i32 5)
+  %3 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([16 x i8], [16 x i8]* @string.560e3347d8fe3fd15f15ce5db418664f, i64 0, i64 0), double 0x40091EB860000000)
+  %4 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([19 x i8], [19 x i8]* @string.b585a7adc3e8d68bbf60cb859044df1e, i64 0, i64 0), i32 3)
+  %5 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([17 x i8], [17 x i8]* @string.84ad90c9c520f1a4e80779cfa15248b6, i64 0, i64 0), i32 5)
+  %6 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([23 x i8], [23 x i8]* @string.07ce14d972194d598243322dc9f50250, i64 0, i64 0), i32 8)
+  %7 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([24 x i8], [24 x i8]* @string.6db0fbcde59d77fa7fc3126dc45321f0, i64 0, i64 0), i32 9)
   ret void
 }
 

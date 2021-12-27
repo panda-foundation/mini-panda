@@ -17,10 +17,10 @@ public struct SubData
     public var array [5]u8;
 }
 
-public enum Color
+public enum Enum
 {
-    r,
-    g,
+    r(i32),
+    g(pointer<Data>),
     b
 }
 
@@ -186,7 +186,6 @@ public function subscripting()
 
 public function member_access()
 {
-    libc.printf("Color.g: %d \n", Color.g);
     libc.printf("global_array[2]: %d \n", global_array[2]);
     
     var sub SubData;
