@@ -1,7 +1,0 @@
-namespace global;
-
-public struct string
-{
-    var bytes []u8;
-    var length u32;
-}

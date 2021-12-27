@@ -264,7 +264,7 @@ exit:
 
 }
 
-define i8* @container.Allocator.at(%container.Allocator* %this, i32 %index) {
+define i8* @container.Allocator.get(%container.Allocator* %this, i32 %index) {
 entry:
 	%0 = alloca %container.Allocator*
 	store %container.Allocator* %this, %container.Allocator** %0
@@ -456,6 +456,8 @@ exit:
 	br label %19
 
 }
+
+declare i32 @putchar(i32 %char)
 
 declare i32 @puts(i8* %text)
 

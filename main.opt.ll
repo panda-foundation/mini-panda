@@ -169,7 +169,7 @@ exit:                                             ; preds = %entry, %3
 }
 
 ; Function Attrs: norecurse nounwind readonly
-define i8* @container.Allocator.at(%container.Allocator* nocapture readonly %this, i32 %index) local_unnamed_addr #1 {
+define i8* @container.Allocator.get(%container.Allocator* nocapture readonly %this, i32 %index) local_unnamed_addr #1 {
 entry:
   %0 = getelementptr %container.Allocator, %container.Allocator* %this, i64 0, i32 1
   %1 = load i32, i32* %0, align 4

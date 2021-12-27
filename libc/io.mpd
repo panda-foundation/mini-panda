@@ -1,5 +1,8 @@
 namespace libc;
 
+@extern(name = "putchar")
+function putchar(char i32) i32;
+
 @extern(name = "puts")
 function puts(text []u8) i32;
 
