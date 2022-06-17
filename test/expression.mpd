@@ -19,9 +19,9 @@ public struct SubData
 
 public enum Enum
 {
-    r(i32),
-    g(pointer<Data>),
-    b
+    red,
+    green,
+    blue
 }
 
 public function expression()
