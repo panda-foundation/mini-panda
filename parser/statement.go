@@ -1,28 +1,29 @@
 package parser
 
 import (
-	"github.com/panda-io/micro-panda/ast"
+	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/statement"
 	"github.com/panda-io/micro-panda/token"
 )
 
-func (p *Parser) parseStatement() ast.Statement {
+func (p *Parser) parseStatement() core.Statement {
 	switch p.token {
 	case token.Break:
-		s := &ast.Break{}
+		s := &statement.Break{}
 		s.Position = p.position
 		p.next()
 		p.expect(token.Semi)
 		return s
 
 	case token.Continue:
-		s := &ast.Continue{}
+		s := &statement.Continue{}
 		s.Position = p.position
 		p.next()
 		p.expect(token.Semi)
 		return s
 
 	case token.Return:
-		s := &ast.Return{}
+		s := &statement.Return{}
 		s.Position = p.position
 		p.next()
 		if p.token != token.Semi {
@@ -48,10 +49,10 @@ func (p *Parser) parseStatement() ast.Statement {
 	}
 }
 
-func (p *Parser) parseSimpleStatement(consumeSemi bool) ast.Statement {
+func (p *Parser) parseSimpleStatement(consumeSemi bool) core.Statement {
 	switch p.token {
 	case token.Semi:
-		s := &ast.Empty{}
+		s := &statement.Empty{}
 		s.Position = p.position
 		if consumeSemi {
 			p.expect(token.Semi)
@@ -70,7 +71,7 @@ func (p *Parser) parseSimpleStatement(consumeSemi bool) ast.Statement {
 		if consumeSemi {
 			p.expect(token.Semi)
 		}
-		s := &ast.ExpressionStatement{}
+		s := &statement.ExpressionStatement{}
 		s.Position = position
 		s.Expression = x
 		return s
@@ -81,8 +82,8 @@ func (p *Parser) parseSimpleStatement(consumeSemi bool) ast.Statement {
 	}
 }
 
-func (p *Parser) parseDeclarationStatement(consumeSemi bool) *ast.DeclarationStatement {
-	s := &ast.DeclarationStatement{}
+func (p *Parser) parseDeclarationStatement(consumeSemi bool) *statement.DeclarationStatement {
+	s := &statement.DeclarationStatement{}
 	s.Position = p.position
 	p.next()
 	s.Name = p.parseIdentifier()
@@ -99,8 +100,8 @@ func (p *Parser) parseDeclarationStatement(consumeSemi bool) *ast.DeclarationSta
 	return s
 }
 
-func (p *Parser) parseBlockStatement() *ast.Block {
-	s := &ast.Block{}
+func (p *Parser) parseBlockStatement() *statement.Block {
+	s := &statement.Block{}
 	s.Position = p.position
 	p.next()
 	for p.token != token.RightBrace {
@@ -110,8 +111,8 @@ func (p *Parser) parseBlockStatement() *ast.Block {
 	return s
 }
 
-func (p *Parser) parseIfStatement() *ast.If {
-	s := &ast.If{}
+func (p *Parser) parseIfStatement() *statement.If {
+	s := &statement.If{}
 	p.next()
 	p.expect(token.LeftParen)
 	first := p.parseSimpleStatement(false)
@@ -119,13 +120,13 @@ func (p *Parser) parseIfStatement() *ast.If {
 		p.next()
 		s.Initialization = first
 		condition := p.parseSimpleStatement(false)
-		if expr, ok := condition.(*ast.ExpressionStatement); ok {
+		if expr, ok := condition.(*statement.ExpressionStatement); ok {
 			s.Condition = expr.Expression
 		} else {
 			p.error(condition.GetPosition(), "if condition must be an expression")
 		}
 	} else {
-		if expr, ok := first.(*ast.ExpressionStatement); ok {
+		if expr, ok := first.(*statement.ExpressionStatement); ok {
 			s.Condition = expr.Expression
 		} else {
 			p.error(first.GetPosition(), "if condition must be an expression")
@@ -144,13 +145,13 @@ func (p *Parser) parseIfStatement() *ast.If {
 	return s
 }
 
-func (p *Parser) parseSwitchStatement() *ast.Switch {
-	s := &ast.Switch{}
+func (p *Parser) parseSwitchStatement() *statement.Switch {
+	s := &statement.Switch{}
 	s.Position = p.position
 	p.next()
 	p.expect(token.LeftParen)
 	first := p.parseSimpleStatement(false)
-	var operand ast.Statement
+	var operand core.Statement
 	if p.token == token.Semi {
 		p.next()
 		s.Initialization = first
@@ -158,7 +159,7 @@ func (p *Parser) parseSwitchStatement() *ast.Switch {
 	} else {
 		operand = first
 	}
-	if expr, ok := operand.(*ast.ExpressionStatement); ok {
+	if expr, ok := operand.(*statement.ExpressionStatement); ok {
 		s.Operand = expr.Expression
 	} else {
 		p.error(operand.GetPosition(), "expect expression")
@@ -179,8 +180,8 @@ func (p *Parser) parseSwitchStatement() *ast.Switch {
 	return s
 }
 
-func (p *Parser) parseCaseStatement() *ast.Case {
-	s := &ast.Case{}
+func (p *Parser) parseCaseStatement() *statement.Case {
+	s := &statement.Case{}
 	s.Position = p.position
 	s.Token = p.token
 	if p.token == token.Case {
@@ -197,11 +198,11 @@ func (p *Parser) parseCaseStatement() *ast.Case {
 // for {}
 // for (condition) {}
 // for (init; condition; post) {}
-func (p *Parser) parseForStatement() ast.Statement {
+func (p *Parser) parseForStatement() core.Statement {
 	position := p.position
 	p.next()
 	if p.token != token.LeftParen {
-		s := &ast.For{}
+		s := &statement.For{}
 		s.Position = position
 		s.Body = p.parseStatement()
 		return s
@@ -210,9 +211,9 @@ func (p *Parser) parseForStatement() ast.Statement {
 		first := p.parseSimpleStatement(false)
 		if p.token == token.RightParen {
 			p.next()
-			s := &ast.For{}
+			s := &statement.For{}
 			s.Position = position
-			if expr, ok := first.(*ast.ExpressionStatement); ok {
+			if expr, ok := first.(*statement.ExpressionStatement); ok {
 				s.Condition = expr.Expression
 			} else {
 				p.error(first.GetPosition(), "expect expression")
@@ -221,10 +222,10 @@ func (p *Parser) parseForStatement() ast.Statement {
 			return s
 		} else {
 			p.expect(token.Semi)
-			s := &ast.For{}
+			s := &statement.For{}
 			s.Initialization = first
 			second := p.parseSimpleStatement(false)
-			if expr, ok := second.(*ast.ExpressionStatement); ok {
+			if expr, ok := second.(*statement.ExpressionStatement); ok {
 				s.Condition = expr.Expression
 			} else {
 				p.error(second.GetPosition(), "expect expression")

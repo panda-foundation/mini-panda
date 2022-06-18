@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/panda-io/micro-panda/ast"
+	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -68,7 +69,7 @@ func (p *Parser) parseNamespace() string {
 	p.expect(token.Namespace)
 	if p.token == token.Semi {
 		p.next()
-		return ast.Global
+		return core.Global
 	}
 	namespace := p.parseQualified("")
 	p.expect(token.Semi)

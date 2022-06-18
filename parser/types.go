@@ -3,13 +3,14 @@ package parser
 import (
 	"strconv"
 
-	"github.com/panda-io/micro-panda/ast"
+	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/expression"
 	"github.com/panda-io/micro-panda/token"
 )
 
-func (p *Parser) parseType() ast.Type {
+func (p *Parser) parseType() core.Type {
 	if p.token.IsScalar() {
-		t := &ast.TypeBuiltin{}
+		t := &core.TypeBuiltin{}
 		t.Position = p.position
 		t.Token = p.token
 		p.next()
@@ -29,8 +30,8 @@ func (p *Parser) parseType() ast.Type {
 	return p.parseTypeName()
 }
 
-func (p *Parser) parseTypeArray() *ast.TypeArray {
-	t := &ast.TypeArray{}
+func (p *Parser) parseTypeArray() *core.TypeArray {
+	t := &core.TypeArray{}
 	t.Position = p.position
 	for p.token == token.LeftBracket {
 		p.next()
@@ -49,8 +50,8 @@ func (p *Parser) parseTypeArray() *ast.TypeArray {
 	return t
 }
 
-func (p *Parser) parseTypeName() *ast.TypeName {
-	t := &ast.TypeName{}
+func (p *Parser) parseTypeName() *core.TypeName {
+	t := &core.TypeName{}
 	t.Position = p.position
 	t.Name = p.parseIdentifier().Name
 	if p.token == token.Dot {
@@ -61,20 +62,20 @@ func (p *Parser) parseTypeName() *ast.TypeName {
 	return t
 }
 
-func (p *Parser) parseTypePointer() *ast.TypePointer {
-	t := &ast.TypePointer{}
+func (p *Parser) parseTypePointer() *core.TypePointer {
+	t := &core.TypePointer{}
 	if p.token == token.Less {
 		p.next()
 		t.ElementType = p.parseType()
 		p.expect(token.Greater)
 	} else {
-		t.ElementType = ast.TypeU8
+		t.ElementType = core.TypeU8
 	}
 	return t
 }
 
-func (p *Parser) parseParameters() []*ast.Parameter {
-	t := []*ast.Parameter{}
+func (p *Parser) parseParameters() []*expression.Parameter {
+	t := []*expression.Parameter{}
 	p.expect(token.LeftParen)
 	if p.token == token.RightParen {
 		p.next()
@@ -89,16 +90,16 @@ func (p *Parser) parseParameters() []*ast.Parameter {
 	return t
 }
 
-func (p *Parser) parseParameter() *ast.Parameter {
-	t := &ast.Parameter{}
+func (p *Parser) parseParameter() *expression.Parameter {
+	t := &expression.Parameter{}
 	t.Position = p.position
 	t.Name = p.parseIdentifier().Name
 	t.Type = p.parseType()
 	return t
 }
 
-func (p *Parser) parseArguments() *ast.Arguments {
-	t := &ast.Arguments{}
+func (p *Parser) parseArguments() *expression.Arguments {
+	t := &expression.Arguments{}
 	t.Position = p.position
 	p.expect(token.LeftParen)
 	if p.token == token.RightParen {
@@ -114,8 +115,8 @@ func (p *Parser) parseArguments() *ast.Arguments {
 	return t
 }
 
-func (p *Parser) parseFunctionType() *ast.TypeFunction {
-	t := &ast.TypeFunction{}
+func (p *Parser) parseFunctionType() *core.TypeFunction {
+	t := &core.TypeFunction{}
 	t.Position = p.position
 	p.expect(token.LeftParen)
 	if p.token == token.RightParen {

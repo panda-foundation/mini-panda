@@ -59,7 +59,7 @@ func (s *Struct) HasMember(member string) bool {
 func (s *Struct) MemberType(member string) core.Type {
 	for _, variable := range s.Variables {
 		if member == variable.Name.Name {
-			return variable.Type
+			return variable.Typ
 		}
 	}
 	for _, function := range s.Functions {
@@ -112,11 +112,11 @@ func (s *Struct) Validate(c core.Context) {
 func (s *Struct) ValidateInitializer(c core.Context, expressions []core.Expression) {
 	if len(s.Variables) == len(expressions) {
 		for idx, e := range expressions {
-			e.Validate(c, s.Variables[idx].Type)
+			e.Validate(c, s.Variables[idx].Typ)
 			if !e.IsConstant() {
 				c.Error(e.GetPosition(), "expect constant expression initializer")
 			}
-			if e.Type() != nil && !e.Type().Equal(s.Variables[idx].Type) {
+			if e.Type() != nil && !e.Type().Equal(s.Variables[idx].Typ) {
 				c.Error(e.GetPosition(), "type mismatch")
 			}
 		}

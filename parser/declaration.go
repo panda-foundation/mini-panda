@@ -1,12 +1,14 @@
 package parser
 
 import (
-	"github.com/panda-io/micro-panda/ast"
+	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/declaration"
+	"github.com/panda-io/micro-panda/ast/expression"
 	"github.com/panda-io/micro-panda/token"
 )
 
-func (p *Parser) parseVariable(public bool, attributes []*ast.Attribute) *ast.Variable {
-	v := &ast.Variable{}
+func (p *Parser) parseVariable(public bool, attributes []*declaration.Attribute) *declaration.Variable {
+	v := &declaration.Variable{}
 	v.Public = public
 	v.Attributes = attributes
 	v.Token = p.token
@@ -15,7 +17,7 @@ func (p *Parser) parseVariable(public bool, attributes []*ast.Attribute) *ast.Va
 	}
 	p.next()
 	v.Name = p.parseIdentifier()
-	v.Type = p.parseType()
+	v.Typ = p.parseType()
 	if p.token == token.Assign {
 		p.next()
 		v.Value = p.parseExpression()
@@ -27,9 +29,9 @@ func (p *Parser) parseVariable(public bool, attributes []*ast.Attribute) *ast.Va
 	return v
 }
 
-func (p *Parser) parseFunction(public bool, attributes []*ast.Attribute) *ast.Function {
-	d := &ast.Function{
-		Type: &ast.TypeFunction{},
+func (p *Parser) parseFunction(public bool, attributes []*declaration.Attribute) *declaration.Function {
+	d := &declaration.Function{
+		Typ: &core.TypeFunction{},
 	}
 	d.Public = public
 	d.Attributes = attributes
@@ -47,15 +49,15 @@ func (p *Parser) parseFunction(public bool, attributes []*ast.Attribute) *ast.Fu
 	return d
 }
 
-func (p *Parser) parseEnum(public bool, attributes []*ast.Attribute) *ast.Enum {
-	e := &ast.Enum{}
+func (p *Parser) parseEnum(public bool, attributes []*declaration.Attribute) *declaration.Enum {
+	e := &declaration.Enum{}
 	e.Public = public
 	e.Attributes = attributes
 	p.next()
 	e.Name = p.parseIdentifier()
 	p.expect(token.LeftBrace)
 	for p.token != token.RightBrace {
-		v := &ast.Variable{}
+		v := &declaration.Variable{}
 		v.Const = true
 		v.Name = p.parseIdentifier()
 		if p.token == token.Assign {
@@ -75,8 +77,8 @@ func (p *Parser) parseEnum(public bool, attributes []*ast.Attribute) *ast.Enum {
 	return e
 }
 
-func (p *Parser) parseStruct(public bool, attributes []*ast.Attribute) *ast.Struct {
-	s := &ast.Struct{}
+func (p *Parser) parseStruct(public bool, attributes []*declaration.Attribute) *declaration.Struct {
+	s := &declaration.Struct{}
 	s.Public = public
 	s.Attributes = attributes
 	p.next()
@@ -117,17 +119,17 @@ func (p *Parser) parseModifier() bool {
 	return false
 }
 
-func (p *Parser) parseAttributes() []*ast.Attribute {
+func (p *Parser) parseAttributes() []*declaration.Attribute {
 	if p.token != token.META {
 		return nil
 	}
-	var attr []*ast.Attribute
+	var attr []*declaration.Attribute
 	for p.token == token.META {
 		p.next()
 		if p.token != token.IDENT {
 			p.expect(token.IDENT)
 		}
-		m := &ast.Attribute{Position: p.position}
+		m := &declaration.Attribute{Position: p.position}
 		m.Name = p.literal
 		p.next()
 
@@ -140,7 +142,7 @@ func (p *Parser) parseAttributes() []*ast.Attribute {
 				m.Text = p.literal
 				p.next()
 			} else {
-				m.Values = make(map[string]*ast.Literal)
+				m.Values = make(map[string]*expression.Literal)
 				for {
 					if p.token == token.IDENT {
 						name := p.literal
@@ -151,7 +153,7 @@ func (p *Parser) parseAttributes() []*ast.Attribute {
 							if _, ok := m.Values[name]; ok {
 								p.error(p.position, "duplicated attribute "+name)
 							}
-							m.Values[name] = &ast.Literal{
+							m.Values[name] = &expression.Literal{
 								Token: p.token,
 								Value: p.literal,
 							}
