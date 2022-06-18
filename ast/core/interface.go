@@ -12,6 +12,15 @@ type Statement interface {
 	Validate(c Context)
 }
 
+type DeclarationKind int
+
+const (
+	DeclarationEnum DeclarationKind = iota
+	DeclarationFunction
+	DeclarationStruct
+	DeclarationVariable
+)
+
 type Declaration interface {
 	Node
 	Type() Type

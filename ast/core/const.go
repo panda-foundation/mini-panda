@@ -11,12 +11,3 @@ const (
 	// meta define
 	Extern = "extern"
 )
-
-type DeclarationKind int
-
-const (
-	DeclarationEnum DeclarationKind = iota
-	DeclarationFunction
-	DeclarationStruct
-	DeclarationVariable
-)
