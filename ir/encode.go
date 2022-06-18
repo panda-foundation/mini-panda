@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// GlobalName encodes a global name to its LLVM IR assembly representation.
+// globalName encodes a global name to its LLVM IR assembly representation.
 //
 // Examples:
 //    "foo" -> "@foo"
@@ -17,7 +17,7 @@ import (
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
-func GlobalName(name string) string {
+func globalName(name string) string {
 	// Positive numeric global names are quoted to distinguish global names from
 	// global IDs; e.g.
 	//
@@ -25,7 +25,7 @@ func GlobalName(name string) string {
 	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
 		return `@"` + name + `"`
 	}
-	return "@" + EscapeIdent(name)
+	return "@" + escapeIdent(name)
 }
 
 // GlobalID encodes a global ID to its LLVM IR assembly representation.
@@ -35,7 +35,7 @@ func GlobalName(name string) string {
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
-func GlobalID(id int64) string {
+func globalID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative global ID (%d); should be represented as global name", id))
 	}
@@ -52,7 +52,7 @@ func GlobalID(id int64) string {
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
-func LocalName(name string) string {
+func localName(name string) string {
 	// Positive numeric local names are quoted to distinguish local names from
 	// local IDs; e.g.
 	//
@@ -60,7 +60,7 @@ func LocalName(name string) string {
 	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
 		return `%"` + name + `"`
 	}
-	return "%" + EscapeIdent(name)
+	return "%" + escapeIdent(name)
 }
 
 // LocalID encodes a local ID to its LLVM IR assembly representation.
@@ -70,7 +70,7 @@ func LocalName(name string) string {
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
-func LocalID(id int64) string {
+func localID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative local ID (%d); should be represented as local name", id))
 	}
@@ -87,7 +87,7 @@ func LocalID(id int64) string {
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
-func LabelName(name string) string {
+func labelName(name string) string {
 	// Positive numeric label names are quoted to distinguish label names from
 	// label IDs; e.g.
 	//
@@ -95,7 +95,7 @@ func LabelName(name string) string {
 	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
 		return `"` + name + `":`
 	}
-	return EscapeIdent(name) + ":"
+	return escapeIdent(name) + ":"
 }
 
 // LabelID encodes a label ID to its LLVM IR assembly representation.
@@ -105,7 +105,7 @@ func LabelName(name string) string {
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
-func LabelID(id int64) string {
+func labelID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative label ID (%d); should be represented as label name", id))
 	}
@@ -122,65 +122,8 @@ func LabelID(id int64) string {
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
-func TypeName(name string) string {
-	return "%" + EscapeIdent(name)
-}
-
-// AttrGroupID encodes a attribute group ID to its LLVM IR assembly
-// representation.
-//
-// Examples:
-//    "42" -> "#42"
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
-func AttrGroupID(id int64) string {
-	return "#" + strconv.FormatInt(id, 10)
-}
-
-// ComdatName encodes a comdat name to its LLVM IR assembly representation.
-//
-// Examples:
-//    "foo" -> $%foo"
-//    "a b" -> `$"a b"`
-//    "世" -> `$"\E4\B8\96"`
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
-func ComdatName(name string) string {
-	return "$" + EscapeIdent(name)
-}
-
-// MetadataName encodes a metadata name to its LLVM IR assembly representation.
-//
-// Examples:
-//    "foo" -> "!foo"
-//    "a b" -> `!a\20b`
-//    "世" -> `!\E4\B8\96`
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
-func MetadataName(name string) string {
-	valid := func(b byte) bool {
-		return strings.IndexByte(tail, b) != -1
-	}
-	if strings.ContainsRune(decimal, rune(name[0])) {
-		// Escape first character if digit, to distinguish named from unnamed
-		// metadata.
-		return "!" + `\3` + name[:1] + string(Escape([]byte(name[1:]), valid))
-	}
-	return "!" + string(Escape([]byte(name), valid))
-}
-
-// MetadataID encodes a metadata ID to its LLVM IR assembly representation.
-//
-// Examples:
-//    "42" -> "!42"
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
-func MetadataID(id int64) string {
-	return "!" + strconv.FormatInt(id, 10)
+func typeName(name string) string {
+	return "%" + escapeIdent(name)
 }
 
 const (
@@ -205,9 +148,9 @@ const (
 	quotedIdent = " !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 )
 
-// EscapeIdent replaces any characters which are not valid in identifiers with
+// escapeIdent replaces any characters which are not valid in identifiers with
 // corresponding hexadecimal escape sequence (\XX).
-func EscapeIdent(s string) string {
+func escapeIdent(s string) string {
 	replace := false
 	extra := 0
 	for i := 0; i < len(s); i++ {
@@ -252,18 +195,18 @@ func EscapeIdent(s string) string {
 	return `"` + string(buf) + `"`
 }
 
-// EscapeString replaces any characters in s categorized as invalid in string
+// escapeString replaces any characters in s categorized as invalid in string
 // literals with corresponding hexadecimal escape sequence (\XX).
-func EscapeString(s []byte) string {
+func escapeString(s []byte) string {
 	valid := func(b byte) bool {
 		return ' ' <= b && b <= '~' && b != '"' && b != '\\'
 	}
-	return string(Escape(s, valid))
+	return string(escape(s, valid))
 }
 
-// Escape replaces any characters in s categorized as invalid by the valid
+// escape replaces any characters in s categorized as invalid by the valid
 // function with corresponding hexadecimal escape sequence (\XX).
-func Escape(s []byte, valid func(b byte) bool) string {
+func escape(s []byte, valid func(b byte) bool) string {
 	// Check if a replacement is required.
 	extra := 0
 	for i := 0; i < len(s); i++ {
@@ -296,9 +239,9 @@ func Escape(s []byte, valid func(b byte) bool) string {
 	return string(buf)
 }
 
-// Unescape replaces hexadecimal escape sequences (\xx) in s with their
+// unescape replaces hexadecimal escape sequences (\xx) in s with their
 // corresponding characters.
-func Unescape(s string) []byte {
+func unescape(s string) []byte {
 	if !strings.ContainsRune(s, '\\') {
 		return []byte(s)
 	}
@@ -329,14 +272,14 @@ func Unescape(s string) []byte {
 	return buf[:j]
 }
 
-// Quote returns s as a double-quoted string literal.
-func Quote(s []byte) string {
-	return `"` + string(EscapeString(s)) + `"`
+// quote returns s as a double-quoted string literal.
+func quote(s []byte) string {
+	return `"` + string(escapeString(s)) + `"`
 }
 
-// Unquote interprets s as a double-quoted string literal, returning the string
+// unquote interprets s as a double-quoted string literal, returning the string
 // value that s quotes.
-func Unquote(s string) []byte {
+func unquote(s string) []byte {
 	if len(s) < 2 {
 		panic(fmt.Errorf("invalid length of quoted string; expected >= 2, got %d", len(s)))
 	}
@@ -348,7 +291,7 @@ func Unquote(s string) []byte {
 	}
 	// Skip double-quotes.
 	s = s[1 : len(s)-1]
-	return Unescape(s)
+	return unescape(s)
 }
 
 // unhex returns the numeric value represented by the hexadecimal digit b. It

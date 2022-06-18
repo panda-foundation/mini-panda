@@ -12,11 +12,11 @@ type GlobalIdent struct {
 }
 
 // Ident returns the identifier associated with the global identifier.
-func (i GlobalIdent) Ident() string {
-	if i.IsUnnamed() {
-		return GlobalID(i.GlobalID)
+func (g *GlobalIdent) Ident() string {
+	if g.IsUnnamed() {
+		return globalID(g.GlobalID)
 	}
-	return GlobalName(i.GlobalName)
+	return globalName(g.GlobalName)
 }
 
 // Name returns the name of the global identifier.
@@ -50,9 +50,8 @@ func (i *GlobalIdent) SetID(id int64) {
 	i.GlobalID = id
 }
 
-// IsUnnamed reports whether the global identifier is unnamed.
-func (i GlobalIdent) IsUnnamed() bool {
-	return len(i.GlobalName) == 0
+func (g *GlobalIdent) unnamed() bool {
+	return g.GlobalName == ""
 }
 
 // LocalIdent is a local identifier.

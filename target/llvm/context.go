@@ -3,12 +3,13 @@ package llvm
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/ir/value"
 )
 
 func NewContext(p *Program) *Context {
 	return &Context{
 		Program: p,
-		objects: make(map[string]ir.Value),
+		objects: make(map[string]value.Value),
 	}
 }
 
@@ -22,7 +23,7 @@ type Context struct {
 	Returned   bool
 
 	parent  *Context
-	objects map[string]ir.Value
+	objects map[string]value.Value
 }
 
 func (c *Context) NewContext() *Context {
@@ -34,15 +35,15 @@ func (c *Context) NewContext() *Context {
 		LoopBlock:  c.LoopBlock,
 
 		parent:  c,
-		objects: make(map[string]ir.Value),
+		objects: make(map[string]value.Value),
 	}
 }
 
-func (c *Context) AddObject(name string, value ir.Value) {
+func (c *Context) AddObject(name string, value value.Value) {
 	c.objects[name] = value
 }
 
-func (c *Context) FindObject(name string) ir.Value {
+func (c *Context) FindObject(name string) value.Value {
 	if v, ok := c.objects[name]; ok {
 		return v
 	}
@@ -59,7 +60,7 @@ func (c *Context) FindObject(name string) ir.Value {
 	return nil
 }
 
-func (c *Context) AutoLoad(value ir.Value) ir.Value {
+func (c *Context) AutoLoad(value value.Value) value.Value {
 	switch t := value.(type) {
 	// global define
 	case *ir.Global:

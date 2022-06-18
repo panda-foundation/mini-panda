@@ -1,9 +1,13 @@
 package ast
 
-import "github.com/panda-io/micro-panda/token"
+import (
+	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/declaration"
+	"github.com/panda-io/micro-panda/token"
+)
 
 type Import struct {
-	NodeBase
+	core.NodeBase
 	Alias     string
 	Namespace string
 }
@@ -14,27 +18,27 @@ type Module struct {
 	Namespace string
 	Imports   []*Import
 
-	Attributes []*Attribute
-	Variables  []*Variable
-	Functions  []*Function
-	Enums      []*Enum
-	Structs    []*Struct
+	Attributes []*declaration.Attribute
+	Variables  []*declaration.Variable
+	Functions  []*declaration.Function
+	Enums      []*declaration.Enum
+	Structs    []*declaration.Struct
 }
 
-func (m *Module) ValidateType(p *Program) {
+func (m *Module) ResolveType(p *Program) {
 	p.Module = m
 	c := NewContext(p)
 	for _, v := range m.Variables {
-		v.ValidateType(c)
+		v.ResolveType(c)
 	}
 	for _, f := range m.Functions {
-		f.ValidateType(c)
+		f.ResolveType(c)
 	}
 	for _, e := range m.Enums {
-		e.ValidateType(c)
+		e.ResolveType(c)
 	}
 	for _, s := range m.Structs {
-		s.ValidateType(c)
+		s.ResolveType(c)
 	}
 }
 
