@@ -53,7 +53,7 @@ func (f *Function) Validate(ctx core.Context) {
 			ctx.Error(f.Position, "function body is required for member function")
 		}
 		if f.Typ.Extern {
-			if l := f.GetAttribute(core.Extern, core.Name); l != nil {
+			if l := f.GetAttribute(core.Extern, "name"); l != nil {
 				if n, ok := l.String(); ok {
 					f.Typ.ExternName = n
 				}

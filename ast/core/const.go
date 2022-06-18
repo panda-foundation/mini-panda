@@ -10,7 +10,6 @@ const (
 
 	// meta define
 	Extern = "extern"
-	Name   = "name"
 )
 
 type DeclarationKind int
