@@ -15,6 +15,10 @@ type Variable struct {
 	Parent *Struct
 }
 
+func (v *Variable) IsConstant() bool {
+	return v.Const
+}
+
 func (v *Variable) ResolveType(c core.Context) {
 	v.Type = c.ResolveType(v.Type)
 }

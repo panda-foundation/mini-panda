@@ -20,7 +20,7 @@ func (i *Identifier) Validate(c core.Context, expected core.Type) {
 		d := c.FindLocalDeclaration(i.Name)
 		if d == nil {
 			i.IsNamespace = c.IsNamespace(i.Name)
-		} else if !d.IsStruct() {
+		} else if d.Kind() != core.DeclarationStruct {
 			i.Const = d.IsConstant()
 			i.Typ = d.Type()
 			i.Qualified = d.QualifiedName()

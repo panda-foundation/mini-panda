@@ -1,24 +1,5 @@
 package ast
 
-/*
-type Context interface {
-	NewContext() Context
-	Error(offset int, message string)
-
-	ResolveType(v Type) Type
-	AddObject(name string, t Type) error
-	FindObject(name string) Type
-
-	//FindType(selector string, member string) Type
-	FindDeclarationByName(selector, member string) Declaration //find FindSelector in program
-	FindDeclarationByType(t *TypeName) Declaration             //find type in program
-	FindLocalDeclaration(name string) Declaration              //find member in program
-	IsNamespace(namespace string) bool                         // in program
-
-	//ReturnType() Type
-}
-*/
-
 import (
 	"fmt"
 
@@ -26,7 +7,7 @@ import (
 	"github.com/panda-io/micro-panda/ast/declaration"
 )
 
-func NewContext(p *Program) *Context {
+func NewContext(p *Program) core.Context {
 	return &Context{
 		Program: p,
 		objects: make(map[string]core.Type),
@@ -46,7 +27,7 @@ func (c *Context) Error(offset int, message string) {
 	c.Program.Error(offset, message)
 }
 
-func (c *Context) NewContext() *Context {
+func (c *Context) NewContext() core.Context {
 	return &Context{
 		Program:  c.Program,
 		Function: c.Function,
@@ -88,7 +69,7 @@ func (c *Context) ResolveType(v core.Type) core.Type {
 			c.Program.Error(v.GetPosition(), "type not defined")
 		} else {
 			if f, ok := d.(*declaration.Function); ok {
-				return f.Type
+				return f.Typ
 			} else if _, ok := d.(*declaration.Struct); ok {
 				// struct
 				t.Qualified = d.QualifiedName()
@@ -128,37 +109,37 @@ func (c *Context) ResolveType(v core.Type) core.Type {
 	}
 }
 
-func (c *Context) FindLocalDeclaration(member string) (string, core.Declaration) {
+func (c *Context) FindLocalDeclaration(member string) core.Declaration {
 	qualified := c.Program.Module.Namespace + "." + member
 	if d, ok := c.Program.Declarations[qualified]; ok {
-		return qualified, d
+		return d
 	}
 	qualified = core.Global + "." + member
 	if d, ok := c.Program.Declarations[qualified]; ok {
-		return qualified, d
+		return d
 	}
-	return "", nil
+	return nil
 }
 
-func (c *Context) FindDeclarationByName(selector, member string) (string, core.Declaration) {
+func (c *Context) FindDeclarationByName(selector, member string) core.Declaration {
 	if selector == "" {
 		return c.FindLocalDeclaration(member)
 	}
 	for _, i := range c.Program.Module.Imports {
 		if i.Alias == selector {
 			qualified := i.Namespace + "." + member
-			return qualified, c.Program.Declarations[qualified]
+			return c.Program.Declarations[qualified]
 		}
 	}
-	return "", nil
+	return nil
 }
 
 func (c *Context) FindDeclarationByType(t *core.TypeName) core.Declaration {
-	q, d := c.FindDeclarationByName(t.Selector, t.Name)
+	d := c.FindDeclarationByName(t.Selector, t.Name)
 	if _, ok := d.(*declaration.Enum); ok {
 		t.IsEnum = true
 	}
-	t.Qualified = q
+	t.Qualified = d.QualifiedName()
 	return d
 }
 

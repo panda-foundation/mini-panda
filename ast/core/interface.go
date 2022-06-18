@@ -19,4 +19,16 @@ type Declaration interface {
 	IsConstant() bool
 	QualifiedName() string
 	ResolveType(c Context)
+
+	Kind() DeclarationKind
+}
+
+type Struct interface {
+	HasMember(name string) bool
+	MemberType(name string) Type
+	ValidateInitializer(c Context, expressions []Expression)
+}
+
+type Enum interface {
+	HasMember(name string) bool
 }

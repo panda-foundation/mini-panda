@@ -15,6 +15,18 @@ type Enum struct {
 	Values  []uint8
 }
 
+func (e *Enum) IsConstant() bool {
+	return false
+}
+
+func (e *Enum) Kind() core.DeclarationKind {
+	return core.DeclarationEnum
+}
+
+func (e *Enum) Type() core.Type {
+	return nil
+}
+
 func (e *Enum) AddMember(m *Variable) error {
 	if e.HasMember(m.Name.Name) {
 		return fmt.Errorf("%s redeclared", m.Name.Name)

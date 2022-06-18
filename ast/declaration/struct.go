@@ -12,6 +12,14 @@ type Struct struct {
 	Variables []*Variable
 }
 
+func (s *Struct) IsConstant() bool {
+	return false
+}
+
+func (s *Struct) Kind() core.DeclarationKind {
+	return core.DeclarationStruct
+}
+
 func (s *Struct) AddVariable(v *Variable) error {
 	if s.IsRedeclared(v.Name.Name) {
 		return fmt.Errorf("%s redeclared", v.Name.Name)
@@ -62,7 +70,7 @@ func (s *Struct) MemberType(member string) core.Type {
 	return nil
 }
 
-func (s *Struct) Type() *core.TypeName {
+func (s *Struct) Type() core.Type {
 	return &core.TypeName{
 		Name:      s.Name.Name,
 		Qualified: s.Qualified,
@@ -98,5 +106,21 @@ func (s *Struct) Validate(c core.Context) {
 	}
 	for _, f := range s.Functions {
 		f.Validate(c)
+	}
+}
+
+func (s *Struct) ValidateInitializer(c core.Context, expressions []core.Expression) {
+	if len(s.Variables) == len(expressions) {
+		for idx, e := range expressions {
+			e.Validate(c, s.Variables[idx].Type)
+			if !e.IsConstant() {
+				c.Error(e.GetPosition(), "expect constant expression initializer")
+			}
+			if e.Type() != nil && !e.Type().Equal(s.Variables[idx].Type) {
+				c.Error(e.GetPosition(), "type mismatch")
+			}
+		}
+	} else {
+		c.Error(expressions[0].GetPosition(), "element number mismatch")
 	}
 }

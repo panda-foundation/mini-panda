@@ -12,3 +12,12 @@ const (
 	Extern = "extern"
 	Name   = "name"
 )
+
+type DeclarationKind int
+
+const (
+	DeclarationEnum DeclarationKind = iota
+	DeclarationFunction
+	DeclarationStruct
+	DeclarationVariable
+)

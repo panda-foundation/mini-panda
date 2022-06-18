@@ -18,20 +18,8 @@ func (i *Initializer) Validate(c core.Context, expected core.Type) {
 		d := c.FindDeclarationByType(t)
 		i.Typ = t
 		i.Const = true
-		if s, ok := d.(*Struct); ok {
-			if len(s.Variables) == len(i.Expressions) {
-				for idx, e := range i.Expressions {
-					e.Validate(c, s.Variables[idx].Type)
-					if !e.IsConstant() {
-						c.Error(e.GetPosition(), "expect constant expression initializer")
-					}
-					if e.Type() != nil && !e.Type().Equal(s.Variables[idx].Type) {
-						c.Error(e.GetPosition(), "type mismatch")
-					}
-				}
-			} else {
-				c.Error(i.Position, "element number mismatch")
-			}
+		if d.Kind() == core.DeclarationStruct {
+			d.(core.Struct).ValidateInitializer(c, i.Expressions)
 		} else {
 			c.Error(i.Position, "undefined type")
 		}
@@ -40,7 +28,7 @@ func (i *Initializer) Validate(c core.Context, expected core.Type) {
 	}
 }
 
-func (i *Initializer) ValidateTypeArray(c core.Context, t *core.TypeArray, exprs []Expression) {
+func (i *Initializer) ValidateTypeArray(c core.Context, t *core.TypeArray, exprs []core.Expression) {
 	if t.Dimension[0] == 0 {
 		c.Error(i.GetPosition(), "initializer is not allowed to pointer type variable")
 	}

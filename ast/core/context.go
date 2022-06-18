@@ -9,10 +9,11 @@ type Context interface {
 	ResolveType(v Type) Type
 
 	//FindType(selector string, member string) Type
-	FindDeclarationByName(selector, member string) Declaration //find FindSelector in program
-	FindDeclarationByType(t *TypeName) Declaration             //find type in program
-	FindLocalDeclaration(name string) Declaration              //find member in program
-	IsNamespace(namespace string) bool                         // in program
+	FindDeclarationByName(selector, member string) Declaration
+	FindDeclarationByType(t *TypeName) Declaration
+	FindLocalDeclaration(name string) Declaration
+	FindQualifiedDeclaration(qualified string) Declaration
+	IsNamespace(namespace string) bool
 
 	SetFunction(f Declaration)
 	ReturnType() Type

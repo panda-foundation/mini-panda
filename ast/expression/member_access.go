@@ -41,35 +41,36 @@ func (m *MemberAccess) Validate(c core.Context, expected core.Type) {
 		if i, ok := m.Parent.(*Identifier); ok {
 			if i.IsNamespace {
 				d := c.FindDeclarationByName(i.Name, m.Member.Name)
-				if d != nil && !d.IsStruct() {
+				if d != nil && d.Kind() != core.DeclarationStruct {
 					m.Typ = d.Type()
 					m.Const = d.IsConstant()
 					m.Qualified = d.QualifiedName()
 				}
-			} else if e, ok := c.Program.FindQualified(i.Qualified).(*Enum); ok {
-				if e.HasMember(m.Member.Name) {
-					m.Typ = TypeU8
+			} else if d := c.FindQualifiedDeclaration(i.Qualified); d != nil {
+				if d.Kind() == core.DeclarationEnum && d.(core.Enum).HasMember(m.Member.Name) {
+					m.Typ = core.TypeU8
 					m.Const = true
 				}
 			}
 		} else if mm, ok := m.Parent.(*MemberAccess); ok {
-			if e, ok := c.Program.FindQualified(mm.Qualified).(*Enum); ok {
-				if e.HasMember(m.Member.Name) {
-					m.Typ = TypeU8
+			fmt.Println(mm.Qualified)
+			if d := c.FindQualifiedDeclaration(mm.Qualified); d != nil {
+				if d.Kind() == core.DeclarationEnum && d.(core.Enum).HasMember(m.Member.Name) {
+					m.Typ = core.TypeU8
 					m.Const = true
 				}
 			}
 		}
 	} else {
 		t := m.Parent.Type()
-		if p, ok := t.(*TypePointer); ok {
+		if p, ok := t.(*core.TypePointer); ok {
 			t = p.ElementType
 		}
-		if n, ok := t.(*TypeName); ok {
-			d := c.Program.FindType(n)
+		if n, ok := t.(*core.TypeName); ok {
+			d := c.FindDeclarationByType(n)
 			if d != nil {
-				if s, ok := d.(*Struct); ok {
-					m.Typ = s.MemberType(m.Member.Name)
+				if d.Kind() == core.DeclarationStruct {
+					m.Typ = d.(core.Struct).MemberType(m.Member.Name)
 					m.Const = false
 				}
 			}

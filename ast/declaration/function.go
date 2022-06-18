@@ -20,6 +20,10 @@ func (f *Function) IsConstant() bool {
 	return true
 }
 
+func (f *Function) Kind() core.DeclarationKind {
+	return core.DeclarationFunction
+}
+
 func (f *Function) Type() core.Type {
 	return f.Typ
 }
