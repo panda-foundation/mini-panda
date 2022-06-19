@@ -51,26 +51,22 @@ func (e *Enum) Validate(c core.Context) {
 	var index int
 	for _, v := range e.Members {
 		if index >= 256 {
-			c.Error(v.Position, "enum value shoud be less than 256")
+			c.Error(v.GetPosition(), "enum value shoud be less than 256")
 		}
 		if v.Value == nil {
 			e.Values = append(e.Values, uint8(index))
 			index++
 		} else {
-			if literal, ok := v.Value.(*expression.Literal); ok {
-				if literal.Token == token.INT {
-					if i, _ := strconv.Atoi(literal.Value); i >= index {
-						index = i
-						e.Values = append(e.Values, uint8(index))
-						index++
-					} else {
-						c.Error(v.Position, fmt.Sprintf("enum value here should be greater than %d.", i-1))
-					}
+			if literal, ok := v.Value.(*expression.Literal); ok && literal.Token == token.INT {
+				if i, _ := strconv.Atoi(literal.Value); i >= index {
+					index = i
+					e.Values = append(e.Values, uint8(index))
+					index++
 				} else {
-					c.Error(v.Position, "enum value must be integer.")
+					c.Error(v.GetPosition(), fmt.Sprintf("enum value here should be greater than %d.", i-1))
 				}
 			} else {
-				c.Error(v.Position, "enum value must be const integer.")
+				c.Error(v.GetPosition(), "enum value must be const integer.")
 			}
 		}
 	}

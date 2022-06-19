@@ -17,14 +17,3 @@ func (b *ExpressionBase) IsConstant() bool {
 func (b *ExpressionBase) Type() core.Type {
 	return b.Typ
 }
-
-type Parameter struct {
-	core.NodeBase
-	Name string
-	Type core.Type
-}
-
-type Arguments struct {
-	core.NodeBase
-	Arguments []core.Expression
-}

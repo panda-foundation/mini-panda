@@ -13,9 +13,9 @@ func (d *Decrement) Validate(c core.Context, expected core.Type) {
 	d.Expression.Validate(c, expected)
 	d.Const = false
 	if d.Expression.IsConstant() {
-		c.Error(d.Position, "expect variable")
+		c.Error(d.GetPosition(), "expect variable")
 	}
 	if !core.IsInteger(d.Expression.Type()) {
-		c.Error(d.Position, "expect integer expression")
+		c.Error(d.GetPosition(), "expect integer expression")
 	}
 }

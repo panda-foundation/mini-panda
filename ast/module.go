@@ -8,7 +8,6 @@ import (
 
 type Import struct {
 	core.NodeBase
-	Alias     string
 	Namespace string
 }
 

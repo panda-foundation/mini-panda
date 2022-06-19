@@ -1,6 +1,10 @@
 package statement
 
-import "github.com/panda-io/micro-panda/ast/core"
+import (
+	"fmt"
+
+	"github.com/panda-io/micro-panda/ast/core"
+)
 
 type Return struct {
 	StatementBase
@@ -8,12 +12,18 @@ type Return struct {
 }
 
 func (r *Return) Validate(c core.Context) {
-	r.Expression.Validate(c, c.ReturnType())
-	if r.Expression == nil {
-		if c.ReturnType() != nil {
-			c.Error(r.Position, "mismatch return type, expect 'null'")
+	returnType := c.GetFunction().GetReturnType()
+	if returnType == nil {
+		if r.Expression != nil {
+			c.Error(r.GetPosition(), "mismatch return type, expect 'null'")
 		}
-	} else if r.Expression.Type() != nil && !r.Expression.Type().Equal(c.ReturnType()) {
-		c.Error(r.Position, "mismatch return type")
+	} else {
+		if r.Expression == nil {
+			c.Error(r.GetPosition(), fmt.Sprintf("mismatch return type, expect '%s' got 'null'", returnType.String()))
+		}
+		r.Expression.Validate(c, returnType)
+		if r.Expression.Type() != nil && !r.Expression.Type().Equal(returnType) {
+			c.Error(r.GetPosition(), fmt.Sprintf("mismatch return type, expect '%s' got '%s'", returnType.String(), r.Expression.Type().String()))
+		}
 	}
 }

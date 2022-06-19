@@ -3,6 +3,9 @@ package ir
 import (
 	"fmt"
 	"strings"
+
+	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/ir/instruction"
 )
 
 // === [ Basic blocks ] ========================================================
@@ -11,9 +14,9 @@ import (
 // terminated by a control flow instruction (e.g. br or ret).
 type Block struct {
 	// Name of local variable associated with the basic block.
-	LocalIdent
+	core.LocalIdent
 	// Instructions of the basic block.
-	Insts      []Instruction
+	Insts      []instruction.Instruction
 	Terminated bool
 }
 

@@ -15,16 +15,16 @@ func (i *Initializer) Validate(c core.Context, expected core.Type) {
 		i.Const = true
 		i.ValidateTypeArray(c, array, i.Expressions)
 	} else if t, ok := expected.(*core.TypeName); ok {
-		d := c.FindDeclarationByType(t)
+		d := c.FindDeclaration(t)
 		i.Typ = t
 		i.Const = true
 		if d.Kind() == core.DeclarationStruct {
 			d.(core.Struct).ValidateInitializer(c, i.Expressions)
 		} else {
-			c.Error(i.Position, "undefined type")
+			c.Error(i.GetPosition(), "enum has no initializer {} expression")
 		}
 	} else {
-		c.Error(i.Position, "unexpected initializer")
+		c.Error(i.GetPosition(), "unexpected initializer")
 	}
 }
 
@@ -44,7 +44,7 @@ func (i *Initializer) ValidateTypeArray(c core.Context, t *core.TypeArray, exprs
 				}
 			}
 		} else {
-			c.Error(i.Position, "array length mismatch")
+			c.Error(i.GetPosition(), "array length mismatch")
 		}
 	} else {
 		if len(exprs) == t.Dimension[0] {
@@ -60,7 +60,7 @@ func (i *Initializer) ValidateTypeArray(c core.Context, t *core.TypeArray, exprs
 				}
 			}
 		} else {
-			c.Error(i.Position, "array length mismatch")
+			c.Error(i.GetPosition(), "array length mismatch")
 		}
 	}
 }

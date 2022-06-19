@@ -1,13 +1,13 @@
 package core
 
-type Node interface {
-	GetPosition() int
-}
-
 type NodeBase struct {
-	Position int
+	position int
 }
 
-func (b *NodeBase) GetPosition() int {
-	return b.Position
+func (n *NodeBase) GetPosition() int {
+	return n.position
+}
+
+func (n *NodeBase) SetPosition(position int) {
+	n.position = position
 }

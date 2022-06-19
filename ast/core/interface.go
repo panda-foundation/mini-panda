@@ -1,5 +1,16 @@
 package core
 
+type Node interface {
+	GetPosition() int
+	SetPosition(position int)
+}
+
+type Type interface {
+	Node
+	Equal(t Type) bool
+	String() string
+}
+
 type Expression interface {
 	Node
 	Type() Type
@@ -15,10 +26,10 @@ type Statement interface {
 type DeclarationKind int
 
 const (
-	DeclarationEnum DeclarationKind = iota
+	DeclarationVariable DeclarationKind = iota
 	DeclarationFunction
+	DeclarationEnum
 	DeclarationStruct
-	DeclarationVariable
 )
 
 type Declaration interface {
@@ -40,4 +51,25 @@ type Struct interface {
 
 type Enum interface {
 	HasMember(name string) bool
+}
+
+type Function interface {
+	GetReturnType() Type
+}
+
+type Context interface {
+	NewContext() Context
+	Error(offset int, message string)
+
+	AddObject(name string, t Type) error
+	FindObject(name string) Type
+	ResolveType(v Type) Type
+
+	FindDeclaration(t *TypeName) Declaration
+	FindLocalDeclaration(name string) Declaration
+	FindQualifiedDeclaration(qualified string) Declaration
+	IsNamespace(namespace string) bool
+
+	GetFunction() Function
+	SetFunction(f Function)
 }

@@ -1,8 +1,10 @@
-package ir
+package instruction
 
 import (
 	"fmt"
 	"strings"
+
+	"github.com/panda-io/micro-panda/ir/core"
 )
 
 // --- [ Binary instructions ] -------------------------------------------------
@@ -12,18 +14,18 @@ import (
 // InstAdd is an LLVM IR add instruction.
 type InstAdd struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // integer scalar or integer vector
+	X, Y core.Value // integer scalar or integer vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewAdd returns a new add instruction based on the given operands.
-func NewAdd(x, y Value) *InstAdd {
+func NewAdd(x, y core.Value) *InstAdd {
 	inst := &InstAdd{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -37,7 +39,7 @@ func (inst *InstAdd) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstAdd) Type() Type {
+func (inst *InstAdd) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -61,18 +63,18 @@ func (inst *InstAdd) LLString() string {
 // InstFAdd is an LLVM IR fadd instruction.
 type InstFAdd struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // floating-point scalar or floating-point vector
+	X, Y core.Value // floating-point scalar or floating-point vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewFAdd returns a new fadd instruction based on the given operands.
-func NewFAdd(x, y Value) *InstFAdd {
+func NewFAdd(x, y core.Value) *InstFAdd {
 	inst := &InstFAdd{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -86,7 +88,7 @@ func (inst *InstFAdd) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstFAdd) Type() Type {
+func (inst *InstFAdd) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -110,18 +112,18 @@ func (inst *InstFAdd) LLString() string {
 // InstSub is an LLVM IR sub instruction.
 type InstSub struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // integer scalar or integer vector
+	X, Y core.Value // integer scalar or integer vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewSub returns a new sub instruction based on the given operands.
-func NewSub(x, y Value) *InstSub {
+func NewSub(x, y core.Value) *InstSub {
 	inst := &InstSub{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -135,7 +137,7 @@ func (inst *InstSub) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstSub) Type() Type {
+func (inst *InstSub) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -159,18 +161,18 @@ func (inst *InstSub) LLString() string {
 // InstFSub is an LLVM IR fsub instruction.
 type InstFSub struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // floating-point scalar or floating-point vector
+	X, Y core.Value // floating-point scalar or floating-point vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewFSub returns a new fsub instruction based on the given operands.
-func NewFSub(x, y Value) *InstFSub {
+func NewFSub(x, y core.Value) *InstFSub {
 	inst := &InstFSub{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -184,7 +186,7 @@ func (inst *InstFSub) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstFSub) Type() Type {
+func (inst *InstFSub) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -208,18 +210,18 @@ func (inst *InstFSub) LLString() string {
 // InstMul is an LLVM IR mul instruction.
 type InstMul struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // integer scalar or integer vector
+	X, Y core.Value // integer scalar or integer vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewMul returns a new mul instruction based on the given operands.
-func NewMul(x, y Value) *InstMul {
+func NewMul(x, y core.Value) *InstMul {
 	inst := &InstMul{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -233,7 +235,7 @@ func (inst *InstMul) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstMul) Type() Type {
+func (inst *InstMul) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -257,18 +259,18 @@ func (inst *InstMul) LLString() string {
 // InstFMul is an LLVM IR fmul instruction.
 type InstFMul struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // floating-point scalar or floating-point vector
+	X, Y core.Value // floating-point scalar or floating-point vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewFMul returns a new fmul instruction based on the given operands.
-func NewFMul(x, y Value) *InstFMul {
+func NewFMul(x, y core.Value) *InstFMul {
 	inst := &InstFMul{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -282,7 +284,7 @@ func (inst *InstFMul) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstFMul) Type() Type {
+func (inst *InstFMul) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -306,18 +308,18 @@ func (inst *InstFMul) LLString() string {
 // InstUDiv is an LLVM IR udiv instruction.
 type InstUDiv struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // integer scalar or integer vector
+	X, Y core.Value // integer scalar or integer vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewUDiv returns a new udiv instruction based on the given operands.
-func NewUDiv(x, y Value) *InstUDiv {
+func NewUDiv(x, y core.Value) *InstUDiv {
 	inst := &InstUDiv{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -331,7 +333,7 @@ func (inst *InstUDiv) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstUDiv) Type() Type {
+func (inst *InstUDiv) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -355,18 +357,18 @@ func (inst *InstUDiv) LLString() string {
 // InstSDiv is an LLVM IR sdiv instruction.
 type InstSDiv struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // integer scalar or integer vector
+	X, Y core.Value // integer scalar or integer vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
-func NewSDiv(x, y Value) *InstSDiv {
+func NewSDiv(x, y core.Value) *InstSDiv {
 	inst := &InstSDiv{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -380,7 +382,7 @@ func (inst *InstSDiv) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstSDiv) Type() Type {
+func (inst *InstSDiv) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -404,18 +406,18 @@ func (inst *InstSDiv) LLString() string {
 // InstFDiv is an LLVM IR fdiv instruction.
 type InstFDiv struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // floating-point scalar or floating-point vector
+	X, Y core.Value // floating-point scalar or floating-point vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewFDiv returns a new fdiv instruction based on the given operands.
-func NewFDiv(x, y Value) *InstFDiv {
+func NewFDiv(x, y core.Value) *InstFDiv {
 	inst := &InstFDiv{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -429,7 +431,7 @@ func (inst *InstFDiv) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstFDiv) Type() Type {
+func (inst *InstFDiv) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -453,18 +455,18 @@ func (inst *InstFDiv) LLString() string {
 // InstURem is an LLVM IR urem instruction.
 type InstURem struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // integer scalar or integer vector
+	X, Y core.Value // integer scalar or integer vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewURem returns a new urem instruction based on the given operands.
-func NewURem(x, y Value) *InstURem {
+func NewURem(x, y core.Value) *InstURem {
 	inst := &InstURem{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -478,7 +480,7 @@ func (inst *InstURem) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstURem) Type() Type {
+func (inst *InstURem) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -501,18 +503,18 @@ func (inst *InstURem) LLString() string {
 // InstSRem is an LLVM IR srem instruction.
 type InstSRem struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // integer scalar or integer vector
+	X, Y core.Value // integer scalar or integer vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewSRem returns a new srem instruction based on the given operands.
-func NewSRem(x, y Value) *InstSRem {
+func NewSRem(x, y core.Value) *InstSRem {
 	inst := &InstSRem{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -526,7 +528,7 @@ func (inst *InstSRem) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstSRem) Type() Type {
+func (inst *InstSRem) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
@@ -549,18 +551,18 @@ func (inst *InstSRem) LLString() string {
 // InstFRem is an LLVM IR frem instruction.
 type InstFRem struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Operands.
-	X, Y Value // floating-point scalar or floating-point vector
+	X, Y core.Value // floating-point scalar or floating-point vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ Type
+	Typ core.Type
 }
 
 // NewFRem returns a new frem instruction based on the given operands.
-func NewFRem(x, y Value) *InstFRem {
+func NewFRem(x, y core.Value) *InstFRem {
 	inst := &InstFRem{X: x, Y: y}
 	// Compute type.
 	inst.Type()
@@ -574,7 +576,7 @@ func (inst *InstFRem) String() string {
 }
 
 // Type returns the type of the instruction.
-func (inst *InstFRem) Type() Type {
+func (inst *InstFRem) Type() core.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()

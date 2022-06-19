@@ -1,9 +1,7 @@
-// Package ir provides a definition of LLVM IR values.
-package value
+package core
 
 import (
-	"github.com/panda-io/micro-panda/constant"
-	"github.com/panda-io/micro-panda/types"
+	"github.com/panda-io/micro-panda/ir/constant"
 )
 
 // Value is an LLVM IR value, which may be used as an operand of instructions
@@ -15,7 +13,7 @@ import (
 //    value.Named         // https://godoc.org/github.com/llir/llvm/ir/value#Named
 type Value interface {
 	// Type returns the type of the value.
-	Type() types.Type
+	Type() Type
 	// Ident returns the identifier associated with the value.
 	Ident() string
 }

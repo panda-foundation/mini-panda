@@ -13,7 +13,8 @@ func (c *Conversion) Validate(ctx core.Context, expected core.Type) {
 	c.Typ = ctx.ResolveType(c.Typ)
 	c.Value.Validate(ctx, c.Typ)
 	c.Const = c.Value.IsConstant()
+	//TO-DO enum convert with int?
 	if !((core.IsNumber(c.Typ) && core.IsNumber(c.Value.Type())) || (core.IsPointer(c.Typ) && core.IsPointer(c.Value.Type()))) {
-		ctx.Error(c.Position, "invalid type conversion")
+		ctx.Error(c.GetPosition(), "invalid type conversion")
 	}
 }

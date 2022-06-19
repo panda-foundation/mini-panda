@@ -1,8 +1,10 @@
-package ir
+package instruction
 
 import (
 	"fmt"
 	"strings"
+
+	"github.com/panda-io/micro-panda/ir/core"
 )
 
 // === [ Terminators ] =========================================================
@@ -183,7 +185,7 @@ type TermIndirectBr struct {
 // blocks.
 func NewIndirectBr(addr Constant, validTargets ...*Block) *TermIndirectBr {
 	// convert validTargets slice to []Value.
-	var targets []Value
+	var targets []core.Value
 	for _, target := range validTargets {
 		targets = append(targets, target)
 	}
@@ -211,23 +213,23 @@ func (term *TermIndirectBr) LLString() string {
 // TermInvoke is an LLVM IR invoke terminator.
 type TermInvoke struct {
 	// Name of local variable associated with the result.
-	LocalIdent
+	core.LocalIdent
 	// Invokee (callee function).
 	// TODO: specify the set of underlying types of Invokee.
-	Invokee Value
+	Invokee core.Value
 	// Function arguments.
 	//
 	// Arg has one of the following underlying types:
 	//    Value
 	//    TODO: add metadata value?
-	Args []Value
+	Args []core.Value
 	// Normal control flow return point.
-	NormalRetTarget Value // *ir.Block
+	NormalRetTarget core.Value // *ir.Block
 	// Exception control flow return point.
-	ExceptionRetTarget Value // *ir.Block
+	ExceptionRetTarget core.Value // *ir.Block
 
 	// Type of result produced by the terminator.
-	Typ Type
+	Typ core.Type
 }
 
 // NewInvoke returns a new invoke terminator based on the given invokee,
@@ -235,7 +237,7 @@ type TermInvoke struct {
 // execution.
 //
 // TODO: specify the set of underlying types of invokee.
-func NewInvoke(invokee Value, args []Value, normalRetTarget, exceptionRetTarget *Block) *TermInvoke {
+func NewInvoke(invokee core.Value, args []core.Value, normalRetTarget, exceptionRetTarget *Block) *TermInvoke {
 	term := &TermInvoke{Invokee: invokee, Args: args, NormalRetTarget: normalRetTarget, ExceptionRetTarget: exceptionRetTarget}
 	// Compute type.
 	term.Type()

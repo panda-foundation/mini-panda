@@ -2,12 +2,10 @@ package declaration
 
 import (
 	"github.com/panda-io/micro-panda/ast/core"
-	"github.com/panda-io/micro-panda/token"
 )
 
 type Variable struct {
 	DeclarationBase
-	Token token.Token
 	Typ   core.Type
 	Const bool
 	Value core.Expression
@@ -37,7 +35,7 @@ func (v *Variable) Validate(c core.Context) {
 	}
 	if v.Const {
 		if v.Value == nil {
-			c.Error(v.Position, "const must be initialized when declare")
+			c.Error(v.GetPosition(), "const must be initialized when declare")
 		} else if !v.Value.IsConstant() {
 			c.Error(v.Value.GetPosition(), "expect const expression")
 		}

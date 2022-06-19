@@ -1,5 +1,5 @@
-// Package enc implements encoding of identifiers for LLVM IR assembly.
-package ir
+// Package core implements encoding of identifiers for LLVM IR assembly.
+package core
 
 import (
 	"fmt"

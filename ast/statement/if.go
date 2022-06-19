@@ -16,7 +16,7 @@ func (i *If) Validate(c core.Context) {
 		i.Initialization.Validate(ctx)
 	}
 	if i.Condition == nil {
-		c.Error(i.Position, "expect condition expression")
+		c.Error(i.GetPosition(), "expect condition expression")
 	} else {
 		i.Condition.Validate(ctx, core.TypeBool)
 		if i.Condition.Type() != nil && !i.Condition.Type().Equal(core.TypeBool) {

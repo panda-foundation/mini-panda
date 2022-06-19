@@ -2,6 +2,8 @@ package constant
 
 import (
 	"fmt"
+
+	"github.com/panda-io/micro-panda/ir/types"
 )
 
 // --- [ zeroinitializer constants ] -------------------------------------------
@@ -9,12 +11,12 @@ import (
 // ZeroInitializer is an LLVM IR zeroinitializer constant.
 type ZeroInitializer struct {
 	// zeroinitializer type.
-	Typ Type
+	Typ types.Type
 }
 
 // NewZeroInitializer returns a new zeroinitializer constant based on the given
 // type.
-func NewZeroInitializer(typ Type) *ZeroInitializer {
+func NewZeroInitializer(typ types.Type) *ZeroInitializer {
 	return &ZeroInitializer{Typ: typ}
 }
 
@@ -25,7 +27,7 @@ func (c *ZeroInitializer) String() string {
 }
 
 // Type returns the type of the constant.
-func (c *ZeroInitializer) Type() Type {
+func (c *ZeroInitializer) Type() types.Type {
 	return c.Typ
 }
 

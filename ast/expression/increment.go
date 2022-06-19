@@ -13,9 +13,9 @@ func (i *Increment) Validate(c core.Context, expected core.Type) {
 	i.Const = false
 	i.Expression.Validate(c, expected)
 	if i.Expression.IsConstant() {
-		c.Error(i.Position, "expect variable")
+		c.Error(i.GetPosition(), "expect variable")
 	}
 	if !core.IsInteger(i.Expression.Type()) {
-		c.Error(i.Position, "expect integer expression")
+		c.Error(i.GetPosition(), "expect integer expression")
 	}
 }

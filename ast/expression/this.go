@@ -10,8 +10,8 @@ type This struct {
 
 func (t *This) Validate(c core.Context, expected core.Type) {
 	t.Const = false
-	t.Typ = c.FindObject("this")
+	t.Typ = c.FindObject(core.StructThis)
 	if t.Typ == nil {
-		c.Error(t.Position, "undefined 'this'")
+		c.Error(t.GetPosition(), "undefined 'this'")
 	}
 }

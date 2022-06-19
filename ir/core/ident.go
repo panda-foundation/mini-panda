@@ -1,4 +1,4 @@
-package ir
+package core
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ type GlobalIdent struct {
 
 // Ident returns the identifier associated with the global identifier.
 func (g *GlobalIdent) Ident() string {
-	if g.IsUnnamed() {
+	if g.GlobalName == "" {
 		return globalID(g.GlobalID)
 	}
 	return globalName(g.GlobalName)
@@ -23,35 +23,31 @@ func (g *GlobalIdent) Ident() string {
 //
 // If unnamed, the global ID is returned. To distinguish numeric names from
 // unnamed IDs, numeric names are quoted.
-func (i GlobalIdent) Name() string {
-	if i.IsUnnamed() {
-		return strconv.FormatInt(i.GlobalID, 10)
+func (g *GlobalIdent) Name() string {
+	if g.GlobalName == "" {
+		return strconv.FormatInt(g.GlobalID, 10)
 	}
-	if x, err := strconv.ParseInt(i.GlobalName, 10, 64); err == nil {
+	if x, err := strconv.ParseInt(g.GlobalName, 10, 64); err == nil {
 		// Print GlobalName with quotes if it is a number; e.g. "42".
 		return fmt.Sprintf(`"%d"`, x)
 	}
-	return i.GlobalName
+	return g.GlobalName
 }
 
 // SetName sets the name of the global identifier.
-func (i *GlobalIdent) SetName(name string) {
-	i.GlobalName = name
-	i.GlobalID = 0
+func (g *GlobalIdent) SetName(name string) {
+	g.GlobalName = name
+	g.GlobalID = 0
 }
 
 // ID returns the ID of the global identifier.
-func (i GlobalIdent) ID() int64 {
-	return i.GlobalID
+func (g *GlobalIdent) ID() int64 {
+	return g.GlobalID
 }
 
 // SetID sets the ID of the global identifier.
-func (i *GlobalIdent) SetID(id int64) {
-	i.GlobalID = id
-}
-
-func (g *GlobalIdent) unnamed() bool {
-	return g.GlobalName == ""
+func (g *GlobalIdent) SetID(id int64) {
+	g.GlobalID = id
 }
 
 // LocalIdent is a local identifier.
@@ -70,37 +66,37 @@ func NewLocalIdent(ident string) LocalIdent {
 }
 
 // Ident returns the identifier associated with the local identifier.
-func (i LocalIdent) Ident() string {
-	if i.IsUnnamed() {
-		return LocalID(i.LocalID)
+func (l *LocalIdent) Ident() string {
+	if l.LocalName == "" {
+		return localID(l.LocalID)
 	}
-	return LocalName(i.LocalName)
+	return localName(l.LocalName)
 }
 
 // Name returns the name of the local identifier.
 //
 // If unnamed, the local ID is returned. To distinguish numeric names from
 // unnamed IDs, numeric names are quoted.
-func (i LocalIdent) Name() string {
-	if i.IsUnnamed() {
-		return strconv.FormatInt(i.LocalID, 10)
+func (l *LocalIdent) Name() string {
+	if l.LocalName == "" {
+		return strconv.FormatInt(l.LocalID, 10)
 	}
-	if x, err := strconv.ParseInt(i.LocalName, 10, 64); err == nil {
+	if x, err := strconv.ParseInt(l.LocalName, 10, 64); err == nil {
 		// Print LocalName with quotes if it is a number; e.g. "42".
 		return fmt.Sprintf(`"%d"`, x)
 	}
-	return i.LocalName
+	return l.LocalName
 }
 
 // SetName sets the name of the local identifier.
-func (i *LocalIdent) SetName(name string) {
-	i.LocalName = name
-	i.LocalID = 0
+func (l *LocalIdent) SetName(name string) {
+	l.LocalName = name
+	l.LocalID = 0
 }
 
 // ID returns the ID of the local identifier.
-func (i LocalIdent) ID() int64 {
-	return i.LocalID
+func (l *LocalIdent) ID() int64 {
+	return l.LocalID
 }
 
 // SetID sets the ID of the local identifier.
@@ -108,18 +104,10 @@ func (i *LocalIdent) SetID(id int64) {
 	i.LocalID = id
 }
 
-// IsUnnamed reports whether the local identifier is unnamed.
-func (i LocalIdent) IsUnnamed() bool {
-	return len(i.LocalName) == 0
-}
-
 // Ident is a named variable.
 type Ident interface {
-	Named
-	// ID returns the ID of the local identifier.
+	Name() string
+	SetName(name string)
 	ID() int64
-	// SetID sets the ID of the local identifier.
 	SetID(id int64)
-	// IsUnnamed reports whether the local identifier is unnamed.
-	IsUnnamed() bool
 }

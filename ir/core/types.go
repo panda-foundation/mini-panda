@@ -1,5 +1,4 @@
-// Package types declares the data types of LLVM IR.
-package types
+package core
 
 import (
 	"fmt"

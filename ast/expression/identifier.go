@@ -32,6 +32,6 @@ func (i *Identifier) Validate(c core.Context, expected core.Type) {
 	// * type would be nil for enum (its member has type u8)
 	// * type is nil when identifier is namespacee
 	if i.Typ == nil && i.Qualified == "" && !i.IsNamespace {
-		c.Error(i.Position, fmt.Sprintf("undefined %s", i.Name))
+		c.Error(i.GetPosition(), fmt.Sprintf("undefined %s", i.Name))
 	}
 }

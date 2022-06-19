@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/panda-io/micro-panda/types"
+	"github.com/panda-io/micro-panda/ir/core"
 )
 
 // --- [ Array constants ] -----------------------------------------------------
@@ -12,7 +12,7 @@ import (
 // Array is an LLVM IR array constant.
 type Array struct {
 	// Array type.
-	Typ *types.ArrayType
+	Typ *core.ArrayType
 	// Array elements.
 	Elems []Constant
 }
@@ -20,7 +20,7 @@ type Array struct {
 // NewArray returns a new array constant based on the given array type and
 // elements. The array type is infered from the type of the elements if t is
 // nil.
-func NewArray(t *types.ArrayType, elems ...Constant) *Array {
+func NewArray(t *core.ArrayType, elems ...Constant) *Array {
 	c := &Array{
 		Elems: elems,
 		Typ:   t,
@@ -66,7 +66,7 @@ func (c *Array) Ident() string {
 // CharArray is an LLVM IR character array constant.
 type CharArray struct {
 	// Array type.
-	Typ *ArrayType
+	Typ *types.ArrayType
 	// Character array contents.
 	X []byte
 }
@@ -74,7 +74,7 @@ type CharArray struct {
 // NewCharArray returns a new character array constant based on the given
 // character array contents.
 func NewCharArray(x []byte) *CharArray {
-	typ := NewArrayType(uint64(len(x)), I8)
+	typ := types.NewArrayType(uint64(len(x)), types.I8)
 	return &CharArray{Typ: typ, X: x}
 }
 
@@ -91,7 +91,7 @@ func (c *CharArray) String() string {
 }
 
 // Type returns the type of the constant.
-func (c *CharArray) Type() Type {
+func (c *CharArray) Type() types.Type {
 	return c.Typ
 }
 

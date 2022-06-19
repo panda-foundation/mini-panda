@@ -3,6 +3,8 @@ package constant
 import (
 	"fmt"
 	"strings"
+
+	"github.com/panda-io/micro-panda/ir/types"
 )
 
 // --- [ Struct constants ] ----------------------------------------------------
@@ -10,14 +12,14 @@ import (
 // Struct is an LLVM IR struct constant.
 type Struct struct {
 	// Struct type.
-	Typ *StructType
+	Typ *types.StructType
 	// Struct fields.
 	Fields []Constant
 }
 
 // NewStruct returns a new struct constant based on the given struct type and
 // fields. The struct type is infered from the type of the fields if t is nil.
-func NewStruct(t *StructType, fields ...Constant) *Struct {
+func NewStruct(t *types.StructType, fields ...Constant) *Struct {
 	c := &Struct{
 		Fields: fields,
 		Typ:    t,
@@ -34,14 +36,14 @@ func (c *Struct) String() string {
 }
 
 // Type returns the type of the constant.
-func (c *Struct) Type() Type {
+func (c *Struct) Type() types.Type {
 	// Cache type if not present.
 	if c.Typ == nil {
-		var fieldTypes []Type
+		var fieldTypes []types.Type
 		for _, field := range c.Fields {
 			fieldTypes = append(fieldTypes, field.Type())
 		}
-		c.Typ = NewStructType(fieldTypes...)
+		c.Typ = types.NewStructType(fieldTypes...)
 	}
 	return c.Typ
 }
@@ -56,15 +58,9 @@ func (c *Struct) Ident() string {
 	//
 	//    '<' '{' Fields=(TypeConst separator ',')+? '}' '>'
 	if len(c.Fields) == 0 {
-		if c.Typ.Packed {
-			return "<{}>"
-		}
 		return "{}"
 	}
 	buf := &strings.Builder{}
-	if c.Typ.Packed {
-		buf.WriteString("<")
-	}
 	buf.WriteString("{ ")
 	for i, field := range c.Fields {
 		if i != 0 {
@@ -73,8 +69,5 @@ func (c *Struct) Ident() string {
 		buf.WriteString(field.String())
 	}
 	buf.WriteString(" }")
-	if c.Typ.Packed {
-		buf.WriteString(">")
-	}
 	return buf.String()
 }

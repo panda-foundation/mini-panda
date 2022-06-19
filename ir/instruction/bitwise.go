@@ -1,4 +1,4 @@
-package ir
+package instruction
 
 import (
 	"fmt"

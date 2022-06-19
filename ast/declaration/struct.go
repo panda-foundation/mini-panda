@@ -86,7 +86,7 @@ func (s *Struct) PointerType() *core.TypePointer {
 
 func (s *Struct) ResolveType(c core.Context) {
 	if len(s.Variables) == 0 {
-		c.Error(s.Position, "struct should contain at least 1 variable member.")
+		c.Error(s.GetPosition(), "struct should contain at least 1 variable member.")
 	}
 	for _, v := range s.Variables {
 		v.ResolveType(c)
@@ -101,7 +101,7 @@ func (s *Struct) Validate(c core.Context) {
 	for _, v := range s.Variables {
 		v.Validate(c)
 		if v.Value != nil {
-			c.Error(v.Position, "struct member has no initialize value")
+			c.Error(v.GetPosition(), "struct member has no initialize value")
 		}
 	}
 	for _, f := range s.Functions {

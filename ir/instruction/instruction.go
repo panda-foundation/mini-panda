@@ -1,4 +1,6 @@
-package ir
+package instruction
+
+import "io"
 
 // === [ Instructions ] ========================================================
 
@@ -75,14 +77,11 @@ package ir
 //
 //    *ir.InstICmp         // https://godoc.org/github.com/llir/llvm/ir#InstICmp
 //    *ir.InstFCmp         // https://godoc.org/github.com/llir/llvm/ir#InstFCmp
-//    *ir.InstPhi          // https://godoc.org/github.com/llir/llvm/ir#InstPhi
-//    *ir.InstSelect       // https://godoc.org/github.com/llir/llvm/ir#InstSelect
-//    *ir.InstFreeze       // https://godoc.org/github.com/llir/llvm/ir#InstFreeze
 //    *ir.InstCall         // https://godoc.org/github.com/llir/llvm/ir#InstCall
-//    *ir.InstVAArg        // https://godoc.org/github.com/llir/llvm/ir#InstVAArg
-//    *ir.InstLandingPad   // https://godoc.org/github.com/llir/llvm/ir#InstLandingPad
-//    *ir.InstCatchPad     // https://godoc.org/github.com/llir/llvm/ir#InstCatchPad
-//    *ir.InstCleanupPad   // https://godoc.org/github.com/llir/llvm/ir#InstCleanupPad
+
+type irWriter interface {
+	writeIR(io.Writer) error
+}
 
 type Instruction interface {
 	irWriter
@@ -143,16 +142,9 @@ func (*InstBitCast) isInstruction()       {}
 func (*InstAddrSpaceCast) isInstruction() {}
 
 // Other instructions.
-func (*InstICmp) isInstruction()       {}
-func (*InstFCmp) isInstruction()       {}
-func (*InstPhi) isInstruction()        {}
-func (*InstSelect) isInstruction()     {}
-func (*InstFreeze) isInstruction()     {}
-func (*InstCall) isInstruction()       {}
-func (*InstVAArg) isInstruction()      {}
-func (*InstLandingPad) isInstruction() {}
-func (*InstCatchPad) isInstruction()   {}
-func (*InstCleanupPad) isInstruction() {}
+func (*InstICmp) isInstruction() {}
+func (*InstFCmp) isInstruction() {}
+func (*InstCall) isInstruction() {}
 
 // Terminator instructions
 func (*TermRet) isInstruction()         {}

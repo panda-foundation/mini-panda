@@ -16,7 +16,7 @@ func TestMiniPanda(t *testing.T) {
 	c.ParseFile("./micro-panda/test/struct.mpd")
 	c.ParseFile("./micro-panda/main.mpd")
 	if c.Validate() {
-		c.GenerateIR("./micro-panda/main")
+		//c.GenerateIR("./micro-panda/main")
 	}
 	t.Fail()
 }
