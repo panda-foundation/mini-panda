@@ -11,7 +11,6 @@ func (p *Parser) parseVariable(public bool, attributes []*declaration.Attribute)
 	v := &declaration.Variable{}
 	v.Public = public
 	v.Attributes = attributes
-	v.Token = p.token
 	if p.token == token.Const {
 		v.Const = true
 	}
@@ -23,7 +22,7 @@ func (p *Parser) parseVariable(public bool, attributes []*declaration.Attribute)
 		v.Value = p.parseExpression()
 	}
 	if v.Const && v.Value == nil {
-		p.error(v.Name.Position, "constant declaration must be initalized")
+		p.error(v.Name.GetPosition(), "constant declaration must be initalized")
 	}
 	p.expect(token.Semi)
 	return v
@@ -66,7 +65,7 @@ func (p *Parser) parseEnum(public bool, attributes []*declaration.Attribute) *de
 		}
 		err := e.AddMember(v)
 		if err != nil {
-			p.error(v.Position, err.Error())
+			p.error(v.GetPosition(), err.Error())
 		}
 		if p.token != token.Comma {
 			break
@@ -93,14 +92,14 @@ func (p *Parser) parseStruct(public bool, attributes []*declaration.Attribute) *
 			v := p.parseVariable(modifier, attr)
 			err := s.AddVariable(v)
 			if err != nil {
-				p.error(v.Position, err.Error())
+				p.error(v.GetPosition(), err.Error())
 			}
 
 		case token.Function:
 			f := p.parseFunction(modifier, attr)
 			err := s.AddFunction(f)
 			if err != nil {
-				p.error(f.Position, err.Error())
+				p.error(f.GetPosition(), err.Error())
 			}
 
 		default:
@@ -157,7 +156,7 @@ func (p *Parser) parseAttributes() []*declaration.Attribute {
 								Token: p.token,
 								Value: p.literal,
 							}
-							m.Values[name].Position = p.position
+							m.Values[name].SetPosition(p.position)
 						default:
 							p.expectedError(p.position, "basic literal (bool, char, int, float, string)")
 						}

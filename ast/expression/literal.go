@@ -1,6 +1,7 @@
 package expression
 
 import (
+	"fmt"
 	"math/big"
 	"strconv"
 
@@ -31,42 +32,47 @@ func (l *Literal) Validate(c core.Context, expected core.Type) {
 			ElementType: core.TypeU8,
 			Dimension:   []int{length},
 		}
+
 	case token.CHAR:
 		l.Typ = core.TypeU8
+
 	case token.FLOAT:
 		if expected != nil {
 			if core.IsFloat(expected) {
 				l.Typ = expected
 			} else {
-				c.Error(l.Position, "type mismatch")
+				c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect '%s' got 'float'", expected.String()))
 			}
 		} else {
 			l.Typ = core.TypeF32
 		}
+
 	case token.INT:
 		if expected != nil {
 			if core.IsNumber(expected) {
 				l.Typ = expected
 			} else {
-				c.Error(l.Position, "type mismatch")
+				c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect '%s' got 'int'", expected.String()))
 			}
 		} else {
 			l.Typ = core.TypeI32
 		}
+
 	case token.BOOL:
 		if expected != nil && !core.IsBool(expected) {
-			c.Error(l.Position, "type mismatch")
+			c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect '%s' got 'bool'", expected.String()))
 		} else {
 			l.Typ = core.TypeBool
 		}
+
 	case token.NULL:
 		if expected == nil {
-			c.Error(l.Position, "expect type for 'null'")
+			c.Error(l.GetPosition(), "expect type for 'null'")
 		} else {
 			if core.IsPointer(expected) {
 				l.Typ = expected
 			} else {
-				c.Error(l.Position, "type mismatch")
+				c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect 'pointer' got '%s'", expected.String()))
 			}
 		}
 	}

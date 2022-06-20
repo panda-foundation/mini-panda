@@ -1,6 +1,8 @@
 package expression
 
 import (
+	"fmt"
+
 	"github.com/panda-io/micro-panda/ast/core"
 )
 
@@ -19,7 +21,7 @@ func (s *Subscripting) Validate(c core.Context, expected core.Type) {
 			for _, e := range s.Indexes {
 				e.Validate(c, nil)
 				if !core.IsInteger(e.Type()) {
-					c.Error(e.GetPosition(), "expect integer index for array")
+					c.Error(e.GetPosition(), fmt.Sprintf("expect integer index for array, got '%s'", e.Type().String()))
 				}
 			}
 		} else if len(s.Indexes) < len(t.Dimension) {
@@ -30,7 +32,7 @@ func (s *Subscripting) Validate(c core.Context, expected core.Type) {
 			for _, e := range s.Indexes {
 				e.Validate(c, nil)
 				if !core.IsInteger(e.Type()) {
-					c.Error(e.GetPosition(), "expect integer index for array")
+					c.Error(e.GetPosition(), fmt.Sprintf("expect integer index for array, got '%s'", e.Type().String()))
 				}
 			}
 			for i := len(t.Dimension) - len(s.Indexes) - 1; i > 0; i-- {
@@ -38,9 +40,9 @@ func (s *Subscripting) Validate(c core.Context, expected core.Type) {
 			}
 			s.Typ = array
 		} else {
-			c.Error(s.Position, "mismatch array dimension")
+			c.Error(s.GetPosition(), "mismatch array dimension")
 		}
 	} else {
-		c.Error(s.Position, "expect array type")
+		c.Error(s.GetPosition(), "expect array type")
 	}
 }

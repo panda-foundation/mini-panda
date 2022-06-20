@@ -12,7 +12,7 @@ func (p *Parser) parseExpression() core.Expression {
 
 func (p *Parser) parseIdentifier() *expression.Identifier {
 	e := &expression.Identifier{}
-	e.Position = p.position
+	e.SetPosition(p.position)
 	if p.token == token.IDENT {
 		e.Name = p.literal
 		p.next()
@@ -31,7 +31,7 @@ func (p *Parser) parseOperand() core.Expression {
 		token.Uint8, token.Uint16, token.Uint32, token.Uint64,
 		token.Float16, token.Float32, token.Float64, token.Pointer, token.LeftBracket:
 		e := &expression.Conversion{}
-		e.Position = p.position
+		e.SetPosition(p.position)
 		e.Typ = p.parseType()
 		p.expect(token.LeftParen)
 		e.Value = p.parseExpression()
@@ -40,7 +40,7 @@ func (p *Parser) parseOperand() core.Expression {
 
 	case token.CHAR, token.INT, token.FLOAT, token.STRING, token.BOOL, token.NULL, token.Void:
 		e := &expression.Literal{}
-		e.Position = p.position
+		e.SetPosition(p.position)
 		e.Token = p.token
 		e.Value = p.literal
 		p.next()
@@ -48,7 +48,7 @@ func (p *Parser) parseOperand() core.Expression {
 
 	case token.LeftParen:
 		e := &expression.Parentheses{}
-		e.Position = p.position
+		e.SetPosition(p.position)
 		p.next()
 		e.Expression = p.parseExpression()
 		p.expect(token.RightParen)
@@ -56,7 +56,7 @@ func (p *Parser) parseOperand() core.Expression {
 
 	case token.LeftBrace:
 		e := &expression.Initializer{}
-		e.Position = p.position
+		e.SetPosition(p.position)
 		p.next()
 		for {
 			e.Expressions = append(e.Expressions, p.parseExpression())
@@ -74,13 +74,13 @@ func (p *Parser) parseOperand() core.Expression {
 
 	case token.This:
 		e := &expression.This{}
-		e.Position = p.position
+		e.SetPosition(p.position)
 		p.next()
 		return e
 
 	case token.Sizeof:
 		e := &expression.Sizeof{}
-		e.Position = p.position
+		e.SetPosition(p.position)
 		p.next()
 		p.expect(token.LeftParen)
 		e.Target = p.parseType()
@@ -99,7 +99,7 @@ func (p *Parser) parsePrimaryExpression() core.Expression {
 		switch p.token {
 		case token.Dot:
 			e := &expression.MemberAccess{}
-			e.Position = p.position
+			e.SetPosition(p.position)
 			p.next()
 			e.Parent = x
 			e.Member = p.parseIdentifier()
@@ -107,7 +107,7 @@ func (p *Parser) parsePrimaryExpression() core.Expression {
 
 		case token.LeftBracket:
 			e := &expression.Subscripting{}
-			e.Position = p.position
+			e.SetPosition(p.position)
 			e.Parent = x
 			for p.token == token.LeftBracket {
 				p.next()
@@ -118,21 +118,21 @@ func (p *Parser) parsePrimaryExpression() core.Expression {
 
 		case token.LeftParen:
 			e := &expression.Invocation{}
-			e.Position = p.position
+			e.SetPosition(p.position)
 			e.Function = x
 			e.Arguments = p.parseArguments()
 			x = e
 
 		case token.PlusPlus:
 			e := &expression.Increment{}
-			e.Position = p.position
+			e.SetPosition(p.position)
 			e.Expression = x
 			p.next()
 			return e
 
 		case token.MinusMinus:
 			e := &expression.Decrement{}
-			e.Position = p.position
+			e.SetPosition(p.position)
 			e.Expression = x
 			p.next()
 			return e
@@ -145,9 +145,9 @@ func (p *Parser) parsePrimaryExpression() core.Expression {
 
 func (p *Parser) parseUnaryExpression() core.Expression {
 	switch p.token {
-	case token.Plus, token.Minus, token.Not, token.Complement, token.BitAnd:
+	case token.Plus, token.Minus, token.Not, token.Complement, token.BitAnd, token.Mul:
 		e := &expression.Unary{}
-		e.Position = p.position
+		e.SetPosition(p.position)
 		e.Operator = p.token
 		p.next()
 		e.Expression = p.parseUnaryExpression()

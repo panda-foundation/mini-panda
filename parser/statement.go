@@ -10,21 +10,21 @@ func (p *Parser) parseStatement() core.Statement {
 	switch p.token {
 	case token.Break:
 		s := &statement.Break{}
-		s.Position = p.position
+		s.SetPosition(p.position)
 		p.next()
 		p.expect(token.Semi)
 		return s
 
 	case token.Continue:
 		s := &statement.Continue{}
-		s.Position = p.position
+		s.SetPosition(p.position)
 		p.next()
 		p.expect(token.Semi)
 		return s
 
 	case token.Return:
 		s := &statement.Return{}
-		s.Position = p.position
+		s.SetPosition(p.position)
 		p.next()
 		if p.token != token.Semi {
 			s.Expression = p.parseExpression()
@@ -53,7 +53,7 @@ func (p *Parser) parseSimpleStatement(consumeSemi bool) core.Statement {
 	switch p.token {
 	case token.Semi:
 		s := &statement.Empty{}
-		s.Position = p.position
+		s.SetPosition(p.position)
 		if consumeSemi {
 			p.expect(token.Semi)
 		}
@@ -72,7 +72,7 @@ func (p *Parser) parseSimpleStatement(consumeSemi bool) core.Statement {
 			p.expect(token.Semi)
 		}
 		s := &statement.ExpressionStatement{}
-		s.Position = position
+		s.SetPosition(position)
 		s.Expression = x
 		return s
 
@@ -84,7 +84,7 @@ func (p *Parser) parseSimpleStatement(consumeSemi bool) core.Statement {
 
 func (p *Parser) parseDeclarationStatement(consumeSemi bool) *statement.DeclarationStatement {
 	s := &statement.DeclarationStatement{}
-	s.Position = p.position
+	s.SetPosition(p.position)
 	p.next()
 	s.Name = p.parseIdentifier()
 	if p.token != token.Assign && p.token != token.Semi && p.token != token.Colon {
@@ -102,7 +102,7 @@ func (p *Parser) parseDeclarationStatement(consumeSemi bool) *statement.Declarat
 
 func (p *Parser) parseBlockStatement() *statement.Block {
 	s := &statement.Block{}
-	s.Position = p.position
+	s.SetPosition(p.position)
 	p.next()
 	for p.token != token.RightBrace {
 		s.Statements = append(s.Statements, p.parseStatement())
@@ -147,7 +147,7 @@ func (p *Parser) parseIfStatement() *statement.If {
 
 func (p *Parser) parseSwitchStatement() *statement.Switch {
 	s := &statement.Switch{}
-	s.Position = p.position
+	s.SetPosition(p.position)
 	p.next()
 	p.expect(token.LeftParen)
 	first := p.parseSimpleStatement(false)
@@ -174,7 +174,7 @@ func (p *Parser) parseSwitchStatement() *statement.Switch {
 		s.Default = p.parseCaseStatement()
 	}
 	if len(s.Cases) == 0 {
-		p.error(s.Position, "expect 'case'")
+		p.error(s.GetPosition(), "expect 'case'")
 	}
 	p.expect(token.RightBrace)
 	return s
@@ -182,7 +182,7 @@ func (p *Parser) parseSwitchStatement() *statement.Switch {
 
 func (p *Parser) parseCaseStatement() *statement.Case {
 	s := &statement.Case{}
-	s.Position = p.position
+	s.SetPosition(p.position)
 	s.Token = p.token
 	if p.token == token.Case {
 		p.next()
@@ -203,7 +203,7 @@ func (p *Parser) parseForStatement() core.Statement {
 	p.next()
 	if p.token != token.LeftParen {
 		s := &statement.For{}
-		s.Position = position
+		s.SetPosition(position)
 		s.Body = p.parseStatement()
 		return s
 	} else {
@@ -212,7 +212,7 @@ func (p *Parser) parseForStatement() core.Statement {
 		if p.token == token.RightParen {
 			p.next()
 			s := &statement.For{}
-			s.Position = position
+			s.SetPosition(position)
 			if expr, ok := first.(*statement.ExpressionStatement); ok {
 				s.Condition = expr.Expression
 			} else {

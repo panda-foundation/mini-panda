@@ -17,7 +17,6 @@ func NewContext(p *Program) core.Context {
 type Context struct {
 	Program  *Program
 	Function *declaration.Function
-	Returned bool
 
 	parent  *Context
 	objects map[string]core.Type
@@ -64,20 +63,26 @@ func (c *Context) FindObject(name string) core.Type {
 func (c *Context) ResolveType(v core.Type) core.Type {
 	switch t := v.(type) {
 	case *core.TypeName:
-		d := c.FindDeclarationByType(t)
+		d := c.FindDeclaration(t)
 		if d == nil {
 			c.Program.Error(v.GetPosition(), "type not defined")
 		} else {
-			if f, ok := d.(*declaration.Function); ok {
-				return f.Typ
-			} else if _, ok := d.(*declaration.Struct); ok {
-				// struct
-				t.Qualified = d.QualifiedName()
-			} else {
+			t.Qualified = d.QualifiedName()
+			switch i := d.(type) {
+			case *declaration.Function:
+				return i.Typ
+
+			case *declaration.Struct:
+
+			case *declaration.Enum:
+				t.IsEnum = true
+
+			default:
 				c.Program.Error(v.GetPosition(), "type not defined")
 			}
 		}
 		return t
+
 	case *core.TypeArray:
 		t.ElementType = c.ResolveType(t.ElementType)
 		if t.Dimension[0] < 0 {
@@ -89,9 +94,11 @@ func (c *Context) ResolveType(v core.Type) core.Type {
 			}
 		}
 		return t
+
 	case *core.TypePointer:
 		t.ElementType = c.ResolveType(t.ElementType)
 		return t
+
 	case *core.TypeFunction:
 		t.ReturnType = c.ResolveType(t.ReturnType)
 		for i := 0; i < len(t.Parameters); i++ {
@@ -104,38 +111,17 @@ func (c *Context) ResolveType(v core.Type) core.Type {
 			}
 		}
 		return t
+
 	default:
 		return t
 	}
 }
 
-func (c *Context) FindLocalDeclaration(member string) core.Declaration {
-	qualified := c.Program.Module.Namespace + "." + member
-	if d, ok := c.Program.Declarations[qualified]; ok {
-		return d
+func (c *Context) FindDeclaration(t *core.TypeName) core.Declaration {
+	if t.Qualified == "" {
+		return c.FindLocalDeclaration(t.Name)
 	}
-	qualified = core.Global + "." + member
-	if d, ok := c.Program.Declarations[qualified]; ok {
-		return d
-	}
-	return nil
-}
-
-func (c *Context) FindDeclarationByName(selector, member string) core.Declaration {
-	if selector == "" {
-		return c.FindLocalDeclaration(member)
-	}
-	for _, i := range c.Program.Module.Imports {
-		if i.Alias == selector {
-			qualified := i.Namespace + "." + member
-			return c.Program.Declarations[qualified]
-		}
-	}
-	return nil
-}
-
-func (c *Context) FindDeclarationByType(t *core.TypeName) core.Declaration {
-	d := c.FindDeclarationByName(t.Selector, t.Name)
+	d := c.FindQualifiedDeclaration(t.Qualified)
 	if _, ok := d.(*declaration.Enum); ok {
 		t.IsEnum = true
 	}
@@ -143,23 +129,36 @@ func (c *Context) FindDeclarationByType(t *core.TypeName) core.Declaration {
 	return d
 }
 
+func (c *Context) FindLocalDeclaration(name string) core.Declaration {
+	qualified := fmt.Sprintf("%s.%s", c.Program.Module.Namespace, name)
+	if d, ok := c.Program.Declarations[qualified]; ok {
+		return d
+	}
+	qualified = fmt.Sprintf("%s.%s", core.Global, name)
+	if d, ok := c.Program.Declarations[qualified]; ok {
+		return d
+	}
+	for _, i := range c.Program.Module.Imports {
+		qualified = fmt.Sprintf("%s.%s", i.Namespace, name)
+		if d, ok := c.Program.Declarations[qualified]; ok {
+			return d
+		}
+	}
+	return nil
+}
+
 func (c *Context) FindQualifiedDeclaration(qualified string) core.Declaration {
 	return c.Program.Declarations[qualified]
 }
 
 func (c *Context) IsNamespace(name string) bool {
-	for _, i := range c.Program.Module.Imports {
-		if i.Alias == name {
-			return true
-		}
-	}
-	return false
+	return c.Program.IsNamespace(name)
 }
 
-func (c *Context) SetFunction(f core.Declaration) {
+func (c *Context) SetFunction(f core.Function) {
 	c.Function = f.(*declaration.Function)
 }
 
-func (c *Context) ReturnType() core.Type {
-	return c.Function.ReturnType
+func (c *Context) GetFunction() core.Function {
+	return c.Function
 }

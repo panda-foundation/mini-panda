@@ -36,19 +36,19 @@ func (i *Invocation) Validate(c core.Context, expected core.Type) {
 						Expression: m.Parent,
 					}
 					u.SetPosition(m.Parent.GetPosition())
-					i.Arguments.Arguments = append([]core.Expression{u}, i.Arguments.Arguments...)
+					i.Arguments = append([]core.Expression{u}, i.Arguments...)
 				} else if core.IsPointer(m.Parent.Type()) {
-					i.Arguments.Arguments = append([]core.Expression{m.Parent}, i.Arguments.Arguments...)
+					i.Arguments = append([]core.Expression{m.Parent}, i.Arguments...)
 				}
 			}
 		}
-		if i.Arguments == nil {
+		if len(i.Arguments) == 0 {
 			if len(f.Parameters) > 0 {
 				c.Error(i.GetPosition(), "expect arguments")
 			}
-		} else if len(f.Parameters) == len(i.Arguments.Arguments) {
+		} else if len(f.Parameters) == len(i.Arguments) {
 			for n := 0; n < len(f.Parameters); n++ {
-				i.Arguments.Arguments[n].Validate(c, f.Parameters[n])
+				i.Arguments[n].Validate(c, f.Parameters[n])
 			}
 		} else {
 			c.Error(i.GetPosition(), "mismatch arguments and parameters")

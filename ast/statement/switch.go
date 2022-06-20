@@ -27,7 +27,7 @@ func (s *Switch) Validate(c core.Context) {
 	}
 	var operandType core.Type
 	if s.Operand == nil {
-		c.Error(s.Position, "expect switch operand")
+		c.Error(s.GetPosition(), "expect switch operand")
 		return
 	} else {
 		s.Operand.Validate(ctx, nil)
@@ -49,11 +49,11 @@ func (s *Switch) Validate(c core.Context) {
 
 func (c *Case) Validate(ctx core.Context, operandType core.Type) {
 	if c.Case == nil {
-		ctx.Error(c.Position, "expect case expression")
+		ctx.Error(c.GetPosition(), "expect case expression")
 	} else {
 		c.Case.Validate(ctx, operandType)
 		if !c.Case.Type().Equal(operandType) {
-			ctx.Error(c.Position, "case operand type mismatch with switch operand")
+			ctx.Error(c.GetPosition(), "case operand type mismatch with switch operand")
 		}
 	}
 	if c.Body != nil {

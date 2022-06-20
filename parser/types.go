@@ -2,16 +2,17 @@ package parser
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/panda-io/micro-panda/ast/core"
-	"github.com/panda-io/micro-panda/ast/expression"
+	"github.com/panda-io/micro-panda/ast/declaration"
 	"github.com/panda-io/micro-panda/token"
 )
 
 func (p *Parser) parseType() core.Type {
 	if p.token.IsScalar() {
 		t := &core.TypeBuiltin{}
-		t.Position = p.position
+		t.SetPosition(p.position)
 		t.Token = p.token
 		p.next()
 		return t
@@ -32,7 +33,7 @@ func (p *Parser) parseType() core.Type {
 
 func (p *Parser) parseTypeArray() *core.TypeArray {
 	t := &core.TypeArray{}
-	t.Position = p.position
+	t.SetPosition(p.position)
 	for p.token == token.LeftBracket {
 		p.next()
 		count := 0
@@ -52,12 +53,14 @@ func (p *Parser) parseTypeArray() *core.TypeArray {
 
 func (p *Parser) parseTypeName() *core.TypeName {
 	t := &core.TypeName{}
-	t.Position = p.position
-	t.Name = p.parseIdentifier().Name
-	if p.token == token.Dot {
-		p.next()
-		t.Selector = t.Name
-		t.Name = p.parseIdentifier().Name
+	t.SetPosition(p.position)
+	qualified := p.parseQualified()
+	if strings.Contains(qualified, ".") {
+		t.Qualified = qualified
+		names := strings.Split(qualified, ".")
+		t.Name = names[len(names)-1]
+	} else {
+		t.Name = qualified
 	}
 	return t
 }
@@ -74,8 +77,8 @@ func (p *Parser) parseTypePointer() *core.TypePointer {
 	return t
 }
 
-func (p *Parser) parseParameters() []*expression.Parameter {
-	t := []*expression.Parameter{}
+func (p *Parser) parseParameters() []*declaration.Parameter {
+	t := []*declaration.Parameter{}
 	p.expect(token.LeftParen)
 	if p.token == token.RightParen {
 		p.next()
@@ -90,34 +93,33 @@ func (p *Parser) parseParameters() []*expression.Parameter {
 	return t
 }
 
-func (p *Parser) parseParameter() *expression.Parameter {
-	t := &expression.Parameter{}
-	t.Position = p.position
+func (p *Parser) parseParameter() *declaration.Parameter {
+	t := &declaration.Parameter{}
+	t.SetPosition(p.position)
 	t.Name = p.parseIdentifier().Name
-	t.Type = p.parseType()
+	t.Typ = p.parseType()
 	return t
 }
 
-func (p *Parser) parseArguments() *expression.Arguments {
-	t := &expression.Arguments{}
-	t.Position = p.position
+func (p *Parser) parseArguments() []core.Expression {
+	expressions := []core.Expression{}
 	p.expect(token.LeftParen)
 	if p.token == token.RightParen {
 		p.next()
-		return t
+		return expressions
 	}
-	t.Arguments = append(t.Arguments, p.parseExpression())
+	expressions = append(expressions, p.parseExpression())
 	for p.token == token.Comma {
 		p.next()
-		t.Arguments = append(t.Arguments, p.parseExpression())
+		expressions = append(expressions, p.parseExpression())
 	}
 	p.expect(token.RightParen)
-	return t
+	return expressions
 }
 
 func (p *Parser) parseFunctionType() *core.TypeFunction {
 	t := &core.TypeFunction{}
-	t.Position = p.position
+	t.SetPosition(p.position)
 	p.expect(token.LeftParen)
 	if p.token == token.RightParen {
 		p.next()
