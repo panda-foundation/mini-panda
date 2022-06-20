@@ -1,0 +1,6 @@
+namespace;
+
+function test()
+{
+    console.write_string("hello micro-panda");
+}

@@ -1,16 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/parser"
-	"github.com/panda-io/micro-panda/target/llvm"
+
+	//"github.com/panda-io/micro-panda/target/llvm"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -79,30 +78,31 @@ func (c *Compiler) Validate() bool {
 }
 
 func (c *Compiler) GenerateIR(file string) {
-	p := llvm.NewProgram()
-	content := p.GenerateIR(c.program)
-	if err := ioutil.WriteFile(file+".ll", []byte(content), 0644); err != nil {
-		panic(err)
-	}
-	cmd := exec.Command("opt-10", "-o", file+".opt.ll", "-S", "--O2", file+".ll")
-	if out, err := cmd.CombinedOutput(); err != nil {
-		if err != nil {
-			fmt.Println(string(out))
+	/*
+		p := llvm.NewProgram()
+		content := p.GenerateIR(c.program)
+		if err := ioutil.WriteFile(file+".ll", []byte(content), 0644); err != nil {
+			panic(err)
 		}
-		return
-	}
-	cmd = exec.Command("llc-10", "-filetype=obj", "-o", file+".o", file+".opt.ll")
-	if out, err := cmd.CombinedOutput(); err != nil {
-		if err != nil {
-			fmt.Println(string(out))
+		cmd := exec.Command("opt-10", "-o", file+".opt.ll", "-S", "--O2", file+".ll")
+		if out, err := cmd.CombinedOutput(); err != nil {
+			if err != nil {
+				fmt.Println(string(out))
+			}
+			return
 		}
-		return
-	}
-	cmd = exec.Command("clang", "-o", file, file+".o")
-	if out, err := cmd.CombinedOutput(); err != nil {
-		if err != nil {
-			fmt.Println(string(out))
+		cmd = exec.Command("llc-10", "-filetype=obj", "-o", file+".o", file+".opt.ll")
+		if out, err := cmd.CombinedOutput(); err != nil {
+			if err != nil {
+				fmt.Println(string(out))
+			}
+			return
 		}
-		return
-	}
+		cmd = exec.Command("clang", "-o", file, file+".o")
+		if out, err := cmd.CombinedOutput(); err != nil {
+			if err != nil {
+				fmt.Println(string(out))
+			}
+			return
+		}*/
 }

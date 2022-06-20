@@ -15,14 +15,6 @@ type Binary struct {
 func (b *Binary) Validate(c core.Context, expected core.Type) {
 	b.Left.Validate(c, expected)
 	b.Right.Validate(c, b.Left.Type())
-	if b.Left.Type() == nil {
-		c.Error(b.Left.GetPosition(), "invalid type for binary expression")
-		return
-	}
-	if b.Right.Type() == nil {
-		c.Error(b.Right.GetPosition(), "invalid type for binary expression")
-		return
-	}
 
 	switch b.Operator {
 	case token.LeftShift, token.RightShift, token.BitXor, token.BitOr, token.BitAnd:

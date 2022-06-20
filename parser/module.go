@@ -27,7 +27,10 @@ func (p *Parser) parseSourceFile(file *token.File) {
 				p.error(v.Name.GetPosition(), fmt.Sprintf("variable %s redeclared", v.Name.Name))
 			}
 			m.Variables = append(m.Variables, v)
-			p.program.Declarations[v.Qualified] = v
+			err := p.program.AddDeclaration(v)
+			if err != nil {
+				p.error(v.Name.GetPosition(), err.Error())
+			}
 
 		case token.Function:
 			f := p.parseFunction(public, attr)
@@ -36,7 +39,10 @@ func (p *Parser) parseSourceFile(file *token.File) {
 				p.error(f.Name.GetPosition(), fmt.Sprintf("function %s redeclared", f.Name.Name))
 			}
 			m.Functions = append(m.Functions, f)
-			p.program.Declarations[f.Qualified] = f
+			err := p.program.AddDeclaration(f)
+			if err != nil {
+				p.error(f.Name.GetPosition(), err.Error())
+			}
 
 		case token.Enum:
 			e := p.parseEnum(public, attr)
@@ -45,7 +51,10 @@ func (p *Parser) parseSourceFile(file *token.File) {
 				p.error(e.Name.GetPosition(), fmt.Sprintf("enum %s redeclared", e.Name.Name))
 			}
 			m.Enums = append(m.Enums, e)
-			p.program.Declarations[e.Qualified] = e
+			err := p.program.AddDeclaration(e)
+			if err != nil {
+				p.error(e.Name.GetPosition(), err.Error())
+			}
 
 		case token.Struct:
 			s := p.parseStruct(public, attr)
@@ -54,7 +63,10 @@ func (p *Parser) parseSourceFile(file *token.File) {
 				p.error(s.Name.GetPosition(), fmt.Sprintf("class %s redeclared", s.Name.Name))
 			}
 			m.Structs = append(m.Structs, s)
-			p.program.Declarations[s.Qualified] = s
+			err := p.program.AddDeclaration(s)
+			if err != nil {
+				p.error(s.Name.GetPosition(), err.Error())
+			}
 
 		default:
 			p.expectedError(p.position, "declaration")

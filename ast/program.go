@@ -83,7 +83,10 @@ func NewProgram() *Program {
 func (p *Program) Reset() {
 	p.Modules = make(map[string]*Module)
 	p.Declarations = make(map[string]core.Declaration)
-	p.Namespace = &Namespace{}
+	p.Namespace = &Namespace{
+		Declarations: make(map[string]core.Declaration),
+		Children:     make(map[string]*Namespace),
+	}
 	p.Errors = p.Errors[:0]
 }
 

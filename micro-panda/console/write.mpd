@@ -1,9 +1,10 @@
 namespace console;
 
-import libc;
-
 const _max_float f64 = 1000000000;
 const _float_precision u8 = 6;
+
+@extern(name = "putchar")
+function putchar(char i32) i32;
 
 public function write_bool(value bool)
 {
@@ -21,71 +22,71 @@ public function write_i8(value i8)
 {
     if (value < 0)
     {
-        libc.putchar(i32('-'));
+        putchar(i32('-'));
         value = -value;
     }
     write_u64(u64(value));
 }
 
-public function write_i16(value i8)
+public function write_i16(value i16)
 {
     if (value < 0)
     {
-        libc.putchar(i32('-'));
+        putchar(i32('-'));
         value = -value;
     }
     write_u64(u64(value));
 }
 
-public function write_i32(value i8)
+public function write_i32(value i32)
 {
     if (value < 0)
     {
-        libc.putchar(i32('-'));
+        putchar(i32('-'));
         value = -value;
     }
     write_u64(u64(value));
 }
 
-public function write_i64(value i8)
+public function write_i64(value i64)
 {
     if (value < 0)
     {
-        libc.putchar(i32('-'));
+        putchar(i32('-'));
         value = -value;
     }
     write_u64(u64(value));
 }
 
-public function write_u8(value i8)
+public function write_u8(value u8)
 {
     write_u64(u64(value));
 }
 
-public function write_u16(value i8)
+public function write_u16(value u16)
 {
     write_u64(u64(value));
 }
 
-public function write_u32(value i8)
+public function write_u32(value u32)
 {
     write_u64(u64(value));
 }
 
-public function write_u64(value i8)
+public function write_u64(value u64)
 {
-    var buffer [20]i8;
+    var buffer [20]u8;
     var index i8 = 0;
     for (value != 0)
     {
-        var digit i8 = i8(value / 10);
+        var digit u8 = u8(value / 10);
         buffer[index] = '0' + digit;
         index++;
         value = value / 10;
     }
     for (var i i8 = index - 1; i >= 0; i--)
     {
-        libc.putchar(i32(buffer[i]));
+        putchar(i32(buffer[i]));
     }
 }
 
@@ -93,7 +94,7 @@ public function write_string(string []u8)
 {
     for (var i u32 = 0; string[i] != 0; i++)
     {
-        libc.putchar(i32(string[i]));
+        putchar(i32(string[i]));
     }
 }
 
@@ -102,7 +103,7 @@ public function write_f64(value f64)
 {
     if (value < 0)
     {
-        libc.putchar(i32('-'));
+        putchar(i32('-'));
         value = -value;
     }
 
