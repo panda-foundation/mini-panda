@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/panda-io/micro-panda/ir/core"
 	"github.com/panda-io/micro-panda/ir/types"
 )
 
@@ -12,14 +13,14 @@ import (
 // Struct is an LLVM IR struct constant.
 type Struct struct {
 	// Struct type.
-	Typ *types.StructType
+	Typ *core.StructType
 	// Struct fields.
 	Fields []Constant
 }
 
 // NewStruct returns a new struct constant based on the given struct type and
 // fields. The struct type is infered from the type of the fields if t is nil.
-func NewStruct(t *types.StructType, fields ...Constant) *Struct {
+func NewStruct(t *core.StructType, fields ...Constant) *Struct {
 	c := &Struct{
 		Fields: fields,
 		Typ:    t,

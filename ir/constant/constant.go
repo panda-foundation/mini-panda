@@ -1,18 +1,16 @@
 package constant
 
 import (
-	"io"
-
-	"github.com/panda-io/micro-panda/types"
-	"github.com/panda-io/micro-panda/value"
+	"github.com/panda-io/micro-panda/ir/core"
 )
 
-type irWriter interface {
-	writeIR(io.Writer) error
+func IsConstant(v core.Value) bool {
+	_, ok := v.(Constant)
+	return ok
 }
 
 type Constant interface {
-	value.Value
+	core.Value
 	isConstant()
 }
 
@@ -21,8 +19,8 @@ type Constant interface {
 // Convenience constants.
 var (
 	// Boolean constants.
-	True  = NewInt(types.I1, 1) // true
-	False = NewInt(types.I1, 0) // false
+	True  = NewInt(core.I1, 1) // true
+	False = NewInt(core.I1, 0) // false
 )
 
 // Constant is an LLVM IR constant; a value that is immutable at runtime, such
@@ -53,13 +51,6 @@ var (
 //
 //    *ir.Global   // https://godoc.org/github.com/llir/llvm/ir#Global
 //    *ir.Func     // https://godoc.org/github.com/llir/llvm/ir#Func
-//
-//
-// Addresses of basic blocks
-//
-// https://llvm.org/docs/LangRef.html#addresses-of-basic-blocks
-//
-//    *constant.BlockAddress   // https://godoc.org/github.com/llir/llvm/ir/constant#BlockAddress
 //
 // Constant expressions
 //

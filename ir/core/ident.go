@@ -5,6 +5,14 @@ import (
 	"strconv"
 )
 
+// Ident is a named variable.
+type Ident interface {
+	Name() string
+	SetName(name string)
+	ID() int64
+	SetID(id int64)
+}
+
 // GlobalIdent is a global identifier.
 type GlobalIdent struct {
 	GlobalName string
@@ -102,12 +110,4 @@ func (l *LocalIdent) ID() int64 {
 // SetID sets the ID of the local identifier.
 func (i *LocalIdent) SetID(id int64) {
 	i.LocalID = id
-}
-
-// Ident is a named variable.
-type Ident interface {
-	Name() string
-	SetName(name string)
-	ID() int64
-	SetID(id int64)
 }

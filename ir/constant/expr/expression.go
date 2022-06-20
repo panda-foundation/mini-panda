@@ -40,21 +40,6 @@ package ir
 //    *constant.ExprOr     // https://godoc.org/github.com/llir/llvm/ir/constant#ExprOr
 //    *constant.ExprXor    // https://godoc.org/github.com/llir/llvm/ir/constant#ExprXor
 //
-// Vector expressions
-//
-// https://llvm.org/docs/LangRef.html#constant-expressions
-//
-//    *constant.ExprExtractElement   // https://godoc.org/github.com/llir/llvm/ir/constant#ExprExtractElement
-//    *constant.ExprInsertElement    // https://godoc.org/github.com/llir/llvm/ir/constant#ExprInsertElement
-//    *constant.ExprShuffleVector    // https://godoc.org/github.com/llir/llvm/ir/constant#ExprShuffleVector
-//
-// Aggregate expressions
-//
-// https://llvm.org/docs/LangRef.html#constant-expressions
-//
-//    *constant.ExprExtractValue   // https://godoc.org/github.com/llir/llvm/ir/constant#ExprExtractValue
-//    *constant.ExprInsertValue    // https://godoc.org/github.com/llir/llvm/ir/constant#ExprInsertValue
-//
 // Memory expressions
 //
 // https://llvm.org/docs/LangRef.html#constant-expressions
@@ -66,7 +51,6 @@ package ir
 // https://llvm.org/docs/LangRef.html#constant-expressions
 //
 //    *constant.ExprTrunc           // https://godoc.org/github.com/llir/llvm/ir/constant#ExprTrunc
-//    *constant.ExprZExt            // https://godoc.org/github.com/llir/llvm/ir/constant#ExprZExt
 //    *constant.ExprSExt            // https://godoc.org/github.com/llir/llvm/ir/constant#ExprSExt
 //    *constant.ExprFPTrunc         // https://godoc.org/github.com/llir/llvm/ir/constant#ExprFPTrunc
 //    *constant.ExprFPExt           // https://godoc.org/github.com/llir/llvm/ir/constant#ExprFPExt
@@ -74,10 +58,7 @@ package ir
 //    *constant.ExprFPToSI          // https://godoc.org/github.com/llir/llvm/ir/constant#ExprFPToSI
 //    *constant.ExprUIToFP          // https://godoc.org/github.com/llir/llvm/ir/constant#ExprUIToFP
 //    *constant.ExprSIToFP          // https://godoc.org/github.com/llir/llvm/ir/constant#ExprSIToFP
-//    *constant.ExprPtrToInt        // https://godoc.org/github.com/llir/llvm/ir/constant#ExprPtrToInt
-//    *constant.ExprIntToPtr        // https://godoc.org/github.com/llir/llvm/ir/constant#ExprIntToPtr
 //    *constant.ExprBitCast         // https://godoc.org/github.com/llir/llvm/ir/constant#ExprBitCast
-//    *constant.ExprAddrSpaceCast   // https://godoc.org/github.com/llir/llvm/ir/constant#ExprAddrSpaceCast
 //
 // Other expressions
 //
@@ -85,7 +66,6 @@ package ir
 //
 //    *constant.ExprICmp     // https://godoc.org/github.com/llir/llvm/ir/constant#ExprICmp
 //    *constant.ExprFCmp     // https://godoc.org/github.com/llir/llvm/ir/constant#ExprFCmp
-//    *constant.ExprSelect   // https://godoc.org/github.com/llir/llvm/ir/constant#ExprSelect
 
 type Expression interface {
 	Constant
@@ -176,30 +156,6 @@ func (*ExprOr) isConstant() {}
 // constant.Constant interface.
 func (*ExprXor) isConstant() {}
 
-// --- [ Vector expressions ] --------------------------------------------------
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprExtractElement) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprInsertElement) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprShuffleVector) isConstant() {}
-
-// --- [ Aggregate expressions ] -----------------------------------------------
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprExtractValue) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprInsertValue) isConstant() {}
-
 // --- [ Memory expressions ] --------------------------------------------------
 
 // IsConstant ensures that only constants can be assigned to the
@@ -211,10 +167,6 @@ func (*ExprGetElementPtr) isConstant() {}
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
 func (*ExprTrunc) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprZExt) isConstant() {}
 
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
@@ -246,19 +198,7 @@ func (*ExprSIToFP) isConstant() {}
 
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
-func (*ExprPtrToInt) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprIntToPtr) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
 func (*ExprBitCast) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprAddrSpaceCast) isConstant() {}
 
 // --- [ Other expressions ] ---------------------------------------------------
 
@@ -269,7 +209,3 @@ func (*ExprICmp) isConstant() {}
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
 func (*ExprFCmp) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprSelect) isConstant() {}

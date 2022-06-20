@@ -73,47 +73,6 @@ func (inst *InstTrunc) LLString() string {
 	return buf.String()
 }
 
-// ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstZExt is an LLVM IR zext instruction.
-type InstZExt struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
-}
-
-// NewZExt returns a new zext instruction based on the given source value and
-// target type.
-func NewZExt(from Value, to Type) *InstZExt {
-	return &InstZExt{From: from, To: to}
-}
-
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
-func (inst *InstZExt) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
-}
-
-// Type returns the type of the instruction.
-func (inst *InstZExt) Type() Type {
-	return inst.To
-}
-
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'zext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstZExt) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "zext %s to %s", inst.From, inst.To)
-	return buf.String()
-}
-
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstSExt is an LLVM IR sext instruction.
@@ -401,88 +360,6 @@ func (inst *InstSIToFP) LLString() string {
 	return buf.String()
 }
 
-// ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstPtrToInt is an LLVM IR ptrtoint instruction.
-type InstPtrToInt struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
-}
-
-// NewPtrToInt returns a new ptrtoint instruction based on the given source
-// value and target type.
-func NewPtrToInt(from Value, to Type) *InstPtrToInt {
-	return &InstPtrToInt{From: from, To: to}
-}
-
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
-func (inst *InstPtrToInt) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
-}
-
-// Type returns the type of the instruction.
-func (inst *InstPtrToInt) Type() Type {
-	return inst.To
-}
-
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'ptrtoint' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstPtrToInt) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "ptrtoint %s to %s", inst.From, inst.To)
-	return buf.String()
-}
-
-// ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstIntToPtr is an LLVM IR inttoptr instruction.
-type InstIntToPtr struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
-}
-
-// NewIntToPtr returns a new inttoptr instruction based on the given source
-// value and target type.
-func NewIntToPtr(from Value, to Type) *InstIntToPtr {
-	return &InstIntToPtr{From: from, To: to}
-}
-
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
-func (inst *InstIntToPtr) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
-}
-
-// Type returns the type of the instruction.
-func (inst *InstIntToPtr) Type() Type {
-	return inst.To
-}
-
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'inttoptr' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstIntToPtr) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "inttoptr %s to %s", inst.From, inst.To)
-	return buf.String()
-}
-
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstBitCast is an LLVM IR bitcast instruction.
@@ -521,46 +398,5 @@ func (inst *InstBitCast) LLString() string {
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "bitcast %s to %s", inst.From, inst.To)
-	return buf.String()
-}
-
-// ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstAddrSpaceCast is an LLVM IR addrspacecast instruction.
-type InstAddrSpaceCast struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
-}
-
-// NewAddrSpaceCast returns a new addrspacecast instruction based on the given
-// source value and target type.
-func NewAddrSpaceCast(from Value, to Type) *InstAddrSpaceCast {
-	return &InstAddrSpaceCast{From: from, To: to}
-}
-
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
-func (inst *InstAddrSpaceCast) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
-}
-
-// Type returns the type of the instruction.
-func (inst *InstAddrSpaceCast) Type() Type {
-	return inst.To
-}
-
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'addrspacecast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstAddrSpaceCast) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "addrspacecast %s to %s", inst.From, inst.To)
 	return buf.String()
 }

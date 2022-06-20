@@ -7,8 +7,6 @@ import (
 func TestMiniPanda(t *testing.T) {
 	c := NewCompiler(nil)
 	c.ParseFile("./micro-panda/console/write.mpd")
-	//c.ParseFile("./micro-panda/libc/memory.mpd")
-	//c.ParseFile("./micro-panda/llvm/memory.mpd")
 	//c.ParseFile("./micro-panda/test/test.mpd")
 	//c.ParseFile("./micro-panda/test/expression.mpd")
 	//c.ParseFile("./micro-panda/test/function.mpd")

@@ -1,4 +1,3 @@
-// Package core implements encoding of identifiers for LLVM IR assembly.
 package core
 
 import (
@@ -14,14 +13,7 @@ import (
 //    "a b" -> `@"a b"`
 //    "世" -> `@"\E4\B8\96"`
 //    "2" -> `@"2"`
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
 func globalName(name string) string {
-	// Positive numeric global names are quoted to distinguish global names from
-	// global IDs; e.g.
-	//
-	//    @"2"
 	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
 		return `@"` + name + `"`
 	}
@@ -32,9 +24,6 @@ func globalName(name string) string {
 //
 // Examples:
 //    "42" -> "@42"
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
 func globalID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative global ID (%d); should be represented as global name", id))
@@ -49,14 +38,7 @@ func globalID(id int64) string {
 //    "a b" -> `%"a b"`
 //    "世" -> `%"\E4\B8\96"`
 //    "2" -> `%"2"`
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
 func localName(name string) string {
-	// Positive numeric local names are quoted to distinguish local names from
-	// local IDs; e.g.
-	//
-	//    %"2"
 	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
 		return `%"` + name + `"`
 	}
@@ -67,9 +49,6 @@ func localName(name string) string {
 //
 // Examples:
 //    "42" -> "%42"
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
 func localID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative local ID (%d); should be represented as local name", id))
@@ -84,14 +63,7 @@ func localID(id int64) string {
 //    "a b" -> `"a b":`
 //    "世" -> `"\E4\B8\96":`
 //    "2" -> `"2":`
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
 func labelName(name string) string {
-	// Positive numeric label names are quoted to distinguish label names from
-	// label IDs; e.g.
-	//
-	//    "2":
 	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
 		return `"` + name + `":`
 	}
@@ -102,9 +74,6 @@ func labelName(name string) string {
 //
 // Examples:
 //    "42" -> 42:
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
 func labelID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative label ID (%d); should be represented as label name", id))
@@ -119,9 +88,6 @@ func labelID(id int64) string {
 //    "a b" -> `%"a b"`
 //    "世" -> `%"\E4\B8\96"`
 //    "2" -> `%2`
-//
-// References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
 func typeName(name string) string {
 	return "%" + escapeIdent(name)
 }

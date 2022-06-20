@@ -3,6 +3,8 @@ package constant
 import (
 	"fmt"
 	"math/big"
+
+	"github.com/panda-io/micro-panda/ir/core"
 )
 
 // --- [ Integer constants ] ---------------------------------------------------
@@ -10,14 +12,14 @@ import (
 // ConstInt is an LLVM IR integer constant.
 type Int struct {
 	// Integer type.
-	Typ *IntType
+	Typ *core.IntType
 	// Integer constant.
 	X *big.Int
 }
 
 // NewInt returns a new integer constant based on the given integer type and
 // 64-bit interger value.
-func NewInt(typ *IntType, x int64) *Int {
+func NewInt(typ *core.IntType, x int64) *Int {
 	return &Int{Typ: typ, X: big.NewInt(x)}
 }
 
@@ -44,16 +46,16 @@ func NewBool(x bool) *Int {
 //         0b[01]+
 //    * oct integer literal
 //         0o[0-7]
-func NewIntFromString(typ *IntType, s string) *Int {
+func NewIntFromString(typ *core.IntType, s string) *Int {
 	// Boolean literal.
 	switch s {
 	case "true":
-		if !typ.Equal(I1) {
+		if !typ.Equal(core.I1) {
 			panic(fmt.Errorf("invalid boolean type; expected i1, got %T", typ))
 		}
 		return True
 	case "false":
-		if !typ.Equal(I1) {
+		if !typ.Equal(core.I1) {
 			panic(fmt.Errorf("invalid boolean type; expected i1, got %T", typ))
 		}
 		return False
@@ -69,7 +71,7 @@ func (c *Int) String() string {
 }
 
 // Type returns the type of the constant.
-func (c *Int) Type() Type {
+func (c *Int) Type() core.Type {
 	return c.Typ
 }
 

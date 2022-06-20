@@ -51,50 +51,6 @@ func (e *ExprTrunc) Simplify() Constant {
 	return e
 }
 
-// ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ExprZExt is an LLVM IR zext expression.
-type ExprZExt struct {
-	// Value before conversion.
-	From Constant
-	// Type after conversion.
-	To Type
-}
-
-// NewZExt returns a new zext expression based on the given source value and
-// target type.
-func NewExprZExt(from Constant, to Type) *ExprZExt {
-	e := &ExprZExt{From: from, To: to}
-	// Compute type.
-	e.Type()
-	return e
-}
-
-// String returns the LLVM syntax representation of the constant expression as a
-// type-value pair.
-func (e *ExprZExt) String() string {
-	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
-}
-
-// Type returns the type of the constant expression.
-func (e *ExprZExt) Type() Type {
-	return e.To
-}
-
-// Ident returns the identifier associated with the constant expression.
-func (e *ExprZExt) Ident() string {
-	// 'zext' '(' From=TypeConst 'to' To=Type ')'
-	return fmt.Sprintf("zext (%s to %s)", e.From, e.To)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprZExt) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprSExt is an LLVM IR sext expression.
@@ -433,93 +389,6 @@ func (e *ExprSIToFP) Simplify() Constant {
 	return e
 }
 
-// ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ExprPtrToInt is an LLVM IR ptrtoint expression.
-type ExprPtrToInt struct {
-	// Value before conversion.
-	From Constant
-	// Type after conversion.
-	To Type
-}
-
-// NewPtrToInt returns a new ptrtoint expression based on the given source value
-// and target type.
-func NewExprPtrToInt(from Constant, to Type) *ExprPtrToInt {
-	e := &ExprPtrToInt{From: from, To: to}
-	// Compute type.
-	e.Type()
-	return e
-}
-
-// String returns the LLVM syntax representation of the constant expression as a
-// type-value pair.
-func (e *ExprPtrToInt) String() string {
-	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
-}
-
-// Type returns the type of the constant expression.
-func (e *ExprPtrToInt) Type() Type {
-	return e.To
-}
-
-// Ident returns the identifier associated with the constant expression.
-func (e *ExprPtrToInt) Ident() string {
-	// 'ptrtoint' '(' From=TypeConst 'to' To=Type ')'
-	return fmt.Sprintf("ptrtoint (%s to %s)", e.From, e.To)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprPtrToInt) Simplify() Constant {
-	// cannot simplify further
-	return e
-}
-
-// ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ExprIntToPtr is an LLVM IR inttoptr expression.
-type ExprIntToPtr struct {
-	// Value before conversion.
-	From Constant
-	// Type after conversion.
-	To Type
-}
-
-// NewIntToPtr returns a new inttoptr expression based on the given source value
-// and target type.
-func NewExprIntToPtr(from Constant, to Type) *ExprIntToPtr {
-	e := &ExprIntToPtr{From: from, To: to}
-	// Compute type.
-	e.Type()
-	return e
-}
-
-// String returns the LLVM syntax representation of the constant expression as a
-// type-value pair.
-func (e *ExprIntToPtr) String() string {
-	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
-}
-
-// Type returns the type of the constant expression.
-func (e *ExprIntToPtr) Type() Type {
-	return e.To
-}
-
-// Ident returns the identifier associated with the constant expression.
-func (e *ExprIntToPtr) Ident() string {
-	// 'inttoptr' '(' From=TypeConst 'to' To=Type ')'
-	return fmt.Sprintf("inttoptr (%s to %s)", e.From, e.To)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprIntToPtr) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprBitCast is an LLVM IR bitcast expression.
@@ -559,50 +428,6 @@ func (e *ExprBitCast) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprBitCast) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
-// ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// ExprAddrSpaceCast is an LLVM IR addrspacecast expression.
-type ExprAddrSpaceCast struct {
-	// Value before conversion.
-	From Constant
-	// Type after conversion.
-	To Type
-}
-
-// NewAddrSpaceCast returns a new addrspacecast expression based on the given
-// source value and target type.
-func NewExprAddrSpaceCast(from Constant, to Type) *ExprAddrSpaceCast {
-	e := &ExprAddrSpaceCast{From: from, To: to}
-	// Compute type.
-	e.Type()
-	return e
-}
-
-// String returns the LLVM syntax representation of the constant expression as a
-// type-value pair.
-func (e *ExprAddrSpaceCast) String() string {
-	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
-}
-
-// Type returns the type of the constant expression.
-func (e *ExprAddrSpaceCast) Type() Type {
-	return e.To
-}
-
-// Ident returns the identifier associated with the constant expression.
-func (e *ExprAddrSpaceCast) Ident() string {
-	// 'addrspacecast' '(' From=TypeConst 'to' To=Type ')'
-	return fmt.Sprintf("addrspacecast (%s to %s)", e.From, e.To)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprAddrSpaceCast) Simplify() Constant {
 	//panic("not yet implemented")
 	// TODO: implement
 	return e

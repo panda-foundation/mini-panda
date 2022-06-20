@@ -58,7 +58,6 @@ import "io"
 // https://llvm.org/docs/LangRef.html#conversion-operations
 //
 //    *ir.InstTrunc           // https://godoc.org/github.com/llir/llvm/ir#InstTrunc
-//    *ir.InstZExt            // https://godoc.org/github.com/llir/llvm/ir#InstZExt
 //    *ir.InstSExt            // https://godoc.org/github.com/llir/llvm/ir#InstSExt
 //    *ir.InstFPTrunc         // https://godoc.org/github.com/llir/llvm/ir#InstFPTrunc
 //    *ir.InstFPExt           // https://godoc.org/github.com/llir/llvm/ir#InstFPExt
@@ -66,10 +65,7 @@ import "io"
 //    *ir.InstFPToSI          // https://godoc.org/github.com/llir/llvm/ir#InstFPToSI
 //    *ir.InstUIToFP          // https://godoc.org/github.com/llir/llvm/ir#InstUIToFP
 //    *ir.InstSIToFP          // https://godoc.org/github.com/llir/llvm/ir#InstSIToFP
-//    *ir.InstPtrToInt        // https://godoc.org/github.com/llir/llvm/ir#InstPtrToInt
-//    *ir.InstIntToPtr        // https://godoc.org/github.com/llir/llvm/ir#InstIntToPtr
 //    *ir.InstBitCast         // https://godoc.org/github.com/llir/llvm/ir#InstBitCast
-//    *ir.InstAddrSpaceCast   // https://godoc.org/github.com/llir/llvm/ir#InstAddrSpaceCast
 //
 // Other instructions
 //
@@ -127,19 +123,15 @@ func (*InstAtomicRMW) isInstruction()     {}
 func (*InstGetElementPtr) isInstruction() {}
 
 // Conversion instructions.
-func (*InstTrunc) isInstruction()         {}
-func (*InstZExt) isInstruction()          {}
-func (*InstSExt) isInstruction()          {}
-func (*InstFPTrunc) isInstruction()       {}
-func (*InstFPExt) isInstruction()         {}
-func (*InstFPToUI) isInstruction()        {}
-func (*InstFPToSI) isInstruction()        {}
-func (*InstUIToFP) isInstruction()        {}
-func (*InstSIToFP) isInstruction()        {}
-func (*InstPtrToInt) isInstruction()      {}
-func (*InstIntToPtr) isInstruction()      {}
-func (*InstBitCast) isInstruction()       {}
-func (*InstAddrSpaceCast) isInstruction() {}
+func (*InstTrunc) isInstruction()   {}
+func (*InstSExt) isInstruction()    {}
+func (*InstFPTrunc) isInstruction() {}
+func (*InstFPExt) isInstruction()   {}
+func (*InstFPToUI) isInstruction()  {}
+func (*InstFPToSI) isInstruction()  {}
+func (*InstUIToFP) isInstruction()  {}
+func (*InstSIToFP) isInstruction()  {}
+func (*InstBitCast) isInstruction() {}
 
 // Other instructions.
 func (*InstICmp) isInstruction() {}
@@ -151,9 +143,6 @@ func (*TermRet) isInstruction()         {}
 func (*TermBr) isInstruction()          {}
 func (*TermCondBr) isInstruction()      {}
 func (*TermSwitch) isInstruction()      {}
-func (*TermIndirectBr) isInstruction()  {}
-func (*TermInvoke) isInstruction()      {}
-func (*TermCallBr) isInstruction()      {}
 func (*TermResume) isInstruction()      {}
 func (*TermCatchSwitch) isInstruction() {}
 func (*TermCatchRet) isInstruction()    {}
