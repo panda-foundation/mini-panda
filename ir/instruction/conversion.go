@@ -2,44 +2,22 @@ package instruction
 
 import (
 	"fmt"
-	"strings"
+	"io"
+
+	"github.com/panda-io/micro-panda/ir/core"
 )
 
-// --- [ Conversion instructions ] ---------------------------------------------
-
-// ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstTrunc is an LLVM IR trunc instruction.
 type InstTrunc struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
+	core.LocalIdent
+	From core.Value
+	To   core.Type
 }
 
-// NewTrunc returns a new trunc instruction based on the given source value and
-// target type.
-func NewTrunc(from Value, to Type) *InstTrunc {
-	// Type-check operands.
+func NewTrunc(from core.Value, to core.Type) *InstTrunc {
 	fromType := from.Type()
-	// Note: intentional alias, so we can use it for checking
-	// the integer types within vectors.
 	toType := to
-	if fromVectorT, ok := fromType.(*VectorType); ok {
-		toVectorT, ok := toType.(*VectorType)
-		if !ok {
-			panic(fmt.Errorf("trunc operands are not compatible: from=%v; to=%v", fromVectorT, to))
-		}
-		if fromVectorT.Len != toVectorT.Len {
-			panic(fmt.Errorf("trunc vector operand length mismatch: from=%v; to=%v", from.Type(), to))
-		}
-		fromType = fromVectorT.ElemType
-		toType = toVectorT.ElemType
-	}
-	if fromIntT, ok := fromType.(*IntType); ok {
-		toIntT, ok := toType.(*IntType)
+	if fromIntT, ok := fromType.(*core.IntType); ok {
+		toIntT, ok := toType.(*core.IntType)
 		if !ok {
 			panic(fmt.Errorf("trunc operands are not compatible: from=%v; to=%T", fromIntT, to))
 		}
@@ -52,351 +30,199 @@ func NewTrunc(from Value, to Type) *InstTrunc {
 	return &InstTrunc{From: from, To: to}
 }
 
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
 func (inst *InstTrunc) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
-func (inst *InstTrunc) Type() Type {
+func (inst *InstTrunc) Type() core.Type {
 	return inst.To
 }
 
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'trunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstTrunc) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "trunc %s to %s", inst.From, inst.To)
-	return buf.String()
+func (inst *InstTrunc) writeIR(w io.Writer) error {
+	_, err := fmt.Fprintf(w, "%s = trunc %s to %s", inst.Ident(), inst.From, inst.To)
+	return err
 }
 
-// ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstSExt is an LLVM IR sext instruction.
 type InstSExt struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
+	core.LocalIdent
+	From core.Value
+	To   core.Type
 }
 
-// NewSExt returns a new sext instruction based on the given source value and
-// target type.
-func NewSExt(from Value, to Type) *InstSExt {
+func NewSExt(from core.Value, to core.Type) *InstSExt {
 	return &InstSExt{From: from, To: to}
 }
 
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
 func (inst *InstSExt) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
-func (inst *InstSExt) Type() Type {
+func (inst *InstSExt) Type() core.Type {
 	return inst.To
 }
 
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'sext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstSExt) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "sext %s to %s", inst.From, inst.To)
-	return buf.String()
+func (inst *InstSExt) writeIR(w io.Writer) error {
+	_, err := fmt.Fprintf(w, "%s = sext %s to %s", inst.Ident(), inst.From, inst.To)
+	return err
 }
 
-// ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstFPTrunc is an LLVM IR fptrunc instruction.
 type InstFPTrunc struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
+	core.LocalIdent
+	From core.Value
+	To   core.Type
 }
 
-// NewFPTrunc returns a new fptrunc instruction based on the given source value
-// and target type.
-func NewFPTrunc(from Value, to Type) *InstFPTrunc {
+func NewFPTrunc(from core.Value, to core.Type) *InstFPTrunc {
 	return &InstFPTrunc{From: from, To: to}
 }
 
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
 func (inst *InstFPTrunc) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
-func (inst *InstFPTrunc) Type() Type {
+func (inst *InstFPTrunc) Type() core.Type {
 	return inst.To
 }
 
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'fptrunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstFPTrunc) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "fptrunc %s to %s", inst.From, inst.To)
-	return buf.String()
+func (inst *InstFPTrunc) writeIR(w io.Writer) error {
+	_, err := fmt.Fprintf(w, "%s = fptrunc %s to %s", inst.Ident(), inst.From, inst.To)
+	return err
 }
 
-// ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstFPExt is an LLVM IR fpext instruction.
 type InstFPExt struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
+	core.LocalIdent
+	From core.Value
+	To   core.Type
 }
 
-// NewFPExt returns a new fpext instruction based on the given source value and
-// target type.
-func NewFPExt(from Value, to Type) *InstFPExt {
+func NewFPExt(from core.Value, to core.Type) *InstFPExt {
 	return &InstFPExt{From: from, To: to}
 }
 
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
 func (inst *InstFPExt) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
-func (inst *InstFPExt) Type() Type {
+func (inst *InstFPExt) Type() core.Type {
 	return inst.To
 }
 
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'fpext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstFPExt) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "fpext %s to %s", inst.From, inst.To)
-	return buf.String()
+func (inst *InstFPExt) writeIR(w io.Writer) error {
+	_, err := fmt.Fprintf(w, "%s = fpext %s to %s", inst.Ident(), inst.From, inst.To)
+	return err
 }
 
-// ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstFPToUI is an LLVM IR fptoui instruction.
 type InstFPToUI struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
+	core.LocalIdent
+	From core.Value
+	To   core.Type
 }
 
-// NewFPToUI returns a new fptoui instruction based on the given source value
-// and target type.
-func NewFPToUI(from Value, to Type) *InstFPToUI {
+func NewFPToUI(from core.Value, to core.Type) *InstFPToUI {
 	return &InstFPToUI{From: from, To: to}
 }
 
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
 func (inst *InstFPToUI) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
-func (inst *InstFPToUI) Type() Type {
+func (inst *InstFPToUI) Type() core.Type {
 	return inst.To
 }
 
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'fptoui' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstFPToUI) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "fptoui %s to %s", inst.From, inst.To)
-	return buf.String()
+func (inst *InstFPToUI) writeIR(w io.Writer) error {
+	_, err := fmt.Fprintf(w, "%s = fptoui %s to %s", inst.Ident(), inst.From, inst.To)
+	return err
 }
 
-// ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstFPToSI is an LLVM IR fptosi instruction.
 type InstFPToSI struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
+	core.LocalIdent
+	From core.Value
+	To   core.Type
 }
 
-// NewFPToSI returns a new fptosi instruction based on the given source value
-// and target type.
-func NewFPToSI(from Value, to Type) *InstFPToSI {
+func NewFPToSI(from core.Value, to core.Type) *InstFPToSI {
 	return &InstFPToSI{From: from, To: to}
 }
 
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
 func (inst *InstFPToSI) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
-func (inst *InstFPToSI) Type() Type {
+func (inst *InstFPToSI) Type() core.Type {
 	return inst.To
 }
 
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'fptosi' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstFPToSI) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "fptosi %s to %s", inst.From, inst.To)
-	return buf.String()
+func (inst *InstFPToSI) writeIR(w io.Writer) error {
+	_, err := fmt.Fprintf(w, "%s = fptosi %s to %s", inst.Ident(), inst.From, inst.To)
+	return err
 }
 
-// ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstUIToFP is an LLVM IR uitofp instruction.
 type InstUIToFP struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
+	core.LocalIdent
+	From core.Value
+	To   core.Type
 }
 
-// NewUIToFP returns a new uitofp instruction based on the given source value
-// and target type.
-func NewUIToFP(from Value, to Type) *InstUIToFP {
+func NewUIToFP(from core.Value, to core.Type) *InstUIToFP {
 	return &InstUIToFP{From: from, To: to}
 }
 
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
 func (inst *InstUIToFP) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
-func (inst *InstUIToFP) Type() Type {
+func (inst *InstUIToFP) Type() core.Type {
 	return inst.To
 }
 
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'uitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstUIToFP) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "uitofp %s to %s", inst.From, inst.To)
-	return buf.String()
+func (inst *InstUIToFP) writeIR(w io.Writer) error {
+	_, err := fmt.Fprintf(w, "%s = uitofp %s to %s", inst.Ident(), inst.From, inst.To)
+	return err
 }
 
-// ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstSIToFP is an LLVM IR sitofp instruction.
 type InstSIToFP struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
+	core.LocalIdent
+	From core.Value
+	To   core.Type
 }
 
-// NewSIToFP returns a new sitofp instruction based on the given source value
-// and target type.
-func NewSIToFP(from Value, to Type) *InstSIToFP {
+func NewSIToFP(from core.Value, to core.Type) *InstSIToFP {
 	return &InstSIToFP{From: from, To: to}
 }
 
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
 func (inst *InstSIToFP) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
-func (inst *InstSIToFP) Type() Type {
+func (inst *InstSIToFP) Type() core.Type {
 	return inst.To
 }
 
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'sitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstSIToFP) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "sitofp %s to %s", inst.From, inst.To)
-	return buf.String()
+func (inst *InstSIToFP) writeIR(w io.Writer) error {
+	_, err := fmt.Fprintf(w, "%s = sitofp %s to %s", inst.Ident(), inst.From, inst.To)
+	return err
 }
 
-// ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstBitCast is an LLVM IR bitcast instruction.
 type InstBitCast struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Value before conversion.
-	From Value
-	// Type after conversion.
-	To Type
-
-	// extra.
+	core.LocalIdent
+	From core.Value
+	To   core.Type
 }
 
-// NewBitCast returns a new bitcast instruction based on the given source value
-// and target type.
-func NewBitCast(from Value, to Type) *InstBitCast {
+func NewBitCast(from core.Value, to core.Type) *InstBitCast {
 	return &InstBitCast{From: from, To: to}
 }
 
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
 func (inst *InstBitCast) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
-func (inst *InstBitCast) Type() Type {
+func (inst *InstBitCast) Type() core.Type {
 	return inst.To
 }
 
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'bitcast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
-func (inst *InstBitCast) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "bitcast %s to %s", inst.From, inst.To)
-	return buf.String()
+func (inst *InstBitCast) writeIR(w io.Writer) error {
+	_, err := fmt.Fprintf(w, "%s = bitcast %s to %s", inst.Ident(), inst.From, inst.To)
+	return err
 }

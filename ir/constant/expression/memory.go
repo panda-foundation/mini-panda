@@ -1,8 +1,11 @@
-package ir
+package expression
 
 import (
 	"fmt"
 	"strings"
+
+	"github.com/panda-io/micro-panda/ir/constant"
+	"github.com/panda-io/micro-panda/ir/core"
 )
 
 // --- [ Memory expressions ] --------------------------------------------------
@@ -75,13 +78,13 @@ func (e *ExprGetElementPtr) Simplify() Constant {
 // Index is an index of a getelementptr constant expression.
 type Index struct {
 	// Element index.
-	Index Constant
+	Index constant.Constant
 
 	// extra.
 }
 
 // NewIndex returns a new gep element index.
-func NewIndex(index Constant) *Index {
+func NewIndex(index constant.Constant) *Index {
 	return &Index{Index: index}
 }
 
@@ -98,7 +101,7 @@ func (index *Index) Ident() string {
 }
 
 // Ident returns a string representation of the getelementptr index.
-func (index *Index) Type() Type {
+func (index *Index) Type() core.Type {
 	// OptInrange Type Constant
 	return index.Index.Type()
 }

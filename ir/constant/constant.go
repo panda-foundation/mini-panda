@@ -14,11 +14,7 @@ type Constant interface {
 	isConstant()
 }
 
-// === [ Constants ] ===
-
-// Convenience constants.
 var (
-	// Boolean constants.
 	True  = NewInt(core.I1, 1) // true
 	False = NewInt(core.I1, 0) // false
 )

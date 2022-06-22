@@ -20,7 +20,7 @@ func globalName(name string) string {
 	return "@" + escapeIdent(name)
 }
 
-// GlobalID encodes a global ID to its LLVM IR assembly representation.
+// globalID encodes a global ID to its LLVM IR assembly representation.
 //
 // Examples:
 //    "42" -> "@42"
@@ -31,7 +31,7 @@ func globalID(id int64) string {
 	return "@" + strconv.FormatInt(id, 10)
 }
 
-// LocalName encodes a local name to its LLVM IR assembly representation.
+// localName encodes a local name to its LLVM IR assembly representation.
 //
 // Examples:
 //    "foo" -> "%foo"
@@ -45,7 +45,7 @@ func localName(name string) string {
 	return "%" + escapeIdent(name)
 }
 
-// LocalID encodes a local ID to its LLVM IR assembly representation.
+// localID encodes a local ID to its LLVM IR assembly representation.
 //
 // Examples:
 //    "42" -> "%42"
@@ -56,7 +56,7 @@ func localID(id int64) string {
 	return "%" + strconv.FormatInt(id, 10)
 }
 
-// LabelName encodes a label name to its LLVM IR assembly representation.
+// labelName encodes a label name to its LLVM IR assembly representation.
 //
 // Examples:
 //    "foo" -> "foo:"
@@ -70,7 +70,7 @@ func labelName(name string) string {
 	return escapeIdent(name) + ":"
 }
 
-// LabelID encodes a label ID to its LLVM IR assembly representation.
+// labelID encodes a label ID to its LLVM IR assembly representation.
 //
 // Examples:
 //    "42" -> 42:
@@ -81,7 +81,7 @@ func labelID(id int64) string {
 	return strconv.FormatInt(id, 10) + ":"
 }
 
-// TypeName encodes a type name to its LLVM IR assembly representation.
+// typeName encodes a type name to its LLVM IR assembly representation.
 //
 // Examples:
 //    "foo" -> "%foo"

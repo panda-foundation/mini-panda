@@ -25,10 +25,10 @@ type irWriter interface {
 
 type Type interface {
 	irWriter
+	fmt.Stringer
 	Equal(u Type) bool
 }
 
-// Convenience types.
 var (
 	// Basic types.
 	Void  = &VoidType{}  // void
@@ -62,13 +62,11 @@ func IsVoid(t Type) bool {
 	return ok
 }
 
-// IsFunc reports whether the given type is a function type.
 func IsFunc(t Type) bool {
 	_, ok := t.(*FuncType)
 	return ok
 }
 
-// IsInt reports whether the given type is an integer type.
 func IsInt(t Type) bool {
 	if i, ok := t.(*IntType); ok {
 		// bit size == 1, bool
@@ -77,7 +75,6 @@ func IsInt(t Type) bool {
 	return false
 }
 
-// IsBool reports whether the given type is an integer type.
 func IsBool(t Type) bool {
 	if i, ok := t.(*IntType); ok {
 		return i.BitSize == 1
@@ -85,7 +82,6 @@ func IsBool(t Type) bool {
 	return false
 }
 
-// IsFloat reports whether the given type is a floating-point type.
 func IsFloat(t Type) bool {
 	_, ok := t.(*FloatType)
 	return ok
@@ -95,37 +91,29 @@ func IsNumber(t Type) bool {
 	return IsInt(t) || IsFloat(t)
 }
 
-// IsPointer reports whether the given type is a pointer type.
 func IsPointer(t Type) bool {
 	_, ok := t.(*PointerType)
 	return ok
 }
 
-// IsLabel reports whether the given type is a label type.
 func IsLabel(t Type) bool {
 	_, ok := t.(*LabelType)
 	return ok
 }
 
-// IsArray reports whether the given type is an array type.
 func IsArray(t Type) bool {
 	_, ok := t.(*ArrayType)
 	return ok
 }
 
-// IsStruct reports whether the given type is a struct type.
 func IsStruct(t Type) bool {
 	_, ok := t.(*StructType)
 	return ok
 }
 
-// --- [ Void types ] ----------------------------------------------------------
-
-// VoidType is an LLVM IR void type.
 type VoidType struct {
 }
 
-// Equal reports whether t and u are of equal type.
 func (t *VoidType) Equal(u Type) bool {
 	if _, ok := u.(*VoidType); ok {
 		return true
@@ -133,31 +121,29 @@ func (t *VoidType) Equal(u Type) bool {
 	return false
 }
 
+func (t *VoidType) String() string {
+	return "void"
+}
+
 func (t *VoidType) writeIR(w io.Writer) error {
 	_, err := w.Write([]byte("void"))
 	return err
 }
 
-// --- [ Function types ] ------------------------------------------------------
-
-// FuncType is an LLVM IR function type.
 type FuncType struct {
-	// Return type.
-	RetType Type
-	// Function parameters.
-	Params []Type
+	Qualified string
+	RetType   Type
+	Params    []Type
 }
 
-// NewFunc returns a new function type based on the given return type and
-// function parameter types.
-func NewFuncType(retType Type, params ...Type) *FuncType {
+func NewFuncType(qualified string, retType Type, params ...Type) *FuncType {
 	return &FuncType{
-		RetType: retType,
-		Params:  params,
+		Qualified: qualified,
+		RetType:   retType,
+		Params:    params,
 	}
 }
 
-// Equal reports whether t and u are of equal type.
 func (t *FuncType) Equal(u Type) bool {
 	if u, ok := u.(*FuncType); ok {
 		if !t.RetType.Equal(u.RetType) {
@@ -174,6 +160,10 @@ func (t *FuncType) Equal(u Type) bool {
 		return true
 	}
 	return false
+}
+
+func (t *FuncType) String() string {
+	return t.Qualified
 }
 
 func (t *FuncType) writeIR(w io.Writer) error {
@@ -201,24 +191,17 @@ func (t *FuncType) writeIR(w io.Writer) error {
 	return err
 }
 
-// --- [ Integer types ] -------------------------------------------------------
-
-// IntType is an LLVM IR integer type.
 type IntType struct {
-	// Integer size in number of bits.
-	BitSize int
-	// If int is unsigned
+	BitSize  int
 	Unsigned bool
 }
 
-// NewIntType returns a new integer type based on the given integer bit size.
 func NewIntType(bitSize int) *IntType {
 	return &IntType{
 		BitSize: bitSize,
 	}
 }
 
-// Equal reports whether t and u are of equal type.
 func (t *IntType) Equal(u Type) bool {
 	if u, ok := u.(*IntType); ok {
 		return t.BitSize == u.BitSize
@@ -226,20 +209,19 @@ func (t *IntType) Equal(u Type) bool {
 	return false
 }
 
+func (t *IntType) String() string {
+	return fmt.Sprintf("i%d", t.BitSize)
+}
+
 func (t *IntType) writeIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "i%d", t.BitSize)
 	return err
 }
 
-// --- [ Floating-point types ] ------------------------------------------------
-
-// FloatType is an LLVM IR floating-point type.
 type FloatType struct {
-	// Floating-point kind.
 	Kind FloatKind
 }
 
-// Equal reports whether t and u are of equal type.
 func (t *FloatType) Equal(u Type) bool {
 	if u, ok := u.(*FloatType); ok {
 		return t.Kind == u.Kind
@@ -247,33 +229,27 @@ func (t *FloatType) Equal(u Type) bool {
 	return false
 }
 
+func (t *FloatType) String() string {
+	return string(t.Kind)
+}
+
 func (t *FloatType) writeIR(w io.Writer) error {
 	_, err := w.Write([]byte(t.Kind))
 	return err
 }
 
-// FloatKind represents the set of floating-point kinds.
 type FloatKind string
 
-// Floating-point kinds.
 const (
-	// 16-bit floating-point type (IEEE 754 half precision).
-	FloatKindHalf FloatKind = "half"
-	// 32-bit floating-point type (IEEE 754 single precision).
-	FloatKindFloat FloatKind = "float"
-	// 64-bit floating-point type (IEEE 754 double precision).
+	FloatKindHalf   FloatKind = "half"
+	FloatKindFloat  FloatKind = "float"
 	FloatKindDouble FloatKind = "double"
 )
 
-// --- [ Pointer types ] -------------------------------------------------------
-
-// PointerType is an LLVM IR pointer type.
 type PointerType struct {
-	// Element type.
 	ElemType Type
 }
 
-// NewPointerType returns a new pointer type based on the given element type.
 func NewPointerType(elemType Type) *PointerType {
 	p := &PointerType{
 		ElemType: elemType,
@@ -281,12 +257,15 @@ func NewPointerType(elemType Type) *PointerType {
 	return p
 }
 
-// Equal reports whether t and u are of equal type.
 func (t *PointerType) Equal(u Type) bool {
 	if u, ok := u.(*PointerType); ok {
 		return t.ElemType.Equal(u.ElemType)
 	}
 	return false
+}
+
+func (t *PointerType) String() string {
+	return fmt.Sprintf("%s*", t.ElemType.String())
 }
 
 func (t *PointerType) writeIR(w io.Writer) error {
@@ -298,15 +277,9 @@ func (t *PointerType) writeIR(w io.Writer) error {
 	return err
 }
 
-// --- [ Label types ] ---------------------------------------------------------
-
-// LabelType is an LLVM IR label type, which is used for basic block values.
 type LabelType struct {
-	// Type name; or empty if not present.
-	TypeName string
 }
 
-// Equal reports whether t and u are of equal type.
 func (t *LabelType) Equal(u Type) bool {
 	if _, ok := u.(*LabelType); ok {
 		return true
@@ -314,23 +287,20 @@ func (t *LabelType) Equal(u Type) bool {
 	return false
 }
 
+func (t *LabelType) String() string {
+	return "label"
+}
+
 func (t *LabelType) writeIR(w io.Writer) error {
 	_, err := w.Write([]byte("label"))
 	return err
 }
 
-// --- [ Array types ] ---------------------------------------------------------
-
-// ArrayType is an LLVM IR array type.
 type ArrayType struct {
-	// Array length.
-	Len uint64
-	// Element type.
+	Len      uint64
 	ElemType Type
 }
 
-// NewArrayType returns a new array type based on the given array length and element
-// type.
 func NewArrayType(len uint64, elemType Type) *ArrayType {
 	return &ArrayType{
 		Len:      len,
@@ -338,7 +308,6 @@ func NewArrayType(len uint64, elemType Type) *ArrayType {
 	}
 }
 
-// Equal reports whether t and u are of equal type.
 func (t *ArrayType) Equal(u Type) bool {
 	if u, ok := u.(*ArrayType); ok {
 		if t.Len != u.Len {
@@ -347,6 +316,10 @@ func (t *ArrayType) Equal(u Type) bool {
 		return t.ElemType.Equal(u.ElemType)
 	}
 	return false
+}
+
+func (t *ArrayType) String() string {
+	return fmt.Sprintf("[%d x %s]", t.Len, t.ElemType.String())
 }
 
 func (t *ArrayType) writeIR(w io.Writer) error {
@@ -358,27 +331,22 @@ func (t *ArrayType) writeIR(w io.Writer) error {
 	if err != nil {
 		return nil
 	}
-	_, err = w.Write([]byte(" ]"))
+	_, err = w.Write([]byte("]"))
 	return err
 }
 
-// --- [ Structure types ] -----------------------------------------------------
-
-// StructType is an LLVM IR structure type. Identified (named) struct types are
-// uniqued by type names, not by structural identity.
 type StructType struct {
-	// Struct fields.
-	Fields []Type
+	Qualified string
+	Fields    []Type
 }
 
-// NewStructType returns a new struct type based on the given field types.
-func NewStructType(fields ...Type) *StructType {
+func NewStructType(qualified string, fields ...Type) *StructType {
 	return &StructType{
-		Fields: fields,
+		Qualified: qualified,
+		Fields:    fields,
 	}
 }
 
-// Equal reports whether t and u are of equal type.
 func (t *StructType) Equal(u Type) bool {
 	if u, ok := u.(*StructType); ok {
 		if len(t.Fields) != len(u.Fields) {
@@ -392,6 +360,10 @@ func (t *StructType) Equal(u Type) bool {
 		return true
 	}
 	return false
+}
+
+func (t *StructType) String() string {
+	return t.Qualified
 }
 
 func (t *StructType) writeIR(w io.Writer) error {

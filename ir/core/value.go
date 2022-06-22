@@ -1,10 +1,9 @@
 package core
 
-// Value is an LLVM IR value, which may be used as an operand of instructions
-// and terminators.
+import "fmt"
+
 type Value interface {
-	// Type returns the type of the value.
+	fmt.Stringer
 	Type() Type
-	// Ident returns the identifier associated with the value.
 	Ident() string
 }

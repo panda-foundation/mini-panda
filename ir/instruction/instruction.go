@@ -74,6 +74,15 @@ import "io"
 //    *ir.InstICmp         // https://godoc.org/github.com/llir/llvm/ir#InstICmp
 //    *ir.InstFCmp         // https://godoc.org/github.com/llir/llvm/ir#InstFCmp
 //    *ir.InstCall         // https://godoc.org/github.com/llir/llvm/ir#InstCall
+//
+// Terminator instructions
+//
+// https://llvm.org/docs/LangRef.html#terminator-instructions
+//
+//    *ir.TermRet           // https://godoc.org/github.com/llir/llvm/ir#TermRet
+//    *ir.TermBr            // https://godoc.org/github.com/llir/llvm/ir#TermBr
+//    *ir.TermCondBr        // https://godoc.org/github.com/llir/llvm/ir#TermCondBr
+//    *ir.TermSwitch        // https://godoc.org/github.com/llir/llvm/ir#TermSwitch
 
 type irWriter interface {
 	writeIR(io.Writer) error
@@ -81,12 +90,8 @@ type irWriter interface {
 
 type Instruction interface {
 	irWriter
-	// isInstruction ensures that only instructions can be assigned to the
-	// instruction.Instruction interface.
 	isInstruction()
 }
-
-// === [ ir.Instruction ] ======================================================
 
 // Binary instructions.
 func (*InstFNeg) isInstruction() {}
@@ -117,9 +122,6 @@ func (*InstXor) isInstruction()  {}
 func (*InstAlloca) isInstruction()        {}
 func (*InstLoad) isInstruction()          {}
 func (*InstStore) isInstruction()         {}
-func (*InstFence) isInstruction()         {}
-func (*InstCmpXchg) isInstruction()       {}
-func (*InstAtomicRMW) isInstruction()     {}
 func (*InstGetElementPtr) isInstruction() {}
 
 // Conversion instructions.
@@ -139,12 +141,7 @@ func (*InstFCmp) isInstruction() {}
 func (*InstCall) isInstruction() {}
 
 // Terminator instructions
-func (*TermRet) isInstruction()         {}
-func (*TermBr) isInstruction()          {}
-func (*TermCondBr) isInstruction()      {}
-func (*TermSwitch) isInstruction()      {}
-func (*TermResume) isInstruction()      {}
-func (*TermCatchSwitch) isInstruction() {}
-func (*TermCatchRet) isInstruction()    {}
-func (*TermCleanupRet) isInstruction()  {}
-func (*TermUnreachable) isInstruction() {}
+func (*TermRet) isInstruction()    {}
+func (*TermBr) isInstruction()     {}
+func (*TermCondBr) isInstruction() {}
+func (*TermSwitch) isInstruction() {}
