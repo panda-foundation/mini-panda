@@ -2,6 +2,7 @@ package expression
 
 import (
 	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Conversion struct {
@@ -14,7 +15,7 @@ func (c *Conversion) Validate(ctx core.Context, expected core.Type) {
 	c.Value.Validate(ctx, c.Typ)
 	c.Const = c.Value.IsConstant()
 	//TO-DO enum convert with int?
-	if !((core.IsNumber(c.Typ) && core.IsNumber(c.Value.Type())) || (core.IsPointer(c.Typ) && core.IsPointer(c.Value.Type()))) {
+	if !((types.IsNumber(c.Typ) && types.IsNumber(c.Value.Type())) || (types.IsPointer(c.Typ) && types.IsPointer(c.Value.Type()))) {
 		ctx.Error(c.GetPosition(), "invalid type conversion")
 	}
 }

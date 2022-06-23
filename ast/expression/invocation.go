@@ -2,6 +2,7 @@ package expression
 
 import (
 	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -10,14 +11,14 @@ type Invocation struct {
 	Function  core.Expression
 	Arguments []core.Expression
 
-	FunctionDefine *core.TypeFunction
+	FunctionDefine *types.TypeFunction
 }
 
 func (i *Invocation) Validate(c core.Context, expected core.Type) {
 	i.Function.Validate(c, expected)
 	i.Const = false
 	t := i.Function.Type()
-	if f, ok := t.(*core.TypeFunction); ok {
+	if f, ok := t.(*types.TypeFunction); ok {
 		i.FunctionDefine = f
 		i.Typ = f.ReturnType
 		if f.MemberFunction {
@@ -30,14 +31,14 @@ func (i *Invocation) Validate(c core.Context, expected core.Type) {
 				u.SetPosition(i.Function.GetPosition())
 				i.Arguments = append([]core.Expression{u}, i.Arguments...)
 			} else if m, ok := i.Function.(*MemberAccess); ok {
-				if core.IsStruct(m.Parent.Type()) {
+				if types.IsStruct(m.Parent.Type()) {
 					u := &Unary{
 						Operator:   token.BitAnd,
 						Expression: m.Parent,
 					}
 					u.SetPosition(m.Parent.GetPosition())
 					i.Arguments = append([]core.Expression{u}, i.Arguments...)
-				} else if core.IsPointer(m.Parent.Type()) {
+				} else if types.IsPointer(m.Parent.Type()) {
 					i.Arguments = append([]core.Expression{m.Parent}, i.Arguments...)
 				}
 			}

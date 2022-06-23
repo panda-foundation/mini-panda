@@ -5,13 +5,15 @@ import (
 	"io"
 
 	"github.com/panda-io/micro-panda/ir/constant"
+	"github.com/panda-io/micro-panda/ir/constant/expression"
 	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/ir/types"
 )
 
 type InstAlloca struct {
 	core.LocalIdent
 	ElemType core.Type
-	Typ      *core.PointerType
+	Typ      *types.PointerType
 }
 
 func NewAlloca(elemType core.Type) *InstAlloca {
@@ -26,12 +28,12 @@ func (inst *InstAlloca) String() string {
 
 func (inst *InstAlloca) Type() core.Type {
 	if inst.Typ == nil {
-		inst.Typ = core.NewPointerType(inst.ElemType)
+		inst.Typ = types.NewPointerType(inst.ElemType)
 	}
 	return inst.Typ
 }
 
-func (inst *InstAlloca) writeIR(w io.Writer) error {
+func (inst *InstAlloca) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = alloca %s", inst.Ident(), inst.ElemType)
 	return err
 }
@@ -55,7 +57,7 @@ func (inst *InstLoad) Type() core.Type {
 	return inst.ElemType
 }
 
-func (inst *InstLoad) writeIR(w io.Writer) error {
+func (inst *InstLoad) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = load %s, %s", inst.Ident(), inst.ElemType, inst.Src)
 	return err
 }
@@ -66,7 +68,7 @@ type InstStore struct {
 }
 
 func NewStore(src, dst core.Value) *InstStore {
-	dstPtrType, ok := dst.Type().(*core.PointerType)
+	dstPtrType, ok := dst.Type().(*types.PointerType)
 	if !ok {
 		panic(fmt.Errorf("invalid store dst operand type; expected *Pointer, got %T", dst.Type()))
 	}
@@ -76,7 +78,7 @@ func NewStore(src, dst core.Value) *InstStore {
 	return &InstStore{Src: src, Dst: dst}
 }
 
-func (inst *InstStore) writeIR(w io.Writer) error {
+func (inst *InstStore) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "store %s, %s", inst.Src, inst.Dst)
 	return err
 }
@@ -101,12 +103,12 @@ func (inst *InstGetElementPtr) String() string {
 
 func (inst *InstGetElementPtr) Type() core.Type {
 	if inst.Typ == nil {
-		inst.Typ = gepInstType(inst.ElemType, inst.Indices)
+		inst.Typ = inst.gepInstType(inst.ElemType, inst.Indices)
 	}
 	return inst.Typ
 }
 
-func (inst *InstGetElementPtr) writeIR(w io.Writer) error {
+func (inst *InstGetElementPtr) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = getelementptr %s, %s", inst.Ident(), inst.ElemType, inst.Src)
 	if err != nil {
 		return err
@@ -120,41 +122,15 @@ func (inst *InstGetElementPtr) writeIR(w io.Writer) error {
 	return nil
 }
 
-func gepInstType(elemType core.Type, indices []core.Value) core.Type {
-	var idxs []core.GepIndex
+func (inst *InstGetElementPtr) gepInstType(elemType core.Type, indices []core.Value) core.Type {
+	var idxs []*expression.GepIndex
 	for _, index := range indices {
-		var idx core.GepIndex
+		var idx *expression.GepIndex
 		switch index := index.(type) {
 		case constant.Constant:
-			idx = getIndex(index)
+			idx = expression.GetGepIndex(index)
 		}
 		idxs = append(idxs, idx)
 	}
-	return core.GepResultType(elemType, idxs)
-}
-
-func getIndex(index constant.Constant) core.GepIndex {
-	// unpack inrange indices.
-	if idx, ok := index.(*Index); ok {
-		index = idx.Index
-	}
-	// Use index.Simplify() to simplify the constant expression to a concrete
-	// integer constant or vector of integers
-	if idx, ok := index.(expr.Expression); ok {
-		index = idx.Simplify()
-	}
-	switch index := index.(type) {
-	case *Int:
-		val := index.X.Int64()
-		return core.NewGepIndex(val)
-	case *ZeroInitializer:
-		return NewGepIndex(0)
-	case Expression:
-		// should already have been simplified to a form we can handle.
-		return GepIndex{HasVal: false}
-	default:
-		// TODO: add support for more constant expressions.
-		// TODO: remove debug output.
-		panic(fmt.Errorf("support for gep index type %T not yet implemented", index))
-	}
+	return expression.GepResultType(elemType, idxs)
 }

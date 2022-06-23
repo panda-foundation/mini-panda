@@ -30,7 +30,7 @@ func (inst *InstShl) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstShl) writeIR(w io.Writer) error {
+func (inst *InstShl) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = shl %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -58,7 +58,7 @@ func (inst *InstLShr) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstLShr) writeIR(w io.Writer) error {
+func (inst *InstLShr) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = lshr %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -86,7 +86,7 @@ func (inst *InstAShr) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstAShr) writeIR(w io.Writer) error {
+func (inst *InstAShr) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = ashr %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -114,7 +114,7 @@ func (inst *InstAnd) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstAnd) writeIR(w io.Writer) error {
+func (inst *InstAnd) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = and %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -142,7 +142,7 @@ func (inst *InstOr) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstOr) writeIR(w io.Writer) error {
+func (inst *InstOr) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = or %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -170,7 +170,7 @@ func (inst *InstXor) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstXor) writeIR(w io.Writer) error {
+func (inst *InstXor) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = xor %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }

@@ -6,12 +6,13 @@ import (
 
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/declaration"
+	"github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/token"
 )
 
 func (p *Parser) parseType() core.Type {
 	if p.token.IsScalar() {
-		t := &core.TypeBuiltin{}
+		t := &types.TypeBuiltin{}
 		t.SetPosition(p.position)
 		t.Token = p.token
 		p.next()
@@ -31,8 +32,8 @@ func (p *Parser) parseType() core.Type {
 	return p.parseTypeName()
 }
 
-func (p *Parser) parseTypeArray() *core.TypeArray {
-	t := &core.TypeArray{}
+func (p *Parser) parseTypeArray() *types.TypeArray {
+	t := &types.TypeArray{}
 	t.SetPosition(p.position)
 	for p.token == token.LeftBracket {
 		p.next()
@@ -51,8 +52,8 @@ func (p *Parser) parseTypeArray() *core.TypeArray {
 	return t
 }
 
-func (p *Parser) parseTypeName() *core.TypeName {
-	t := &core.TypeName{}
+func (p *Parser) parseTypeName() *types.TypeName {
+	t := &types.TypeName{}
 	t.SetPosition(p.position)
 	qualified := p.parseQualified()
 	if strings.Contains(qualified, ".") {
@@ -65,14 +66,14 @@ func (p *Parser) parseTypeName() *core.TypeName {
 	return t
 }
 
-func (p *Parser) parseTypePointer() *core.TypePointer {
-	t := &core.TypePointer{}
+func (p *Parser) parseTypePointer() *types.TypePointer {
+	t := &types.TypePointer{}
 	if p.token == token.Less {
 		p.next()
 		t.ElementType = p.parseType()
 		p.expect(token.Greater)
 	} else {
-		t.ElementType = core.TypeU8
+		t.ElementType = types.TypeU8
 	}
 	return t
 }
@@ -117,8 +118,8 @@ func (p *Parser) parseArguments() []core.Expression {
 	return expressions
 }
 
-func (p *Parser) parseFunctionType() *core.TypeFunction {
-	t := &core.TypeFunction{}
+func (p *Parser) parseFunctionType() *types.TypeFunction {
+	t := &types.TypeFunction{}
 	t.SetPosition(p.position)
 	p.expect(token.LeftParen)
 	if p.token == token.RightParen {

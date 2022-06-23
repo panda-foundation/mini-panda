@@ -2,6 +2,7 @@ package constant
 
 import (
 	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/ir/types"
 )
 
 func IsConstant(v core.Value) bool {
@@ -11,12 +12,12 @@ func IsConstant(v core.Value) bool {
 
 type Constant interface {
 	core.Value
-	isConstant()
+	IsConstant()
 }
 
 var (
-	True  = NewInt(core.I1, 1) // true
-	False = NewInt(core.I1, 0) // false
+	True  = NewInt(types.I1, 1) // true
+	False = NewInt(types.I1, 0) // false
 )
 
 // Constant is an LLVM IR constant; a value that is immutable at runtime, such
@@ -54,30 +55,11 @@ var (
 //
 //    constant.Expression   // https://godoc.org/github.com/llir/llvm/ir/constant#Expression
 
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*Int) isConstant() {}
+func (*Int) IsConstant()   {}
+func (*Float) IsConstant() {}
+func (*Null) IsConstant()  {}
 
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*Float) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*Null) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*Struct) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*Array) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*CharArray) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ZeroInitializer) isConstant() {}
+func (*Struct) IsConstant()          {}
+func (*Array) IsConstant()           {}
+func (*CharArray) IsConstant()       {}
+func (*ZeroInitializer) IsConstant() {}

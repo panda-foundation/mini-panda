@@ -26,7 +26,7 @@ func (inst *InstFNeg) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstFNeg) writeIR(w io.Writer) error {
+func (inst *InstFNeg) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = fneg %s", inst.Ident(), inst.X)
 	return err
 }

@@ -1,9 +1,9 @@
 package parser
 
 import (
-	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/declaration"
 	"github.com/panda-io/micro-panda/ast/expression"
+	"github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -30,7 +30,7 @@ func (p *Parser) parseVariable(public bool, attributes []*declaration.Attribute)
 
 func (p *Parser) parseFunction(public bool, attributes []*declaration.Attribute) *declaration.Function {
 	d := &declaration.Function{
-		Typ: &core.TypeFunction{},
+		Typ: &types.TypeFunction{},
 	}
 	d.Public = public
 	d.Attributes = attributes

@@ -5,7 +5,6 @@ import (
 	"strconv"
 )
 
-// Ident is a named variable.
 type Ident interface {
 	Name() string
 	SetName(name string)
@@ -13,7 +12,6 @@ type Ident interface {
 	SetID(id int64)
 }
 
-// GlobalIdent is a global identifier.
 type GlobalIdent struct {
 	GlobalName string
 	GlobalID   int64
@@ -21,9 +19,9 @@ type GlobalIdent struct {
 
 func (g *GlobalIdent) Ident() string {
 	if g.GlobalName == "" {
-		return globalID(g.GlobalID)
+		return GlobalID(g.GlobalID)
 	}
-	return globalName(g.GlobalName)
+	return GlobalName(g.GlobalName)
 }
 
 func (g *GlobalIdent) Name() string {
@@ -31,7 +29,6 @@ func (g *GlobalIdent) Name() string {
 		return strconv.FormatInt(g.GlobalID, 10)
 	}
 	if x, err := strconv.ParseInt(g.GlobalName, 10, 64); err == nil {
-		// Print GlobalName with quotes if it is a number; e.g. "42".
 		return fmt.Sprintf(`"%d"`, x)
 	}
 	return g.GlobalName
@@ -50,7 +47,6 @@ func (g *GlobalIdent) SetID(id int64) {
 	g.GlobalID = id
 }
 
-// LocalIdent is a local identifier.
 type LocalIdent struct {
 	LocalName string
 	LocalID   int64
@@ -65,9 +61,9 @@ func NewLocalIdent(ident string) LocalIdent {
 
 func (l *LocalIdent) Ident() string {
 	if l.LocalName == "" {
-		return localID(l.LocalID)
+		return LocalID(l.LocalID)
 	}
-	return localName(l.LocalName)
+	return LocalName(l.LocalName)
 }
 
 func (l *LocalIdent) Name() string {
@@ -75,7 +71,6 @@ func (l *LocalIdent) Name() string {
 		return strconv.FormatInt(l.LocalID, 10)
 	}
 	if x, err := strconv.ParseInt(l.LocalName, 10, 64); err == nil {
-		// Print LocalName with quotes if it is a number; e.g. "42".
 		return fmt.Sprintf(`"%d"`, x)
 	}
 	return l.LocalName

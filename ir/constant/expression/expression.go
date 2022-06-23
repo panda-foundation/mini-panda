@@ -1,5 +1,7 @@
 package expression
 
+import "github.com/panda-io/micro-panda/ir/constant"
+
 // === [ Expressions ] =========================================================
 
 // Expression is an LLVM IR constant expression.
@@ -68,144 +70,51 @@ package expression
 //    *constant.ExprFCmp     // https://godoc.org/github.com/llir/llvm/ir/constant#ExprFCmp
 
 type Expression interface {
-	Constant
-	// Simplify returns an equivalent (and potentially simplified) constant to
-	// the constant expression.
-	Simplify() Constant
+	constant.Constant
 }
 
 // --- [ Unary expressions ] ---------------------------------------------------
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFNeg) isConstant() {}
+func (*ExprFNeg) IsConstant() {}
 
 // --- [ Binary expressions ] --------------------------------------------------
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprAdd) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFAdd) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprSub) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFSub) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprMul) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFMul) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprUDiv) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprSDiv) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFDiv) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprURem) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprSRem) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFRem) isConstant() {}
+func (*ExprAdd) IsConstant()  {}
+func (*ExprFAdd) IsConstant() {}
+func (*ExprSub) IsConstant()  {}
+func (*ExprFSub) IsConstant() {}
+func (*ExprMul) IsConstant()  {}
+func (*ExprFMul) IsConstant() {}
+func (*ExprUDiv) IsConstant() {}
+func (*ExprSDiv) IsConstant() {}
+func (*ExprFDiv) IsConstant() {}
+func (*ExprURem) IsConstant() {}
+func (*ExprSRem) IsConstant() {}
+func (*ExprFRem) IsConstant() {}
 
 // --- [ Bitwise expressions ] -------------------------------------------------
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprShl) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprLShr) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprAShr) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprAnd) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprOr) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprXor) isConstant() {}
+func (*ExprShl) IsConstant()  {}
+func (*ExprLShr) IsConstant() {}
+func (*ExprAShr) IsConstant() {}
+func (*ExprAnd) IsConstant()  {}
+func (*ExprOr) IsConstant()   {}
+func (*ExprXor) IsConstant()  {}
 
 // --- [ Memory expressions ] --------------------------------------------------
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprGetElementPtr) isConstant() {}
+func (*ExprGetElementPtr) IsConstant() {}
 
 // --- [ Conversion expressions ] ----------------------------------------------
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprTrunc) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprSExt) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFPTrunc) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFPExt) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFPToUI) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFPToSI) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprUIToFP) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprSIToFP) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprBitCast) isConstant() {}
+func (*ExprTrunc) IsConstant()   {}
+func (*ExprSExt) IsConstant()    {}
+func (*ExprFPTrunc) IsConstant() {}
+func (*ExprFPExt) IsConstant()   {}
+func (*ExprFPToUI) IsConstant()  {}
+func (*ExprFPToSI) IsConstant()  {}
+func (*ExprUIToFP) IsConstant()  {}
+func (*ExprSIToFP) IsConstant()  {}
+func (*ExprBitCast) IsConstant() {}
 
 // --- [ Other expressions ] ---------------------------------------------------
+func (*ExprICmp) IsConstant() {}
+func (*ExprFCmp) IsConstant() {}
 
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprICmp) isConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFCmp) isConstant() {}
+// --- [ Index ] --------------------------------
+func (*Index) IsConstant() {}

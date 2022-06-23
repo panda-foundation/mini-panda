@@ -2,43 +2,36 @@ package ir
 
 import (
 	"fmt"
-	"strings"
+	"io"
 
 	"github.com/panda-io/micro-panda/ir/core"
 	"github.com/panda-io/micro-panda/ir/instruction"
+	"github.com/panda-io/micro-panda/ir/types"
 )
 
-// === [ Basic blocks ] ========================================================
-
-// Block is an LLVM IR basic block; a sequence of non-branching instructions
-// terminated by a control flow instruction (e.g. br or ret).
 type Block struct {
-	// Name of local variable associated with the basic block.
 	core.LocalIdent
-	// Instructions of the basic block.
 	Insts      []instruction.Instruction
 	Terminated bool
 }
 
-// NewBlock returns a new basic block based on the given label name. An empty
-// label name indicates an unnamed basic block.
 func NewBlock(name string) *Block {
 	block := &Block{}
 	block.SetName(name)
 	return block
 }
 
-func (block *Block) AddInstruction(inst Instruction) {
+func (block *Block) AddInstruction(inst instruction.Instruction) {
 	if block.Terminated {
 		panic("block already terminated")
 	}
 	block.Insts = append(block.Insts, inst)
-	if _, ok := inst.(Terminator); ok {
+	if _, ok := inst.(instruction.Terminator); ok {
 		block.Terminated = true
 	}
 }
 
-func (block *Block) InsertAlloca(inst *InstAlloca) {
+func (block *Block) InsertAlloca(inst *instruction.InstAlloca) {
 	if block.Terminated {
 		block.Insts = append(block.Insts, block.Insts[len(block.Insts)-1])
 		block.Insts[len(block.Insts)-2] = inst
@@ -47,33 +40,38 @@ func (block *Block) InsertAlloca(inst *InstAlloca) {
 	}
 }
 
-// String returns the LLVM syntax representation of the basic block as a
-// type-value pair.
 func (block *Block) String() string {
 	return fmt.Sprintf("%s %s", block.Type(), block.Ident())
 }
 
-// Type returns the type of the basic block.
-func (block *Block) Type() Type {
-	return Label
+func (block *Block) Type() core.Type {
+	return types.Label
 }
 
-// LLString returns the LLVM syntax representation of the basic block
-// definition.
-//
-// Name=LabelIdentopt Insts=Instruction* Term=Terminator
-func (block *Block) LLString() string {
-	buf := &strings.Builder{}
-	if block.IsUnnamed() {
-		//fmt.Fprintf(buf, "; <label>:%d\n", block.LocalID)
-		// Explicitly print basic block label to conform with Clang 9.0, and
-		// because it's the sane thing to do.
-		fmt.Fprintf(buf, "%s\n", LabelID(block.LocalID))
+func (block *Block) WriteIR(w io.Writer) error {
+	name := ""
+	if block.LocalName == "" {
+		name = core.LabelID(block.LocalID)
 	} else {
-		fmt.Fprintf(buf, "%s\n", LabelName(block.LocalName))
+		name = core.LabelName(block.LocalName)
+	}
+	_, err := fmt.Fprintf(w, "%s\n", name)
+	if err != nil {
+		return err
 	}
 	for _, inst := range block.Insts {
-		fmt.Fprintf(buf, "\t%s\n", inst.LLString())
+		_, err = w.Write([]byte("\t"))
+		if err != nil {
+			return err
+		}
+		err = inst.WriteIR(w)
+		if err != nil {
+			return err
+		}
+		_, err = w.Write([]byte("\n"))
+		if err != nil {
+			return err
+		}
 	}
-	return buf.String()
+	return nil
 }

@@ -3,6 +3,7 @@ package declaration
 import (
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/statement"
+	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Parameter struct {
@@ -18,7 +19,7 @@ type Function struct {
 	Body       *statement.Block
 
 	Parent *Struct
-	Typ    *core.TypeFunction
+	Typ    *types.TypeFunction
 }
 
 func (f *Function) IsConstant() bool {
@@ -75,7 +76,7 @@ func (f *Function) Validate(ctx core.Context) {
 		c := ctx.NewContext()
 		c.SetFunction(f)
 		if f.Parent != nil {
-			p := &core.TypePointer{
+			p := &types.TypePointer{
 				ElementType: f.Parent.Type(),
 			}
 			_ = c.AddObject(core.StructThis, p)

@@ -5,40 +5,28 @@ import (
 	"strings"
 
 	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/ir/types"
 )
 
-// --- [ Array constants ] -----------------------------------------------------
-
-// Array is an LLVM IR array constant.
 type Array struct {
-	// Array type.
-	Typ *core.ArrayType
-	// Array elements.
+	Typ   *types.ArrayType
 	Elems []Constant
 }
 
-// NewArray returns a new array constant based on the given array type and
-// elements. The array type is infered from the type of the elements if t is
-// nil.
-func NewArray(t *core.ArrayType, elems ...Constant) *Array {
+func NewArray(t *types.ArrayType, elems ...Constant) *Array {
 	c := &Array{
 		Elems: elems,
 		Typ:   t,
 	}
-	// Compute type.
 	c.Type()
 	return c
 }
 
-// String returns the LLVM syntax representation of the constant as a type-value
-// pair.
 func (c *Array) String() string {
 	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
-// Type returns the type of the constant.
-func (c *Array) Type() types.Type {
-	// Cache type if not present.
+func (c *Array) Type() core.Type {
 	if c.Typ == nil {
 		elemType := c.Elems[0].Type()
 		c.Typ = types.NewArrayType(uint64(len(c.Elems)), elemType)
@@ -46,9 +34,7 @@ func (c *Array) Type() types.Type {
 	return c.Typ
 }
 
-// Ident returns the identifier associated with the constant.
 func (c *Array) Ident() string {
-	// '[' Elems=(TypeConst separator ',')* ']'
 	buf := &strings.Builder{}
 	buf.WriteString("[")
 	for i, elem := range c.Elems {
@@ -61,42 +47,28 @@ func (c *Array) Ident() string {
 	return buf.String()
 }
 
-// --- [ Character array constants ] -------------------------------------------
-
-// CharArray is an LLVM IR character array constant.
 type CharArray struct {
-	// Array type.
 	Typ *types.ArrayType
-	// Character array contents.
-	X []byte
+	X   []byte
 }
 
-// NewCharArray returns a new character array constant based on the given
-// character array contents.
 func NewCharArray(x []byte) *CharArray {
 	typ := types.NewArrayType(uint64(len(x)), types.I8)
 	return &CharArray{Typ: typ, X: x}
 }
 
-// NewCharArrayFromString returns a new character array constant based on the
-// given UTF-8 string contents.
 func NewCharArrayFromString(s string) *CharArray {
 	return NewCharArray([]byte(s))
 }
 
-// String returns the LLVM syntax representation of the constant as a type-value
-// pair.
 func (c *CharArray) String() string {
 	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
-// Type returns the type of the constant.
-func (c *CharArray) Type() types.Type {
+func (c *CharArray) Type() core.Type {
 	return c.Typ
 }
 
-// Ident returns the identifier associated with the constant.
 func (c *CharArray) Ident() string {
-	// 'c' Val=StringLit
-	return "c" + Quote(c.X)
+	return "c" + core.Quote(c.X)
 }

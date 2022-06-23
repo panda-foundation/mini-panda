@@ -1,6 +1,6 @@
 package instruction
 
-import "io"
+import "github.com/panda-io/micro-panda/ir/core"
 
 // === [ Instructions ] ========================================================
 
@@ -84,64 +84,61 @@ import "io"
 //    *ir.TermCondBr        // https://godoc.org/github.com/llir/llvm/ir#TermCondBr
 //    *ir.TermSwitch        // https://godoc.org/github.com/llir/llvm/ir#TermSwitch
 
-type irWriter interface {
-	writeIR(io.Writer) error
-}
-
 type Instruction interface {
-	irWriter
-	isInstruction()
+	core.Value
+	core.IRWriter
+	IsInstruction()
 }
 
 // Binary instructions.
-func (*InstFNeg) isInstruction() {}
+func (*InstFNeg) IsInstruction() {}
 
 // Binary instructions.
-func (*InstAdd) isInstruction()  {}
-func (*InstFAdd) isInstruction() {}
-func (*InstSub) isInstruction()  {}
-func (*InstFSub) isInstruction() {}
-func (*InstMul) isInstruction()  {}
-func (*InstFMul) isInstruction() {}
-func (*InstUDiv) isInstruction() {}
-func (*InstSDiv) isInstruction() {}
-func (*InstFDiv) isInstruction() {}
-func (*InstURem) isInstruction() {}
-func (*InstSRem) isInstruction() {}
-func (*InstFRem) isInstruction() {}
+func (*InstAdd) IsInstruction()  {}
+func (*InstFAdd) IsInstruction() {}
+func (*InstSub) IsInstruction()  {}
+func (*InstFSub) IsInstruction() {}
+func (*InstMul) IsInstruction()  {}
+func (*InstFMul) IsInstruction() {}
+func (*InstUDiv) IsInstruction() {}
+func (*InstSDiv) IsInstruction() {}
+func (*InstFDiv) IsInstruction() {}
+func (*InstURem) IsInstruction() {}
+func (*InstSRem) IsInstruction() {}
+func (*InstFRem) IsInstruction() {}
 
 // Bitwise instructions.
-func (*InstShl) isInstruction()  {}
-func (*InstLShr) isInstruction() {}
-func (*InstAShr) isInstruction() {}
-func (*InstAnd) isInstruction()  {}
-func (*InstOr) isInstruction()   {}
-func (*InstXor) isInstruction()  {}
+func (*InstShl) IsInstruction()  {}
+func (*InstLShr) IsInstruction() {}
+func (*InstAShr) IsInstruction() {}
+func (*InstAnd) IsInstruction()  {}
+func (*InstOr) IsInstruction()   {}
+func (*InstXor) IsInstruction()  {}
 
 // Memory instructions.
-func (*InstAlloca) isInstruction()        {}
-func (*InstLoad) isInstruction()          {}
-func (*InstStore) isInstruction()         {}
-func (*InstGetElementPtr) isInstruction() {}
+func (*InstAlloca) IsInstruction()        {}
+func (*InstLoad) IsInstruction()          {}
+func (*InstStore) IsInstruction()         {}
+func (*InstGetElementPtr) IsInstruction() {}
 
 // Conversion instructions.
-func (*InstTrunc) isInstruction()   {}
-func (*InstSExt) isInstruction()    {}
-func (*InstFPTrunc) isInstruction() {}
-func (*InstFPExt) isInstruction()   {}
-func (*InstFPToUI) isInstruction()  {}
-func (*InstFPToSI) isInstruction()  {}
-func (*InstUIToFP) isInstruction()  {}
-func (*InstSIToFP) isInstruction()  {}
-func (*InstBitCast) isInstruction() {}
+func (*InstTrunc) IsInstruction()   {}
+func (*InstSExt) IsInstruction()    {}
+func (*InstFPTrunc) IsInstruction() {}
+func (*InstFPExt) IsInstruction()   {}
+func (*InstFPToUI) IsInstruction()  {}
+func (*InstFPToSI) IsInstruction()  {}
+func (*InstUIToFP) IsInstruction()  {}
+func (*InstSIToFP) IsInstruction()  {}
+func (*InstBitCast) IsInstruction() {}
 
 // Other instructions.
-func (*InstICmp) isInstruction() {}
-func (*InstFCmp) isInstruction() {}
-func (*InstCall) isInstruction() {}
+func (*InstICmp) IsInstruction() {}
+func (*InstFCmp) IsInstruction() {}
+func (*InstCall) IsInstruction() {}
 
 // Terminator instructions
-func (*TermRet) isInstruction()    {}
-func (*TermBr) isInstruction()     {}
-func (*TermCondBr) isInstruction() {}
-func (*TermSwitch) isInstruction() {}
+func (*TermRet) IsInstruction()    {}
+func (*TermBr) IsInstruction()     {}
+func (*TermCondBr) IsInstruction() {}
+func (*TermSwitch) IsInstruction() {}

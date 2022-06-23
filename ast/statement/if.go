@@ -1,6 +1,9 @@
 package statement
 
-import "github.com/panda-io/micro-panda/ast/core"
+import (
+	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/types"
+)
 
 type If struct {
 	StatementBase
@@ -18,8 +21,8 @@ func (i *If) Validate(c core.Context) {
 	if i.Condition == nil {
 		c.Error(i.GetPosition(), "expect condition expression")
 	} else {
-		i.Condition.Validate(ctx, core.TypeBool)
-		if i.Condition.Type() != nil && !i.Condition.Type().Equal(core.TypeBool) {
+		i.Condition.Validate(ctx, types.TypeBool)
+		if i.Condition.Type() != nil && !i.Condition.Type().Equal(types.TypeBool) {
 			c.Error(i.Condition.GetPosition(), "expect bool type condition")
 		}
 	}

@@ -13,7 +13,7 @@ import (
 //    "a b" -> `@"a b"`
 //    "世" -> `@"\E4\B8\96"`
 //    "2" -> `@"2"`
-func globalName(name string) string {
+func GlobalName(name string) string {
 	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
 		return `@"` + name + `"`
 	}
@@ -24,7 +24,7 @@ func globalName(name string) string {
 //
 // Examples:
 //    "42" -> "@42"
-func globalID(id int64) string {
+func GlobalID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative global ID (%d); should be represented as global name", id))
 	}
@@ -38,7 +38,7 @@ func globalID(id int64) string {
 //    "a b" -> `%"a b"`
 //    "世" -> `%"\E4\B8\96"`
 //    "2" -> `%"2"`
-func localName(name string) string {
+func LocalName(name string) string {
 	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
 		return `%"` + name + `"`
 	}
@@ -49,7 +49,7 @@ func localName(name string) string {
 //
 // Examples:
 //    "42" -> "%42"
-func localID(id int64) string {
+func LocalID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative local ID (%d); should be represented as local name", id))
 	}
@@ -63,7 +63,7 @@ func localID(id int64) string {
 //    "a b" -> `"a b":`
 //    "世" -> `"\E4\B8\96":`
 //    "2" -> `"2":`
-func labelName(name string) string {
+func LabelName(name string) string {
 	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
 		return `"` + name + `":`
 	}
@@ -74,7 +74,7 @@ func labelName(name string) string {
 //
 // Examples:
 //    "42" -> 42:
-func labelID(id int64) string {
+func LabelID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative label ID (%d); should be represented as label name", id))
 	}
@@ -238,14 +238,11 @@ func unescape(s string) []byte {
 	return buf[:j]
 }
 
-// quote returns s as a double-quoted string literal.
-func quote(s []byte) string {
+func Quote(s []byte) string {
 	return `"` + string(escapeString(s)) + `"`
 }
 
-// unquote interprets s as a double-quoted string literal, returning the string
-// value that s quotes.
-func unquote(s string) []byte {
+func Unquote(s string) []byte {
 	if len(s) < 2 {
 		panic(fmt.Errorf("invalid length of quoted string; expected >= 2, got %d", len(s)))
 	}

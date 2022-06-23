@@ -19,7 +19,7 @@ func NewRet(x core.Value) *TermRet {
 	return &TermRet{X: x}
 }
 
-func (term *TermRet) writeIR(w io.Writer) error {
+func (term *TermRet) WriteIR(w io.Writer) error {
 	var err error
 	if term.X == nil {
 		_, err = w.Write([]byte("ret void"))
@@ -37,7 +37,7 @@ func NewBr(target core.Value) *TermBr {
 	return &TermBr{Target: target}
 }
 
-func (term *TermBr) writeIR(w io.Writer) error {
+func (term *TermBr) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "br %s", term.Target)
 	return err
 }
@@ -52,7 +52,7 @@ func NewCondBr(cond, targetTrue, targetFalse core.Value) *TermCondBr {
 	return &TermCondBr{Cond: cond, TargetTrue: targetTrue, TargetFalse: targetFalse}
 }
 
-func (term *TermCondBr) writeIR(w io.Writer) error {
+func (term *TermCondBr) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "br %s, %s, %s", term.Cond, term.TargetTrue, term.TargetFalse)
 	return err
 }
@@ -67,7 +67,7 @@ func NewSwitch(x, targetDefault core.Value, cases ...*Case) *TermSwitch {
 	return &TermSwitch{X: x, TargetDefault: targetDefault, Cases: cases}
 }
 
-func (term *TermSwitch) writeIR(w io.Writer) error {
+func (term *TermSwitch) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "switch %s, %s [\n", term.X, term.TargetDefault)
 	if err != nil {
 		return err

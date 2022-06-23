@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -28,48 +29,48 @@ func (l *Literal) Validate(c core.Context, expected core.Type) {
 			// `` raw string
 			length = len(l.Value) - 1
 		}
-		l.Typ = &core.TypeArray{
-			ElementType: core.TypeU8,
+		l.Typ = &types.TypeArray{
+			ElementType: types.TypeU8,
 			Dimension:   []int{length},
 		}
 
 	case token.CHAR:
-		l.Typ = core.TypeU8
+		l.Typ = types.TypeU8
 
 	case token.FLOAT:
 		if expected != nil {
-			if core.IsFloat(expected) {
+			if types.IsFloat(expected) {
 				l.Typ = expected
 			} else {
 				c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect '%s' got 'float'", expected.String()))
 			}
 		} else {
-			l.Typ = core.TypeF32
+			l.Typ = types.TypeF32
 		}
 
 	case token.INT:
 		if expected != nil {
-			if core.IsNumber(expected) {
+			if types.IsNumber(expected) {
 				l.Typ = expected
 			} else {
 				c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect '%s' got 'int'", expected.String()))
 			}
 		} else {
-			l.Typ = core.TypeI32
+			l.Typ = types.TypeI32
 		}
 
 	case token.BOOL:
-		if expected != nil && !core.IsBool(expected) {
+		if expected != nil && !types.IsBool(expected) {
 			c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect '%s' got 'bool'", expected.String()))
 		} else {
-			l.Typ = core.TypeBool
+			l.Typ = types.TypeBool
 		}
 
 	case token.NULL:
 		if expected == nil {
 			c.Error(l.GetPosition(), "expect type for 'null'")
 		} else {
-			if core.IsPointer(expected) {
+			if types.IsPointer(expected) {
 				l.Typ = expected
 			} else {
 				c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect 'pointer' got '%s'", expected.String()))

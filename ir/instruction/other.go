@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/ir/types"
 )
 
 type InstICmp struct {
@@ -27,8 +28,8 @@ func (inst *InstICmp) String() string {
 func (inst *InstICmp) Type() core.Type {
 	if inst.Typ == nil {
 		switch xType := inst.X.Type().(type) {
-		case *core.IntType, *core.PointerType:
-			inst.Typ = core.I1
+		case *types.IntType, *types.PointerType:
+			inst.Typ = types.I1
 		default:
 			panic(fmt.Errorf("invalid icmp operand type; expected *IntType or *PointerType, got %T", xType))
 		}
@@ -36,7 +37,7 @@ func (inst *InstICmp) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstICmp) writeIR(w io.Writer) error {
+func (inst *InstICmp) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = icmp %s %s, %s", inst.Ident(), inst.Pred, inst.X, inst.Y.Ident())
 	return err
 }
@@ -61,8 +62,8 @@ func (inst *InstFCmp) String() string {
 func (inst *InstFCmp) Type() core.Type {
 	if inst.Typ == nil {
 		switch xType := inst.X.Type().(type) {
-		case *core.FloatType:
-			inst.Typ = core.I1
+		case *types.FloatType:
+			inst.Typ = types.I1
 		default:
 			panic(fmt.Errorf("invalid fcmp operand type; expected *FloatType, got %T", xType))
 		}
@@ -70,7 +71,7 @@ func (inst *InstFCmp) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstFCmp) writeIR(w io.Writer) error {
+func (inst *InstFCmp) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = fcmp %s %s, %s", inst.Ident(), inst.Pred, inst.X, inst.Y.Ident())
 	return err
 }
@@ -100,9 +101,9 @@ func (inst *InstCall) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstCall) writeIR(w io.Writer) error {
+func (inst *InstCall) WriteIR(w io.Writer) error {
 	var err error
-	if !inst.Type().Equal(core.Void) {
+	if !inst.Type().Equal(types.Void) {
 		_, err = fmt.Fprintf(w, "%s = ", inst.Ident())
 		if err != nil {
 			return err
@@ -110,6 +111,9 @@ func (inst *InstCall) writeIR(w io.Writer) error {
 	}
 	calleeType := inst.Type()
 	_, err = fmt.Fprintf(w, "call %s %s(", calleeType, inst.Callee.Ident())
+	if err != nil {
+		return err
+	}
 	for i, arg := range inst.Args {
 		if i != 0 {
 			_, err = w.Write([]byte(", "))
@@ -126,12 +130,12 @@ func (inst *InstCall) writeIR(w io.Writer) error {
 	return err
 }
 
-func (inst *InstCall) Sig() *core.FuncType {
-	t, ok := inst.Callee.Type().(*core.PointerType)
+func (inst *InstCall) Sig() *types.FuncType {
+	t, ok := inst.Callee.Type().(*types.PointerType)
 	if !ok {
 		panic(fmt.Errorf("invalid callee type; expected *PointerType, got %T", inst.Callee.Type()))
 	}
-	sig, ok := t.ElemType.(*core.FuncType)
+	sig, ok := t.ElemType.(*types.FuncType)
 	if !ok {
 		panic(fmt.Errorf("invalid callee type; expected *FuncType, got %T", t.ElemType))
 	}

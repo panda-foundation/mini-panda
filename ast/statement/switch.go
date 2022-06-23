@@ -2,6 +2,7 @@ package statement
 
 import (
 	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -32,7 +33,7 @@ func (s *Switch) Validate(c core.Context) {
 	} else {
 		s.Operand.Validate(ctx, nil)
 		operandType = s.Operand.Type()
-		if !core.IsInteger(operandType) {
+		if !types.IsInteger(operandType) {
 			c.Error(s.Operand.GetPosition(), "expect integer operand")
 			return
 		}

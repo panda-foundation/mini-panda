@@ -2,6 +2,7 @@ package expression
 
 import (
 	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -17,26 +18,26 @@ func (u *Unary) Validate(c core.Context, expected core.Type) {
 	u.Typ = u.Expression.Type()
 	switch u.Operator {
 	case token.Plus, token.Minus:
-		if !core.IsNumber(u.Typ) {
+		if !types.IsNumber(u.Typ) {
 			c.Error(u.GetPosition(), "expect number expression")
 		}
 
 	case token.Not:
-		if !core.IsBool(u.Typ) {
+		if !types.IsBool(u.Typ) {
 			c.Error(u.GetPosition(), "expect boolean expression")
 		}
 
 	case token.Complement:
-		if !core.IsInteger(u.Typ) {
+		if !types.IsInteger(u.Typ) {
 			c.Error(u.GetPosition(), "expect integer expression")
 		}
 
 	case token.BitAnd:
-		if core.IsPointer(u.Typ) || core.IsFunction(u.Typ) || core.IsArray(u.Typ) {
+		if types.IsPointer(u.Typ) || types.IsFunction(u.Typ) || types.IsArray(u.Typ) {
 			c.Error(u.GetPosition(), "pointer, function and array are not allowed to use '&' operator")
 			return
 		}
-		u.Typ = &core.TypePointer{
+		u.Typ = &types.TypePointer{
 			ElementType: u.Typ,
 		}
 		switch u.Expression.(type) {
@@ -48,8 +49,8 @@ func (u *Unary) Validate(c core.Context, expected core.Type) {
 		}
 
 	case token.Mul:
-		if core.IsPointer(u.Typ) {
-			u.Typ = u.Typ.(*core.TypePointer).ElementType
+		if types.IsPointer(u.Typ) {
+			u.Typ = u.Typ.(*types.TypePointer).ElementType
 		} else {
 			c.Error(u.GetPosition(), "only pointer type is allowed with '*' operator")
 		}

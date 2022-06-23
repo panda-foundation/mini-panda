@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type MemberAccess struct {
@@ -38,7 +39,7 @@ func (m *MemberAccess) Validate(c core.Context, expected core.Type) {
 				}
 			} else if d := c.FindQualifiedDeclaration(i.Qualified); d != nil {
 				if d.Kind() == core.DeclarationEnum && d.(core.Enum).HasMember(m.Member.Name) {
-					m.Typ = core.TypeU8
+					m.Typ = types.TypeU8
 					m.Const = true
 				}
 			}
@@ -57,17 +58,17 @@ func (m *MemberAccess) Validate(c core.Context, expected core.Type) {
 				}
 			} else if d := c.FindQualifiedDeclaration(mm.Qualified); d != nil {
 				if d.Kind() == core.DeclarationEnum && d.(core.Enum).HasMember(m.Member.Name) {
-					m.Typ = core.TypeU8
+					m.Typ = types.TypeU8
 					m.Const = true
 				}
 			}
 		}
 	} else {
 		t := m.Parent.Type()
-		if p, ok := t.(*core.TypePointer); ok {
+		if p, ok := t.(*types.TypePointer); ok {
 			t = p.ElementType
 		}
-		if n, ok := t.(*core.TypeName); ok {
+		if n, ok := t.(*types.TypeName); ok {
 			d := c.FindDeclaration(n)
 			if d != nil {
 				if d.Kind() == core.DeclarationStruct {

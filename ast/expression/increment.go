@@ -2,6 +2,7 @@ package expression
 
 import (
 	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Increment struct {
@@ -15,7 +16,7 @@ func (i *Increment) Validate(c core.Context, expected core.Type) {
 	if i.Expression.IsConstant() {
 		c.Error(i.GetPosition(), "expect variable")
 	}
-	if !core.IsInteger(i.Expression.Type()) {
+	if !types.IsInteger(i.Expression.Type()) {
 		c.Error(i.GetPosition(), "expect integer expression")
 	}
 }

@@ -30,7 +30,7 @@ func (inst *InstAdd) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstAdd) writeIR(w io.Writer) error {
+func (inst *InstAdd) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = add %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -58,7 +58,7 @@ func (inst *InstFAdd) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstFAdd) writeIR(w io.Writer) error {
+func (inst *InstFAdd) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = fadd %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -86,7 +86,7 @@ func (inst *InstSub) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstSub) writeIR(w io.Writer) error {
+func (inst *InstSub) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = sub %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -114,7 +114,7 @@ func (inst *InstFSub) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstFSub) writeIR(w io.Writer) error {
+func (inst *InstFSub) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = fsub %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -142,7 +142,7 @@ func (inst *InstMul) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstMul) writeIR(w io.Writer) error {
+func (inst *InstMul) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = mul %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -170,7 +170,7 @@ func (inst *InstFMul) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstFMul) writeIR(w io.Writer) error {
+func (inst *InstFMul) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = fmul %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -198,7 +198,7 @@ func (inst *InstUDiv) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstUDiv) writeIR(w io.Writer) error {
+func (inst *InstUDiv) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = udiv %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -226,7 +226,7 @@ func (inst *InstSDiv) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstSDiv) writeIR(w io.Writer) error {
+func (inst *InstSDiv) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = sdiv %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -254,7 +254,7 @@ func (inst *InstFDiv) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstFDiv) writeIR(w io.Writer) error {
+func (inst *InstFDiv) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = fdiv %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -282,7 +282,7 @@ func (inst *InstURem) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstURem) writeIR(w io.Writer) error {
+func (inst *InstURem) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = urem %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -310,7 +310,7 @@ func (inst *InstSRem) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstSRem) writeIR(w io.Writer) error {
+func (inst *InstSRem) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = srem %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }
@@ -338,7 +338,7 @@ func (inst *InstFRem) Type() core.Type {
 	return inst.Typ
 }
 
-func (inst *InstFRem) writeIR(w io.Writer) error {
+func (inst *InstFRem) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = frem %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
 	return err
 }

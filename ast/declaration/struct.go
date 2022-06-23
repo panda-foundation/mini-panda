@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Struct struct {
@@ -71,15 +72,15 @@ func (s *Struct) MemberType(member string) core.Type {
 }
 
 func (s *Struct) Type() core.Type {
-	return &core.TypeName{
+	return &types.TypeName{
 		Name:      s.Name.Name,
 		Qualified: s.Qualified,
 		IsEnum:    false,
 	}
 }
 
-func (s *Struct) PointerType() *core.TypePointer {
-	return &core.TypePointer{
+func (s *Struct) PointerType() *types.TypePointer {
+	return &types.TypePointer{
 		ElementType: s.Type(),
 	}
 }

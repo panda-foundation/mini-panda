@@ -5,6 +5,7 @@ import (
 
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/declaration"
+	"github.com/panda-io/micro-panda/ast/types"
 )
 
 func NewContext(p *Program) core.Context {
@@ -62,7 +63,7 @@ func (c *Context) FindObject(name string) core.Type {
 
 func (c *Context) ResolveType(v core.Type) core.Type {
 	switch t := v.(type) {
-	case *core.TypeName:
+	case *types.TypeName:
 		d := c.FindDeclaration(t)
 		if d == nil {
 			c.Program.Error(v.GetPosition(), "type not defined")
@@ -83,7 +84,7 @@ func (c *Context) ResolveType(v core.Type) core.Type {
 		}
 		return t
 
-	case *core.TypeArray:
+	case *types.TypeArray:
 		t.ElementType = c.ResolveType(t.ElementType)
 		if t.Dimension[0] < 0 {
 			c.Program.Error(v.GetPosition(), "invalid array index")
@@ -95,18 +96,18 @@ func (c *Context) ResolveType(v core.Type) core.Type {
 		}
 		return t
 
-	case *core.TypePointer:
+	case *types.TypePointer:
 		t.ElementType = c.ResolveType(t.ElementType)
 		return t
 
-	case *core.TypeFunction:
+	case *types.TypeFunction:
 		t.ReturnType = c.ResolveType(t.ReturnType)
 		for i := 0; i < len(t.Parameters); i++ {
 			t.Parameters[i] = c.ResolveType(t.Parameters[i])
-			if core.IsStruct(t.Parameters[i]) {
+			if types.IsStruct(t.Parameters[i]) {
 				c.Program.Error(t.Parameters[i].GetPosition(), "struct is not allowed as parameter, use pointer instead")
 			}
-			if core.IsArray(t.Parameters[i]) {
+			if types.IsArray(t.Parameters[i]) {
 				c.Program.Error(t.Parameters[i].GetPosition(), "array is not allowed as parameter, use pointer instead")
 			}
 		}
@@ -117,15 +118,16 @@ func (c *Context) ResolveType(v core.Type) core.Type {
 	}
 }
 
-func (c *Context) FindDeclaration(t *core.TypeName) core.Declaration {
-	if t.Qualified == "" {
-		return c.FindLocalDeclaration(t.Name)
+func (c *Context) FindDeclaration(t core.Type) core.Declaration {
+	typeName := t.(*types.TypeName)
+	if typeName.Qualified == "" {
+		return c.FindLocalDeclaration(typeName.Name)
 	}
-	d := c.FindQualifiedDeclaration(t.Qualified)
+	d := c.FindQualifiedDeclaration(typeName.Qualified)
 	if _, ok := d.(*declaration.Enum); ok {
-		t.IsEnum = true
+		typeName.IsEnum = true
 	}
-	t.Qualified = d.QualifiedName()
+	typeName.Qualified = d.QualifiedName()
 	return d
 }
 

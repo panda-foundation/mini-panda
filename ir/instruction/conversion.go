@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/ir/types"
 )
 
 type InstTrunc struct {
@@ -16,8 +17,8 @@ type InstTrunc struct {
 func NewTrunc(from core.Value, to core.Type) *InstTrunc {
 	fromType := from.Type()
 	toType := to
-	if fromIntT, ok := fromType.(*core.IntType); ok {
-		toIntT, ok := toType.(*core.IntType)
+	if fromIntT, ok := fromType.(*types.IntType); ok {
+		toIntT, ok := toType.(*types.IntType)
 		if !ok {
 			panic(fmt.Errorf("trunc operands are not compatible: from=%v; to=%T", fromIntT, to))
 		}
@@ -38,7 +39,7 @@ func (inst *InstTrunc) Type() core.Type {
 	return inst.To
 }
 
-func (inst *InstTrunc) writeIR(w io.Writer) error {
+func (inst *InstTrunc) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = trunc %s to %s", inst.Ident(), inst.From, inst.To)
 	return err
 }
@@ -61,7 +62,7 @@ func (inst *InstSExt) Type() core.Type {
 	return inst.To
 }
 
-func (inst *InstSExt) writeIR(w io.Writer) error {
+func (inst *InstSExt) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = sext %s to %s", inst.Ident(), inst.From, inst.To)
 	return err
 }
@@ -84,7 +85,7 @@ func (inst *InstFPTrunc) Type() core.Type {
 	return inst.To
 }
 
-func (inst *InstFPTrunc) writeIR(w io.Writer) error {
+func (inst *InstFPTrunc) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = fptrunc %s to %s", inst.Ident(), inst.From, inst.To)
 	return err
 }
@@ -107,7 +108,7 @@ func (inst *InstFPExt) Type() core.Type {
 	return inst.To
 }
 
-func (inst *InstFPExt) writeIR(w io.Writer) error {
+func (inst *InstFPExt) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = fpext %s to %s", inst.Ident(), inst.From, inst.To)
 	return err
 }
@@ -130,7 +131,7 @@ func (inst *InstFPToUI) Type() core.Type {
 	return inst.To
 }
 
-func (inst *InstFPToUI) writeIR(w io.Writer) error {
+func (inst *InstFPToUI) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = fptoui %s to %s", inst.Ident(), inst.From, inst.To)
 	return err
 }
@@ -153,7 +154,7 @@ func (inst *InstFPToSI) Type() core.Type {
 	return inst.To
 }
 
-func (inst *InstFPToSI) writeIR(w io.Writer) error {
+func (inst *InstFPToSI) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = fptosi %s to %s", inst.Ident(), inst.From, inst.To)
 	return err
 }
@@ -176,7 +177,7 @@ func (inst *InstUIToFP) Type() core.Type {
 	return inst.To
 }
 
-func (inst *InstUIToFP) writeIR(w io.Writer) error {
+func (inst *InstUIToFP) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = uitofp %s to %s", inst.Ident(), inst.From, inst.To)
 	return err
 }
@@ -199,7 +200,7 @@ func (inst *InstSIToFP) Type() core.Type {
 	return inst.To
 }
 
-func (inst *InstSIToFP) writeIR(w io.Writer) error {
+func (inst *InstSIToFP) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = sitofp %s to %s", inst.Ident(), inst.From, inst.To)
 	return err
 }
@@ -222,7 +223,7 @@ func (inst *InstBitCast) Type() core.Type {
 	return inst.To
 }
 
-func (inst *InstBitCast) writeIR(w io.Writer) error {
+func (inst *InstBitCast) WriteIR(w io.Writer) error {
 	_, err := fmt.Fprintf(w, "%s = bitcast %s to %s", inst.Ident(), inst.From, inst.To)
 	return err
 }

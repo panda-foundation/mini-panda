@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Subscripting struct {
@@ -15,23 +16,23 @@ type Subscripting struct {
 func (s *Subscripting) Validate(c core.Context, expected core.Type) {
 	s.Const = false
 	s.Parent.Validate(c, nil)
-	if t, ok := s.Parent.Type().(*core.TypeArray); ok {
+	if t, ok := s.Parent.Type().(*types.TypeArray); ok {
 		if len(s.Indexes) == len(t.Dimension) {
 			s.Typ = t.ElementType
 			for _, e := range s.Indexes {
 				e.Validate(c, nil)
-				if !core.IsInteger(e.Type()) {
+				if !types.IsInteger(e.Type()) {
 					c.Error(e.GetPosition(), fmt.Sprintf("expect integer index for array, got '%s'", e.Type().String()))
 				}
 			}
 		} else if len(s.Indexes) < len(t.Dimension) {
-			array := &core.TypeArray{
+			array := &types.TypeArray{
 				ElementType: t.ElementType,
 				Dimension:   []int{0},
 			}
 			for _, e := range s.Indexes {
 				e.Validate(c, nil)
-				if !core.IsInteger(e.Type()) {
+				if !types.IsInteger(e.Type()) {
 					c.Error(e.GetPosition(), fmt.Sprintf("expect integer index for array, got '%s'", e.Type().String()))
 				}
 			}

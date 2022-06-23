@@ -65,7 +65,7 @@ type Context interface {
 	FindObject(name string) Type
 	ResolveType(v Type) Type
 
-	FindDeclaration(t *TypeName) Declaration
+	FindDeclaration(t Type) Declaration
 	FindLocalDeclaration(name string) Declaration
 	FindQualifiedDeclaration(qualified string) Declaration
 	IsNamespace(namespace string) bool
