@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/ast"
+	core "github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/token"
 )
 

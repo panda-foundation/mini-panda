@@ -1,12 +1,12 @@
 package parser
 
 import (
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/statement"
 	"github.com/panda-io/micro-panda/token"
 )
 
-func (p *Parser) parseStatement() core.Statement {
+func (p *Parser) parseStatement() ast.Statement {
 	switch p.token {
 	case token.Break:
 		s := &statement.Break{}
@@ -49,7 +49,7 @@ func (p *Parser) parseStatement() core.Statement {
 	}
 }
 
-func (p *Parser) parseSimpleStatement(consumeSemi bool) core.Statement {
+func (p *Parser) parseSimpleStatement(consumeSemi bool) ast.Statement {
 	switch p.token {
 	case token.Semi:
 		s := &statement.Empty{}
@@ -151,7 +151,7 @@ func (p *Parser) parseSwitchStatement() *statement.Switch {
 	p.next()
 	p.expect(token.LeftParen)
 	first := p.parseSimpleStatement(false)
-	var operand core.Statement
+	var operand ast.Statement
 	if p.token == token.Semi {
 		p.next()
 		s.Initialization = first
@@ -198,7 +198,7 @@ func (p *Parser) parseCaseStatement() *statement.Case {
 // for {}
 // for (condition) {}
 // for (init; condition; post) {}
-func (p *Parser) parseForStatement() core.Statement {
+func (p *Parser) parseForStatement() ast.Statement {
 	position := p.position
 	p.next()
 	if p.token != token.LeftParen {

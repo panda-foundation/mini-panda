@@ -5,8 +5,7 @@ import (
 	"fmt"
 
 	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/ast"
-	"github.com/panda-io/micro-panda/ast/core"
+	core "github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/scanner"
 	"github.com/panda-io/micro-panda/token"
 )
@@ -40,7 +39,7 @@ func (p *Parser) ParseFile(file *token.File, source []byte) {
 	p.parseSourceFile(file)
 }
 
-func (p *Parser) ParseExpression(source []byte) ast.Expression {
+func (p *Parser) ParseExpression(source []byte) core.Expression {
 	file := token.NewFile("<input>"+fmt.Sprintf("%x", md5.Sum(source)), len(source))
 	p.setSource(file, source)
 	return p.parseExpression()

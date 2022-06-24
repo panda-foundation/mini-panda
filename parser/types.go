@@ -5,15 +5,14 @@ import (
 	"strings"
 
 	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 	"github.com/panda-io/micro-panda/ast/declaration"
-	"github.com/panda-io/micro-panda/ast/types"
-	"github.com/panda-io/micro-panda/ir/core"
 	"github.com/panda-io/micro-panda/token"
 )
 
-func (p *Parser) parseType() core.Type {
+func (p *Parser) parseType() ast.Type {
 	if p.token.IsScalar() {
-		t := &types.TypeBuiltin{}
+		t := &ast_types.TypeBuiltin{}
 		t.SetPosition(p.position)
 		t.Token = p.token
 		p.next()
@@ -33,8 +32,8 @@ func (p *Parser) parseType() core.Type {
 	return p.parseTypeName()
 }
 
-func (p *Parser) parseTypeArray() *types.TypeArray {
-	t := &types.TypeArray{}
+func (p *Parser) parseTypeArray() *ast_types.TypeArray {
+	t := &ast_types.TypeArray{}
 	t.SetPosition(p.position)
 	for p.token == token.LeftBracket {
 		p.next()
@@ -53,8 +52,8 @@ func (p *Parser) parseTypeArray() *types.TypeArray {
 	return t
 }
 
-func (p *Parser) parseTypeName() *types.TypeName {
-	t := &types.TypeName{}
+func (p *Parser) parseTypeName() *ast_types.TypeName {
+	t := &ast_types.TypeName{}
 	t.SetPosition(p.position)
 	qualified := p.parseQualified()
 	if strings.Contains(qualified, ".") {
@@ -67,14 +66,14 @@ func (p *Parser) parseTypeName() *types.TypeName {
 	return t
 }
 
-func (p *Parser) parseTypePointer() *types.TypePointer {
-	t := &types.TypePointer{}
+func (p *Parser) parseTypePointer() *ast_types.TypePointer {
+	t := &ast_types.TypePointer{}
 	if p.token == token.Less {
 		p.next()
 		t.ElementType = p.parseType()
 		p.expect(token.Greater)
 	} else {
-		t.ElementType = types.TypeU8
+		t.ElementType = ast_types.TypeU8
 	}
 	return t
 }
@@ -119,8 +118,8 @@ func (p *Parser) parseArguments() []ast.Expression {
 	return expressions
 }
 
-func (p *Parser) parseFunctionType() *types.TypeFunction {
-	t := &types.TypeFunction{}
+func (p *Parser) parseFunctionType() *ast_types.TypeFunction {
+	t := &ast_types.TypeFunction{}
 	t.SetPosition(p.position)
 	p.expect(token.LeftParen)
 	if p.token == token.RightParen {
