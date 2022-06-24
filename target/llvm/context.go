@@ -2,15 +2,13 @@ package llvm
 
 import (
 	"github.com/panda-io/micro-panda/ast/ast"
-	"github.com/panda-io/micro-panda/target/llvm/declaration"
 	"github.com/panda-io/micro-panda/target/llvm/ir"
 	"github.com/panda-io/micro-panda/target/llvm/ir/instruction"
 	ir_core "github.com/panda-io/micro-panda/target/llvm/ir/ir"
 	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
-	"github.com/panda-io/micro-panda/target/llvm/llvm"
 )
 
-func NewContext(p *Program) llvm.Context {
+func NewContext(p *Program) *Context {
 	return &Context{
 		Program: p,
 		objects: make(map[string]ir_core.Value),
@@ -19,18 +17,18 @@ func NewContext(p *Program) llvm.Context {
 
 type Context struct {
 	Program  *Program
-	Function *declaration.Function
+	Function *Function
 
 	Block      *ir.Block
 	LeaveBlock *ir.Block
 	LoopBlock  *ir.Block
 	Returned   bool
 
-	parent  llvm.Context
+	parent  *Context
 	objects map[string]ir_core.Value
 }
 
-func (c *Context) NewContext() llvm.Context {
+func (c *Context) NewContext() *Context {
 	return &Context{
 		Program:  c.Program,
 		Function: c.Function,
@@ -69,28 +67,28 @@ func (c *Context) AutoLoad(value ir_core.Value) ir_core.Value {
 	// global define
 	case *ir.Global:
 		load := instruction.NewLoad(t.ContentType, t)
-		c.Block().AddInstruction(load)
+		c.Block.AddInstruction(load)
 		return load
 
 	// parameter
 	case *ir.Param:
 		if typ, ok := t.Type().(*ir_types.PointerType); ok {
 			load := instruction.NewLoad(typ.ElemType, t)
-			c.Block().AddInstruction(load)
+			c.Block.AddInstruction(load)
 			return load
 		}
 
 	// alloca in function
 	case *instruction.InstAlloca:
 		load := instruction.NewLoad(t.ElemType, t)
-		c.Block().AddInstruction(load)
+		c.Block.AddInstruction(load)
 		return load
 
 	// struct member
 	case *instruction.InstGetElementPtr:
 		typ := t.Type().(*ir_types.PointerType)
 		load := instruction.NewLoad(typ.ElemType, t)
-		c.Block().AddInstruction(load)
+		c.Block.AddInstruction(load)
 		return load
 	}
 	return value

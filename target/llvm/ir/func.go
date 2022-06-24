@@ -77,9 +77,11 @@ func (f *Func) assignIDs() error {
 			if !ok {
 				continue
 			}
-			if inst.Type().Equal(ir_types.Void) {
-				continue
-			}
+			//TO-DO
+			/*
+				if inst.Type().Equal(ir_types.Void) {
+					continue
+				}*/
 			if err := f.setName(n, &id); err != nil {
 				return err
 			}

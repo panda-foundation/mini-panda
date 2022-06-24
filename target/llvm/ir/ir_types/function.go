@@ -7,16 +7,16 @@ import (
 )
 
 type FuncType struct {
-	TypeName string //TO-DO
-	RetType  ir.Type
-	Params   []ir.Type
+	Qualified string //TO-DO
+	RetType   ir.Type
+	Params    []ir.Type
 }
 
-func NewFuncType(typeName string, retType ir.Type, params ...ir.Type) *FuncType {
+func NewFuncType(qualified string, retType ir.Type, params ...ir.Type) *FuncType {
 	return &FuncType{
-		TypeName: typeName,
-		RetType:  retType,
-		Params:   params,
+		Qualified: qualified,
+		RetType:   retType,
+		Params:    params,
 	}
 }
 
@@ -39,7 +39,7 @@ func (t *FuncType) Equal(u ir.Type) bool {
 }
 
 func (t *FuncType) String() string {
-	return t.TypeName
+	return t.Qualified
 }
 
 func (t *FuncType) WriteIR(w io.Writer) error {

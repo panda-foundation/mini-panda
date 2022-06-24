@@ -7,7 +7,6 @@ import (
 	"sort"
 
 	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/target/llvm/declaration"
 	"github.com/panda-io/micro-panda/target/llvm/ir"
 	"github.com/panda-io/micro-panda/target/llvm/ir/constant"
 )
@@ -15,7 +14,7 @@ import (
 type Program struct {
 	Program      *ir.Program
 	Strings      map[string]constant.Constant
-	Declarations map[string]declaration.Declaration
+	Declarations map[string]Declaration
 }
 
 func NewProgram() *Program {
@@ -38,18 +37,18 @@ func (p *Program) AddString(value string) constant.Constant {
 	return s
 }
 
-func (p *Program) AddDeclaration(qualified string, d declaration.Declaration) {
+func (p *Program) AddDeclaration(qualified string, d Declaration) {
 	p.Declarations[qualified] = d
 }
 
-func (p *Program) FindDeclaration(qualified string) declaration.Declaration {
+func (p *Program) FindDeclaration(qualified string) Declaration {
 	return p.Declarations[qualified]
 }
 
 func (p *Program) Reset() {
 	p.Program = ir.NewProgram()
 	p.Strings = make(map[string]constant.Constant)
-	p.Declarations = make(map[string]declaration.Declaration)
+	p.Declarations = make(map[string]Declaration)
 }
 
 func (p *Program) GenerateIR(program *ast.Program) []byte {
@@ -68,17 +67,17 @@ func (p *Program) GenerateIR(program *ast.Program) []byte {
 	for _, m := range modules {
 		program.Module = m
 		for _, f := range m.Functions {
-			ff := &declaration.Function{}
+			ff := &Function{}
 			ff.GenerateDefineIR(p, f)
 			p.AddDeclaration(f.QualifiedName(), ff)
 		}
 		for _, e := range m.Enums {
-			ee := &declaration.Enum{}
+			ee := &Enum{}
 			ee.GenerateIR(p, e)
 			p.AddDeclaration(e.QualifiedName(), ee)
 		}
 		for _, s := range m.Structs {
-			ss := &declaration.Struct{}
+			ss := &Struct{}
 			ss.GenerateDefineIR(p, s)
 			p.AddDeclaration(s.QualifiedName(), ss)
 		}
@@ -88,16 +87,16 @@ func (p *Program) GenerateIR(program *ast.Program) []byte {
 	for _, m := range modules {
 		program.Module = m
 		for _, v := range m.Variables {
-			vv := &declaration.Variable{}
+			vv := &Variable{}
 			vv.GenerateIR(p, v)
 			p.AddDeclaration(v.QualifiedName(), vv)
 		}
 		for _, f := range m.Functions {
-			ff := p.FindDeclaration(f.QualifiedName()).(*declaration.Function)
+			ff := p.FindDeclaration(f.QualifiedName()).(*Function)
 			ff.GenerateIR(p, f)
 		}
 		for _, s := range m.Structs {
-			ss := p.FindDeclaration(s.QualifiedName()).(*declaration.Struct)
+			ss := p.FindDeclaration(s.QualifiedName()).(*Struct)
 			ss.GenerateIR(p, s)
 		}
 	}

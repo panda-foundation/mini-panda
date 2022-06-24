@@ -61,6 +61,8 @@ import "github.com/panda-io/micro-panda/target/llvm/ir/constant"
 //    *constant.ExprUIToFP          // https://godoc.org/github.com/llir/llvm/ir/constant#ExprUIToFP
 //    *constant.ExprSIToFP          // https://godoc.org/github.com/llir/llvm/ir/constant#ExprSIToFP
 //    *constant.ExprBitCast         // https://godoc.org/github.com/llir/llvm/ir/constant#ExprBitCast
+//    *constant.ExprPtrToInt        // https://godoc.org/github.com/llir/llvm/ir/constant#ExprPtrToInt
+//    *constant.ExprIntToPtr        // https://godoc.org/github.com/llir/llvm/ir/constant#ExprIntToPtr
 //
 // Other expressions
 //
@@ -102,15 +104,17 @@ func (*ExprXor) IsConstant()  {}
 func (*ExprGetElementPtr) IsConstant() {}
 
 // --- [ Conversion expressions ] ----------------------------------------------
-func (*ExprTrunc) IsConstant()   {}
-func (*ExprSExt) IsConstant()    {}
-func (*ExprFPTrunc) IsConstant() {}
-func (*ExprFPExt) IsConstant()   {}
-func (*ExprFPToUI) IsConstant()  {}
-func (*ExprFPToSI) IsConstant()  {}
-func (*ExprUIToFP) IsConstant()  {}
-func (*ExprSIToFP) IsConstant()  {}
-func (*ExprBitCast) IsConstant() {}
+func (*ExprTrunc) IsConstant()    {}
+func (*ExprSExt) IsConstant()     {}
+func (*ExprFPTrunc) IsConstant()  {}
+func (*ExprFPExt) IsConstant()    {}
+func (*ExprFPToUI) IsConstant()   {}
+func (*ExprFPToSI) IsConstant()   {}
+func (*ExprUIToFP) IsConstant()   {}
+func (*ExprSIToFP) IsConstant()   {}
+func (*ExprBitCast) IsConstant()  {}
+func (*ExprPtrToInt) IsConstant() {}
+func (*ExprIntToPtr) IsConstant() {}
 
 // --- [ Other expressions ] ---------------------------------------------------
 func (*ExprICmp) IsConstant() {}

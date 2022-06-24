@@ -213,3 +213,49 @@ func (e *ExprBitCast) Type() ir.Type {
 func (e *ExprBitCast) Ident() string {
 	return fmt.Sprintf("bitcast (%s to %s)", e.From.String(), e.To.String())
 }
+
+type ExprPtrToInt struct {
+	From constant.Constant
+	To   ir.Type
+}
+
+func NewExprPtrToInt(from constant.Constant, to ir.Type) *ExprPtrToInt {
+	e := &ExprPtrToInt{From: from, To: to}
+	e.Type()
+	return e
+}
+
+func (e *ExprPtrToInt) String() string {
+	return fmt.Sprintf("%s %s", e.Type().String(), e.Ident())
+}
+
+func (e *ExprPtrToInt) Type() ir.Type {
+	return e.To
+}
+
+func (e *ExprPtrToInt) Ident() string {
+	return fmt.Sprintf("ptrtoint (%s to %s)", e.From.String(), e.To.String())
+}
+
+type ExprIntToPtr struct {
+	From constant.Constant
+	To   ir.Type
+}
+
+func NewExprIntToPtr(from constant.Constant, to ir.Type) *ExprIntToPtr {
+	e := &ExprIntToPtr{From: from, To: to}
+	e.Type()
+	return e
+}
+
+func (e *ExprIntToPtr) String() string {
+	return fmt.Sprintf("%s %s", e.Type().String(), e.Ident())
+}
+
+func (e *ExprIntToPtr) Type() ir.Type {
+	return e.To
+}
+
+func (e *ExprIntToPtr) Ident() string {
+	return fmt.Sprintf("inttoptr (%s to %s)", e.From.String(), e.To.String())
+}
