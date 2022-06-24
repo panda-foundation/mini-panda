@@ -1,8 +1,11 @@
 package llvm
 
-import "github.com/panda-io/micro-panda/ast"
+import (
+	"github.com/panda-io/micro-panda/ast"
+	"github.com/panda-io/micro-panda/target/llvm"
+)
 
-func StatementIR(c *Context, stmt ast.Statement) {
+func StatementIR(c llvm.Context, stmt ast.Statement) {
 	switch s := stmt.(type) {
 	case *ast.Block:
 		BlockIR(c, s)

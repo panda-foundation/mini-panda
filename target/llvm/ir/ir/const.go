@@ -1,4 +1,4 @@
-package core
+package ir
 
 // IPred is an integer comparison predicate.
 type IPred string

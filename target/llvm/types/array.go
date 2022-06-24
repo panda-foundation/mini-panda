@@ -1,12 +1,12 @@
 package types
 
 import (
-	ast_types "github.com/panda-io/micro-panda/ast/types"
-	ir_core "github.com/panda-io/micro-panda/ir/core"
-	ir_types "github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/ast/ast_types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
-func TypeArrayIR(t *ast_types.TypeArray) ir_core.Type {
+func TypeArrayIR(t *ast_types.TypeArray) ir.Type {
 	e := TypeIR(t.ElementType)
 	if t.Dimension[0] == 0 {
 		if len(t.Dimension) == 1 {

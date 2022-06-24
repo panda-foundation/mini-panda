@@ -1,16 +1,16 @@
-package types
+package ir_types
 
 import (
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 type FloatType struct {
 	Kind FloatKind
 }
 
-func (t *FloatType) Equal(u core.Type) bool {
+func (t *FloatType) Equal(u ir.Type) bool {
 	if u, ok := u.(*FloatType); ok {
 		return t.Kind == u.Kind
 	}

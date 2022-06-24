@@ -1,18 +1,18 @@
-package types
+package ir_types
 
 import (
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 type FuncType struct {
 	TypeName string //TO-DO
-	RetType  core.Type
-	Params   []core.Type
+	RetType  ir.Type
+	Params   []ir.Type
 }
 
-func NewFuncType(typeName string, retType core.Type, params ...core.Type) *FuncType {
+func NewFuncType(typeName string, retType ir.Type, params ...ir.Type) *FuncType {
 	return &FuncType{
 		TypeName: typeName,
 		RetType:  retType,
@@ -20,7 +20,7 @@ func NewFuncType(typeName string, retType core.Type, params ...core.Type) *FuncT
 	}
 }
 
-func (t *FuncType) Equal(u core.Type) bool {
+func (t *FuncType) Equal(u ir.Type) bool {
 	if u, ok := u.(*FuncType); ok {
 		if !t.RetType.Equal(u.RetType) {
 			return false

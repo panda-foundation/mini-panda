@@ -3,9 +3,10 @@ package llvm
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/target/llvm"
 )
 
-func ForIR(c *Context, f *ast.For) {
+func ForIR(c llvm.Context, f *ast.For) {
 	ctx := c.NewContext()
 	ctx.Block = c.Block
 	if f.Initialization != nil {
@@ -26,7 +27,7 @@ func ForIR(c *Context, f *ast.For) {
 	if f.Post != nil {
 		StatementIR(postContext, f.Post)
 	}
-	postContext.Block.AddInstruction(ir.NewBr(conditionBlock))
+	postContext.Block().AddInstruction(ir.NewBr(conditionBlock))
 
 	bodyBlock := c.Function.Function.NewBlock("")
 	bodyContext := ctx.NewContext()
@@ -35,7 +36,7 @@ func ForIR(c *Context, f *ast.For) {
 	if bodyContext.Returned {
 		ctx.Returned = true
 	} else if !bodyContext.Block.Terminated {
-		bodyContext.Block.AddInstruction(ir.NewBr(postBlock))
+		bodyContext.Block().AddInstruction(ir.NewBr(postBlock))
 	}
 
 	var condition ir.Value
@@ -44,8 +45,8 @@ func ForIR(c *Context, f *ast.For) {
 	} else {
 		condition = ExpressionIR(conditionContext, f.Condition)
 	}
-	conditionContext.Block.AddInstruction(ir.NewCondBr(condition, bodyBlock, nextBlock))
-	ctx.Block.AddInstruction(ir.NewBr(conditionBlock))
+	conditionContext.Block().AddInstruction(ir.NewCondBr(condition, bodyBlock, nextBlock))
+	ctx.Block().AddInstruction(ir.NewBr(conditionBlock))
 	c.Block = nextBlock
 	c.Returned = ctx.Returned
 }

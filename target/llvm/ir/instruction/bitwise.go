@@ -4,26 +4,26 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 type InstShl struct {
-	core.LocalIdent
-	X, Y core.Value // integer scalar or integer vector
-	Typ  core.Type
+	ir.LocalIdent
+	X, Y ir.Value // integer scalar or integer vector
+	Typ  ir.Type
 }
 
-func NewShl(x, y core.Value) *InstShl {
+func NewShl(x, y ir.Value) *InstShl {
 	inst := &InstShl{X: x, Y: y}
 	inst.Type()
 	return inst
 }
 
 func (inst *InstShl) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type().String(), inst.Ident())
 }
 
-func (inst *InstShl) Type() core.Type {
+func (inst *InstShl) Type() ir.Type {
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
 	}
@@ -31,27 +31,27 @@ func (inst *InstShl) Type() core.Type {
 }
 
 func (inst *InstShl) WriteIR(w io.Writer) error {
-	_, err := fmt.Fprintf(w, "%s = shl %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
+	_, err := fmt.Fprintf(w, "%s = shl %s, %s", inst.Ident(), inst.X.String(), inst.Y.Ident())
 	return err
 }
 
 type InstLShr struct {
-	core.LocalIdent
-	X, Y core.Value // integer scalars or vectors
-	Typ  core.Type
+	ir.LocalIdent
+	X, Y ir.Value // integer scalars or vectors
+	Typ  ir.Type
 }
 
-func NewLShr(x, y core.Value) *InstLShr {
+func NewLShr(x, y ir.Value) *InstLShr {
 	inst := &InstLShr{X: x, Y: y}
 	inst.Type()
 	return inst
 }
 
 func (inst *InstLShr) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type().String(), inst.Ident())
 }
 
-func (inst *InstLShr) Type() core.Type {
+func (inst *InstLShr) Type() ir.Type {
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
 	}
@@ -59,27 +59,27 @@ func (inst *InstLShr) Type() core.Type {
 }
 
 func (inst *InstLShr) WriteIR(w io.Writer) error {
-	_, err := fmt.Fprintf(w, "%s = lshr %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
+	_, err := fmt.Fprintf(w, "%s = lshr %s, %s", inst.Ident(), inst.X.String(), inst.Y.Ident())
 	return err
 }
 
 type InstAShr struct {
-	core.LocalIdent
-	X, Y core.Value // integer scalars or vectors
-	Typ  core.Type
+	ir.LocalIdent
+	X, Y ir.Value // integer scalars or vectors
+	Typ  ir.Type
 }
 
-func NewAShr(x, y core.Value) *InstAShr {
+func NewAShr(x, y ir.Value) *InstAShr {
 	inst := &InstAShr{X: x, Y: y}
 	inst.Type()
 	return inst
 }
 
 func (inst *InstAShr) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type().String(), inst.Ident())
 }
 
-func (inst *InstAShr) Type() core.Type {
+func (inst *InstAShr) Type() ir.Type {
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
 	}
@@ -87,27 +87,27 @@ func (inst *InstAShr) Type() core.Type {
 }
 
 func (inst *InstAShr) WriteIR(w io.Writer) error {
-	_, err := fmt.Fprintf(w, "%s = ashr %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
+	_, err := fmt.Fprintf(w, "%s = ashr %s, %s", inst.Ident(), inst.X.String(), inst.Y.Ident())
 	return err
 }
 
 type InstAnd struct {
-	core.LocalIdent
-	X, Y core.Value // integer scalars or vectors
-	Typ  core.Type
+	ir.LocalIdent
+	X, Y ir.Value // integer scalars or vectors
+	Typ  ir.Type
 }
 
-func NewAnd(x, y core.Value) *InstAnd {
+func NewAnd(x, y ir.Value) *InstAnd {
 	inst := &InstAnd{X: x, Y: y}
 	inst.Type()
 	return inst
 }
 
 func (inst *InstAnd) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type().String(), inst.Ident())
 }
 
-func (inst *InstAnd) Type() core.Type {
+func (inst *InstAnd) Type() ir.Type {
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
 	}
@@ -115,27 +115,27 @@ func (inst *InstAnd) Type() core.Type {
 }
 
 func (inst *InstAnd) WriteIR(w io.Writer) error {
-	_, err := fmt.Fprintf(w, "%s = and %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
+	_, err := fmt.Fprintf(w, "%s = and %s, %s", inst.Ident(), inst.X.String(), inst.Y.Ident())
 	return err
 }
 
 type InstOr struct {
-	core.LocalIdent
-	X, Y core.Value // integer scalars or vectors
-	Typ  core.Type
+	ir.LocalIdent
+	X, Y ir.Value // integer scalars or vectors
+	Typ  ir.Type
 }
 
-func NewOr(x, y core.Value) *InstOr {
+func NewOr(x, y ir.Value) *InstOr {
 	inst := &InstOr{X: x, Y: y}
 	inst.Type()
 	return inst
 }
 
 func (inst *InstOr) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type().String(), inst.Ident())
 }
 
-func (inst *InstOr) Type() core.Type {
+func (inst *InstOr) Type() ir.Type {
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
 	}
@@ -143,27 +143,27 @@ func (inst *InstOr) Type() core.Type {
 }
 
 func (inst *InstOr) WriteIR(w io.Writer) error {
-	_, err := fmt.Fprintf(w, "%s = or %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
+	_, err := fmt.Fprintf(w, "%s = or %s, %s", inst.Ident(), inst.X.String(), inst.Y.Ident())
 	return err
 }
 
 type InstXor struct {
-	core.LocalIdent
-	X, Y core.Value // integer scalars or vectors
-	Typ  core.Type
+	ir.LocalIdent
+	X, Y ir.Value // integer scalars or vectors
+	Typ  ir.Type
 }
 
-func NewXor(x, y core.Value) *InstXor {
+func NewXor(x, y ir.Value) *InstXor {
 	inst := &InstXor{X: x, Y: y}
 	inst.Type()
 	return inst
 }
 
 func (inst *InstXor) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type().String(), inst.Ident())
 }
 
-func (inst *InstXor) Type() core.Type {
+func (inst *InstXor) Type() ir.Type {
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
 	}
@@ -171,6 +171,6 @@ func (inst *InstXor) Type() core.Type {
 }
 
 func (inst *InstXor) WriteIR(w io.Writer) error {
-	_, err := fmt.Fprintf(w, "%s = xor %s, %s", inst.Ident(), inst.X, inst.Y.Ident())
+	_, err := fmt.Fprintf(w, "%s = xor %s, %s", inst.Ident(), inst.X.String(), inst.Y.Ident())
 	return err
 }

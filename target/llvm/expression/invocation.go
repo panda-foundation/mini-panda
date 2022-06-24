@@ -3,9 +3,11 @@ package expression
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/target/llvm/llvm"
+	"github.com/panda-io/micro-panda/target/llvm/types"
 )
 
-func InvocationIR(c *Context, i *ast.Invocation) ir.Value {
+func InvocationIR(c llvm.Context, i *ast.Invocation) ir.Value {
 	t := i.Function.Type()
 	if f, ok := t.(*ast.TypeFunction); ok {
 		var call *ir.InstCall
@@ -23,22 +25,22 @@ func InvocationIR(c *Context, i *ast.Invocation) ir.Value {
 				if f.Variadic && i >= len(f.Parameters) {
 					if arg.Type().Equal(ast.TypeF16) || arg.Type().Equal(ast.TypeF32) {
 						double := ir.NewFPExt(c.AutoLoad(v), ir.Float64)
-						c.Block.AddInstruction(double)
+						c.Block().AddInstruction(double)
 						v = double
 					} else {
-						argTyp := TypeIR(arg.Type())
+						argTyp := types.TypeIR(arg.Type())
 						if intTyp, ok := argTyp.(*ir.IntType); ok {
 							if intTyp.BitSize < 32 {
 								i32 := ir.NewSExt(c.AutoLoad(v), ir.I32)
-								c.Block.AddInstruction(i32)
+								c.Block().AddInstruction(i32)
 								v = i32
 							}
 						}
 					}
 				}
 				if t, ok := arg.Type().(*ast.TypeArray); ok && t.Dimension[0] != 0 {
-					var gep ir.Instruction = ir.NewGetElementPtr(TypeIR(t), v, ir.NewInt(ir.I32, 0), ir.NewInt(ir.I32, 0))
-					c.Block.AddInstruction(gep)
+					var gep ir.Instruction = ir.NewGetElementPtr(types.TypeIR(t), v, ir.NewInt(ir.I32, 0), ir.NewInt(ir.I32, 0))
+					c.Block().AddInstruction(gep)
 					v = gep.(ir.Value)
 				} else {
 					v = c.AutoLoad(v)
@@ -46,12 +48,12 @@ func InvocationIR(c *Context, i *ast.Invocation) ir.Value {
 				call.Args = append(call.Args, v)
 			}
 		}
-		c.Block.AddInstruction(call)
+		c.Block().AddInstruction(call)
 		return call
 	}
 	return nil
 }
 
-func InvocationConstIR(p *Program, i *ast.Invocation) ir.Constant {
+func InvocationConstIR(p llvm.Program, i *ast.Invocation) ir.Constant {
 	return nil
 }

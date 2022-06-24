@@ -3,9 +3,10 @@ package llvm
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/target/llvm"
 )
 
-func SwitchIR(c *Context, s *ast.Switch) {
+func SwitchIR(c llvm.Context, s *ast.Switch) {
 	ctx := c.NewContext()
 	ctx.Block = c.Block
 	ctx.Returned = true
@@ -29,7 +30,7 @@ func SwitchIR(c *Context, s *ast.Switch) {
 		StatementIR(defaultContext, s.Default.Body)
 	}
 	if !defaultContext.Block.Terminated {
-		defaultContext.Block.AddInstruction(ir.NewBr(nextBlock))
+		defaultContext.Block().AddInstruction(ir.NewBr(nextBlock))
 	}
 	if !defaultContext.Returned {
 		ctx.Returned = false
@@ -59,7 +60,7 @@ func SwitchIR(c *Context, s *ast.Switch) {
 		}
 	}
 
-	ctx.Block.AddInstruction(ir.NewSwitch(operand, defaultBlock, caseBlocks...))
+	ctx.Block().AddInstruction(ir.NewSwitch(operand, defaultBlock, caseBlocks...))
 	c.Block = nextBlock
 	c.Returned = ctx.Returned
 }

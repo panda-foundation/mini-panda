@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/panda-io/micro-panda/ir/core"
-	"github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
 type Array struct {
-	Typ   *types.ArrayType
+	Typ   *ir_types.ArrayType
 	Elems []Constant
 }
 
-func NewArray(t *types.ArrayType, elems ...Constant) *Array {
+func NewArray(t *ir_types.ArrayType, elems ...Constant) *Array {
 	c := &Array{
 		Elems: elems,
 		Typ:   t,
@@ -23,13 +23,13 @@ func NewArray(t *types.ArrayType, elems ...Constant) *Array {
 }
 
 func (c *Array) String() string {
-	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type().String(), c.Ident())
 }
 
-func (c *Array) Type() core.Type {
+func (c *Array) Type() ir.Type {
 	if c.Typ == nil {
 		elemType := c.Elems[0].Type()
-		c.Typ = types.NewArrayType(uint64(len(c.Elems)), elemType)
+		c.Typ = ir_types.NewArrayType(uint64(len(c.Elems)), elemType)
 	}
 	return c.Typ
 }
@@ -48,12 +48,12 @@ func (c *Array) Ident() string {
 }
 
 type CharArray struct {
-	Typ *types.ArrayType
+	Typ *ir_types.ArrayType
 	X   []byte
 }
 
 func NewCharArray(x []byte) *CharArray {
-	typ := types.NewArrayType(uint64(len(x)), types.I8)
+	typ := ir_types.NewArrayType(uint64(len(x)), ir_types.I8)
 	return &CharArray{Typ: typ, X: x}
 }
 
@@ -62,13 +62,13 @@ func NewCharArrayFromString(s string) *CharArray {
 }
 
 func (c *CharArray) String() string {
-	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type().String(), c.Ident())
 }
 
-func (c *CharArray) Type() core.Type {
+func (c *CharArray) Type() ir.Type {
 	return c.Typ
 }
 
 func (c *CharArray) Ident() string {
-	return "c" + core.Quote(c.X)
+	return "c" + ir.Quote(c.X)
 }

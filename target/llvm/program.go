@@ -7,9 +7,9 @@ import (
 	"sort"
 
 	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ir"
-	"github.com/panda-io/micro-panda/ir/constant"
 	"github.com/panda-io/micro-panda/target/llvm/declaration"
+	"github.com/panda-io/micro-panda/target/llvm/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/constant"
 )
 
 type Program struct {

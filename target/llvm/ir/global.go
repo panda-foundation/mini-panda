@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/constant"
-	"github.com/panda-io/micro-panda/ir/core"
-	"github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/constant"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
 type Global struct {
-	core.GlobalIdent
+	ir.GlobalIdent
 	Immutable   bool
-	ContentType core.Type
+	ContentType ir.Type
 	Init        constant.Constant
-	Typ         *types.PointerType
+	Typ         *ir_types.PointerType
 }
 
-func NewGlobal(name string, contentType core.Type) *Global {
+func NewGlobal(name string, contentType ir.Type) *Global {
 	global := &Global{ContentType: contentType}
 	global.SetName(name)
 	global.Type()
@@ -32,12 +32,12 @@ func NewGlobalDef(name string, init constant.Constant) *Global {
 }
 
 func (g *Global) String() string {
-	return fmt.Sprintf("%s %s", g.Type(), g.Ident())
+	return fmt.Sprintf("%s %s", g.Type().String(), g.Ident())
 }
 
-func (g *Global) Type() core.Type {
+func (g *Global) Type() ir.Type {
 	if g.Typ == nil {
-		g.Typ = types.NewPointerType(g.ContentType)
+		g.Typ = ir_types.NewPointerType(g.ContentType)
 	}
 	return g.Typ
 }
@@ -47,7 +47,7 @@ func (g *Global) WriteIR(w io.Writer) error {
 	if g.Immutable {
 		declaration = "constant"
 	}
-	_, err := fmt.Fprintf(w, "%s = %s %s", g.Ident(), declaration, g.ContentType)
+	_, err := fmt.Fprintf(w, "%s = %s %s", g.Ident(), declaration, g.ContentType.String())
 	if err != nil {
 		return err
 	}

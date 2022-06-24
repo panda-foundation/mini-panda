@@ -3,15 +3,15 @@ package expression
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ir/constant"
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/constant"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 // --- [ Unary expressions ] ---------------------------------------------------
 
 type ExprFNeg struct {
 	X   constant.Constant // floating-point scalar or vector constant
-	Typ core.Type
+	Typ ir.Type
 }
 
 func NewExprFNeg(x constant.Constant) *ExprFNeg {
@@ -24,7 +24,7 @@ func (e *ExprFNeg) String() string {
 	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
-func (e *ExprFNeg) Type() core.Type {
+func (e *ExprFNeg) Type() ir.Type {
 	if e.Typ == nil {
 		e.Typ = e.X.Type()
 	}
@@ -32,7 +32,7 @@ func (e *ExprFNeg) Type() core.Type {
 }
 
 func (e *ExprFNeg) Ident() string {
-	return fmt.Sprintf("fneg (%s)", e.X)
+	return fmt.Sprintf("fneg (%s)", e.X.String())
 }
 
 func (e *ExprFNeg) Simplify() constant.Constant {

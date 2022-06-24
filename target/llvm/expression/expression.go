@@ -4,6 +4,7 @@ import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
 	"github.com/panda-io/micro-panda/llvm/context"
+	"github.com/panda-io/micro-panda/target/llvm/llvm"
 )
 
 func ExpressionIR(c context.Context, expression ast_ast.Expression) ir.Value {
@@ -40,7 +41,7 @@ func ExpressionIR(c context.Context, expression ast_ast.Expression) ir.Value {
 	return nil
 }
 
-func ExpressionConstIR(p *Program, expression ast_ast.Expression) ir.Constant {
+func ExpressionConstIR(p llvm.Program, expression ast_ast.Expression) ir.Constant {
 	switch t := expression.(type) {
 	case *ast.Binary:
 		return BinaryConstIR(p, t)

@@ -1,24 +1,24 @@
-package types
+package ir_types
 
 import (
 	"fmt"
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 type PointerType struct {
-	ElemType core.Type
+	ElemType ir.Type
 }
 
-func NewPointerType(elemType core.Type) *PointerType {
+func NewPointerType(elemType ir.Type) *PointerType {
 	p := &PointerType{
 		ElemType: elemType,
 	}
 	return p
 }
 
-func (t *PointerType) Equal(u core.Type) bool {
+func (t *PointerType) Equal(u ir.Type) bool {
 	if u, ok := u.(*PointerType); ok {
 		return t.ElemType.Equal(u.ElemType)
 	}

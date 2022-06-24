@@ -1,20 +1,20 @@
-package types
+package ir_types
 
-import "github.com/panda-io/micro-panda/ir/core"
+import "github.com/panda-io/micro-panda/target/llvm/ir/ir"
 
 // === [ Types ] ===
 // Type is an LLVM IR type.
 //
 // A Type has one of the following underlying types.
 //
-//    *types.VoidType       // https://godoc.org/github.com/llir/llvm/ir/types#VoidType
-//    *types.FuncType       // https://godoc.org/github.com/llir/llvm/ir/types#FuncType
-//    *types.IntType        // https://godoc.org/github.com/llir/llvm/ir/types#IntType
-//    *types.FloatType      // https://godoc.org/github.com/llir/llvm/ir/types#FloatType
-//    *types.PointerType    // https://godoc.org/github.com/llir/llvm/ir/types#PointerType
-//    *types.LabelType      // https://godoc.org/github.com/llir/llvm/ir/types#LabelType
-//    *types.ArrayType      // https://godoc.org/github.com/llir/llvm/ir/types#ArrayType
-//    *types.StructType     // https://godoc.org/github.com/llir/llvm/ir/types#StructType
+//    *VoidType       // https://godoc.org/github.com/llir/llvm/ir/types#VoidType
+//    *FuncType       // https://godoc.org/github.com/llir/llvm/ir/types#FuncType
+//    *IntType        // https://godoc.org/github.com/llir/llvm/ir/types#IntType
+//    *FloatType      // https://godoc.org/github.com/llir/llvm/ir/types#FloatType
+//    *PointerType    // https://godoc.org/github.com/llir/llvm/ir/types#PointerType
+//    *LabelType      // https://godoc.org/github.com/llir/llvm/ir/types#LabelType
+//    *ArrayType      // https://godoc.org/github.com/llir/llvm/ir/types#ArrayType
+//    *StructType     // https://godoc.org/github.com/llir/llvm/ir/types#StructType
 
 var (
 	// Basic types.
@@ -44,17 +44,17 @@ var (
 	I64Ptr = &PointerType{ElemType: I64} // i64*
 )
 
-func IsVoid(t core.Type) bool {
+func IsVoid(t ir.Type) bool {
 	_, ok := t.(*VoidType)
 	return ok
 }
 
-func IsFunc(t core.Type) bool {
+func IsFunc(t ir.Type) bool {
 	_, ok := t.(*FuncType)
 	return ok
 }
 
-func IsInt(t core.Type) bool {
+func IsInt(t ir.Type) bool {
 	if i, ok := t.(*IntType); ok {
 		// bit size == 1, bool
 		return i.BitSize > 1
@@ -62,38 +62,38 @@ func IsInt(t core.Type) bool {
 	return false
 }
 
-func IsBool(t core.Type) bool {
+func IsBool(t ir.Type) bool {
 	if i, ok := t.(*IntType); ok {
 		return i.BitSize == 1
 	}
 	return false
 }
 
-func IsFloat(t core.Type) bool {
+func IsFloat(t ir.Type) bool {
 	_, ok := t.(*FloatType)
 	return ok
 }
 
-func IsNumber(t core.Type) bool {
+func IsNumber(t ir.Type) bool {
 	return IsInt(t) || IsFloat(t)
 }
 
-func IsPointer(t core.Type) bool {
+func IsPointer(t ir.Type) bool {
 	_, ok := t.(*PointerType)
 	return ok
 }
 
-func IsLabel(t core.Type) bool {
+func IsLabel(t ir.Type) bool {
 	_, ok := t.(*LabelType)
 	return ok
 }
 
-func IsArray(t core.Type) bool {
+func IsArray(t ir.Type) bool {
 	_, ok := t.(*ArrayType)
 	return ok
 }
 
-func IsStruct(t core.Type) bool {
+func IsStruct(t ir.Type) bool {
 	_, ok := t.(*StructType)
 	return ok
 }

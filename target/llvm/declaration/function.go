@@ -3,6 +3,8 @@ package declaration
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/target/llvm"
+	"github.com/panda-io/micro-panda/target/llvm/types"
 )
 
 type Function struct {
@@ -20,7 +22,7 @@ type Function struct {
 	Return       ir.Value
 }
 
-func (ff *Function) GenerateDefineIR(p *Program, f *ast.Function) {
+func (ff *Function) GenerateDefineIR(p llvm.Program, f *ast.Function) {
 	if f.Parent != nil {
 		this := ir.NewPointerType(ff.Parent.Struct)
 		param := ir.NewParam(this)
@@ -29,7 +31,7 @@ func (ff *Function) GenerateDefineIR(p *Program, f *ast.Function) {
 	}
 	if f.Parameters != nil {
 		for _, parameter := range f.Parameters {
-			t := TypeIR(parameter.Type)
+			t := types.TypeIR(parameter.Type)
 			if _, ok := parameter.Type.(*ast.TypeName); ok {
 				t = ir.NewPointerType(t)
 			}
@@ -41,7 +43,7 @@ func (ff *Function) GenerateDefineIR(p *Program, f *ast.Function) {
 	}
 	var t ir.Type = ir.Void
 	if f.ReturnType != nil {
-		t = TypeIR(f.ReturnType)
+		t = types.TypeIR(f.ReturnType)
 	}
 	n := f.Qualified
 	if f.Type.Extern {
@@ -58,7 +60,7 @@ func (ff *Function) GenerateDefineIR(p *Program, f *ast.Function) {
 	}
 }
 
-func (ff *Function) GenerateIR(p *Program, f *ast.Function) {
+func (ff *Function) GenerateIR(p llvm.Program, f *ast.Function) {
 	if f.Body != nil {
 		c := NewContext(p)
 		c.Function = ff
@@ -78,7 +80,7 @@ func (ff *Function) GenerateIR(p *Program, f *ast.Function) {
 
 		// prepare return value
 		if f.ReturnType != nil {
-			alloca := ir.NewAlloca(TypeIR(f.ReturnType))
+			alloca := ir.NewAlloca(types.TypeIR(f.ReturnType))
 			ff.Entry.AddInstruction(alloca)
 			ff.Return = alloca
 		}
@@ -89,7 +91,7 @@ func (ff *Function) GenerateIR(p *Program, f *ast.Function) {
 
 		if !c.Block.Terminated {
 			if c.Returned || f.ReturnType == nil {
-				c.Block.AddInstruction(ir.NewBr(ff.Exit))
+				c.Block().AddInstruction(ir.NewBr(ff.Exit))
 			}
 		}
 
@@ -97,14 +99,14 @@ func (ff *Function) GenerateIR(p *Program, f *ast.Function) {
 		if f.ReturnType == nil {
 			ff.Exit.AddInstruction(ir.NewRet(nil))
 		} else {
-			load := ir.NewLoad(TypeIR(f.ReturnType), ff.Return)
+			load := ir.NewLoad(types.TypeIR(f.ReturnType), ff.Return)
 			ff.Exit.AddInstruction(load)
 			ff.Exit.AddInstruction(ir.NewRet(load))
 		}
 	}
 }
 
-func GenerateArgumentsIR(c *Context, args *ast.Arguments, call *ir.InstCall) {
+func GenerateArgumentsIR(c llvm.Context, args *ast.Arguments, call *ir.InstCall) {
 	function := call.Callee.Type().(*ir.PointerType).ElemType.(*ir.FuncType)
 	if args == nil {
 		return

@@ -1,6 +1,6 @@
 package expression
 
-import "github.com/panda-io/micro-panda/ir/constant"
+import "github.com/panda-io/micro-panda/target/llvm/ir/constant"
 
 // === [ Expressions ] =========================================================
 

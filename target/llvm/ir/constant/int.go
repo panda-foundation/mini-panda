@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/panda-io/micro-panda/ir/core"
-	"github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
 type Int struct {
-	Typ *types.IntType
+	Typ *ir_types.IntType
 	X   *big.Int
 }
 
-func NewInt(typ *types.IntType, x int64) *Int {
+func NewInt(typ *ir_types.IntType, x int64) *Int {
 	return &Int{Typ: typ, X: big.NewInt(x)}
 }
 
@@ -24,15 +24,15 @@ func NewBool(x bool) *Int {
 	return False
 }
 
-func NewIntFromString(typ *types.IntType, s string) *Int {
+func NewIntFromString(typ *ir_types.IntType, s string) *Int {
 	switch s {
 	case "true":
-		if !typ.Equal(types.I1) {
+		if !typ.Equal(ir_types.I1) {
 			panic(fmt.Errorf("invalid boolean type; expected i1, got %T", typ))
 		}
 		return True
 	case "false":
-		if !typ.Equal(types.I1) {
+		if !typ.Equal(ir_types.I1) {
 			panic(fmt.Errorf("invalid boolean type; expected i1, got %T", typ))
 		}
 		return False
@@ -42,10 +42,10 @@ func NewIntFromString(typ *types.IntType, s string) *Int {
 }
 
 func (c *Int) String() string {
-	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type().String(), c.Ident())
 }
 
-func (c *Int) Type() core.Type {
+func (c *Int) Type() ir.Type {
 	return c.Typ
 }
 

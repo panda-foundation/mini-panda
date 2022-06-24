@@ -1,15 +1,15 @@
 package types
 
 import (
-	ast_core "github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 	"github.com/panda-io/micro-panda/ast/declaration"
-	ast_types "github.com/panda-io/micro-panda/ast/types"
-	"github.com/panda-io/micro-panda/ir"
-	ir_core "github.com/panda-io/micro-panda/ir/core"
-	ir_types "github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir"
+	ir_core "github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
-func TypeIR(typ ast_core.Type) ir_core.Type {
+func TypeIR(typ ast.Type) ir_core.Type {
 	switch t := typ.(type) {
 	case *ast_types.TypeBuiltin:
 		return TypeBuiltinIR(t)

@@ -5,17 +5,17 @@ import (
 	"math"
 	"math/big"
 
-	"github.com/panda-io/micro-panda/ir/core"
-	"github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
 type Float struct {
-	Typ *types.FloatType
+	Typ *ir_types.FloatType
 	X   *big.Float
 	NaN bool
 }
 
-func NewFloat(typ *types.FloatType, x float64) *Float {
+func NewFloat(typ *ir_types.FloatType, x float64) *Float {
 	if math.IsNaN(x) {
 		f := &Float{Typ: typ, X: &big.Float{}, NaN: true}
 		// Store sign of NaN.
@@ -27,17 +27,17 @@ func NewFloat(typ *types.FloatType, x float64) *Float {
 	return &Float{Typ: typ, X: big.NewFloat(x)}
 }
 
-func NewFloatFromString(typ *types.FloatType, s string) *Float {
+func NewFloatFromString(typ *ir_types.FloatType, s string) *Float {
 	const base = 10
 	switch typ.Kind {
-	case types.FloatKindHalf:
+	case ir_types.FloatKindHalf:
 		const precision = 11
 		x, _, _ := big.ParseFloat(s, base, precision, big.ToNearestEven)
 		return &Float{
 			Typ: typ,
 			X:   x,
 		}
-	case types.FloatKindFloat:
+	case ir_types.FloatKindFloat:
 		const precision = 24
 		x, _, _ := big.ParseFloat(s, base, precision, big.ToNearestEven)
 		return &Float{
@@ -45,7 +45,7 @@ func NewFloatFromString(typ *types.FloatType, s string) *Float {
 			X:   x,
 		}
 
-	case types.FloatKindDouble:
+	case ir_types.FloatKindDouble:
 		const precision = 53
 		x, _, _ := big.ParseFloat(s, base, precision, big.ToNearestEven)
 		return &Float{
@@ -59,10 +59,10 @@ func NewFloatFromString(typ *types.FloatType, s string) *Float {
 }
 
 func (c *Float) String() string {
-	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type().String(), c.Ident())
 }
 
-func (c *Float) Type() core.Type {
+func (c *Float) Type() ir.Type {
 	return c.Typ
 }
 

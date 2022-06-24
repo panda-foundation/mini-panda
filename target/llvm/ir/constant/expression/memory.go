@@ -4,28 +4,28 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/panda-io/micro-panda/ir/constant"
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/constant"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 type ExprGetElementPtr struct {
-	ElemType core.Type
+	ElemType ir.Type
 	Src      constant.Constant
 	Indices  []constant.Constant // *Int, *Vector or *Index
-	Typ      core.Type           // *PointerType or *VectorType (with elements of pointer type)
+	Typ      ir.Type             // *PointerType or *VectorType (with elements of pointer type)
 }
 
-func NewExprGetElementPtr(elemType core.Type, src constant.Constant, indices ...constant.Constant) *ExprGetElementPtr {
+func NewExprGetElementPtr(elemType ir.Type, src constant.Constant, indices ...constant.Constant) *ExprGetElementPtr {
 	e := &ExprGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
 	e.Type()
 	return e
 }
 
 func (e *ExprGetElementPtr) String() string {
-	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type().String(), e.Ident())
 }
 
-func (e *ExprGetElementPtr) Type() core.Type {
+func (e *ExprGetElementPtr) Type() ir.Type {
 	if e.Typ == nil {
 		e.Typ = e.gepExprType(e.ElemType, e.Src.Type(), e.Indices)
 	}
@@ -35,9 +35,9 @@ func (e *ExprGetElementPtr) Type() core.Type {
 func (e *ExprGetElementPtr) Ident() string {
 	buf := &strings.Builder{}
 	buf.WriteString("getelementptr")
-	fmt.Fprintf(buf, " (%s, %s", e.ElemType, e.Src)
+	fmt.Fprintf(buf, " (%s, %s", e.ElemType.String(), e.Src.String())
 	for _, index := range e.Indices {
-		fmt.Fprintf(buf, ", %s", index)
+		fmt.Fprintf(buf, ", %s", index.String())
 	}
 	buf.WriteString(")")
 	return buf.String()
@@ -59,11 +59,11 @@ func (index *Index) Ident() string {
 	return index.Index.Ident()
 }
 
-func (index *Index) Type() core.Type {
+func (index *Index) Type() ir.Type {
 	return index.Index.Type()
 }
 
-func (e *ExprGetElementPtr) gepExprType(elemType, src core.Type, indices []constant.Constant) core.Type {
+func (e *ExprGetElementPtr) gepExprType(elemType, src ir.Type, indices []constant.Constant) ir.Type {
 	var idxs []*GepIndex
 	for _, index := range indices {
 		idx := GetGepIndex(index)

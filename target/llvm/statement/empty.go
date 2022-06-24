@@ -1,4 +1,6 @@
 package llvm
 
-func EmptyIR(*Context) {
+import "github.com/panda-io/micro-panda/target/llvm"
+
+func EmptyIR(llvm.Context) {
 }

@@ -1,12 +1,12 @@
 package types
 
 import (
-	ast_types "github.com/panda-io/micro-panda/ast/types"
-	ir_core "github.com/panda-io/micro-panda/ir/core"
-	ir_types "github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/ast/ast_types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
-func TypeNameIR(t *ast_types.TypeName) ir_core.Type {
+func TypeNameIR(t *ast_types.TypeName) ir.Type {
 	if t.IsEnum {
 		return ir_types.UI8
 	} else {

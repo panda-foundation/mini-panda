@@ -3,9 +3,9 @@ package expression
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ir/constant"
-	"github.com/panda-io/micro-panda/ir/core"
-	"github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/constant"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
 type GepIndex struct {
@@ -20,18 +20,18 @@ func NewGepIndex(val int64) *GepIndex {
 	}
 }
 
-func GepResultType(elemType core.Type, indices []*GepIndex) core.Type {
+func GepResultType(elemType ir.Type, indices []*GepIndex) ir.Type {
 	e := elemType
 	for i, index := range indices {
 		if i == 0 {
 			continue
 		}
 		switch elm := e.(type) {
-		case *types.PointerType:
+		case *ir_types.PointerType:
 			panic(fmt.Errorf("cannot index into pointer type at %d:th gep index, only valid at 0:th gep index; see https://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep", i))
-		case *types.ArrayType:
+		case *ir_types.ArrayType:
 			e = elm.ElemType
-		case *types.StructType:
+		case *ir_types.StructType:
 			if !index.HasVal {
 				panic(fmt.Errorf("unable to index into struct type `%v` using gep with non-constant index", e))
 			}
@@ -40,7 +40,7 @@ func GepResultType(elemType core.Type, indices []*GepIndex) core.Type {
 			panic(fmt.Errorf("cannot index into type %T using gep", e))
 		}
 	}
-	return types.NewPointerType(e)
+	return ir_types.NewPointerType(e)
 }
 
 func GetGepIndex(index constant.Constant) *GepIndex {

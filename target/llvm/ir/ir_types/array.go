@@ -1,25 +1,25 @@
-package types
+package ir_types
 
 import (
 	"fmt"
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 type ArrayType struct {
 	Len      uint64
-	ElemType core.Type
+	ElemType ir.Type
 }
 
-func NewArrayType(len uint64, elemType core.Type) *ArrayType {
+func NewArrayType(len uint64, elemType ir.Type) *ArrayType {
 	return &ArrayType{
 		Len:      len,
 		ElemType: elemType,
 	}
 }
 
-func (t *ArrayType) Equal(u core.Type) bool {
+func (t *ArrayType) Equal(u ir.Type) bool {
 	if u, ok := u.(*ArrayType); ok {
 		if t.Len != u.Len {
 			return false

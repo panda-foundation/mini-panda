@@ -1,24 +1,24 @@
-package types
+package ir_types
 
 import (
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 type StructType struct {
 	Qualified string
-	Fields    []core.Type
+	Fields    []ir.Type
 }
 
-func NewStructType(qualified string, fields ...core.Type) *StructType {
+func NewStructType(qualified string, fields ...ir.Type) *StructType {
 	return &StructType{
 		Qualified: qualified,
 		Fields:    fields,
 	}
 }
 
-func (t *StructType) Equal(u core.Type) bool {
+func (t *StructType) Equal(u ir.Type) bool {
 	if u, ok := u.(*StructType); ok {
 		if len(t.Fields) != len(u.Fields) {
 			return false

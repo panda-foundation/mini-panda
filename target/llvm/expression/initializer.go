@@ -3,13 +3,14 @@ package expression
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/target/llvm/llvm"
 )
 
-func InitializerIR(c *Context, i *ast.Initializer) ir.Value {
+func InitializerIR(c llvm.Context, i *ast.Initializer) ir.Value {
 	return InitializerConstIR(c.Program, i)
 }
 
-func InitializerConstIR(p *Program, i *ast.Initializer) ir.Constant {
+func InitializerConstIR(p llvm.Program, i *ast.Initializer) ir.Constant {
 	values := []ir.Constant{}
 	for _, e := range i.Expressions {
 		values = append(values, ExpressionConstIR(p, e))

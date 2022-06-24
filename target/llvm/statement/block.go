@@ -1,8 +1,11 @@
 package llvm
 
-import "github.com/panda-io/micro-panda/ast"
+import (
+	"github.com/panda-io/micro-panda/ast"
+	"github.com/panda-io/micro-panda/target/llvm"
+)
 
-func BlockIR(c *Context, b *ast.Block) {
+func BlockIR(c llvm.Context, b *ast.Block) {
 	for _, stmt := range b.Statements {
 		ctx := c
 		if _, ok := stmt.(*ast.Block); ok {

@@ -3,6 +3,7 @@ package declaration
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/target/llvm"
 )
 
 type Enum struct {
@@ -15,7 +16,7 @@ func (e *Enum) GetMember(member string) ir.Constant {
 	return e.Members[member]
 }
 
-func (e *Enum) GenerateIR(p *Program, enum *ast.Enum) {
+func (e *Enum) GenerateIR(p llvm.Program, enum *ast.Enum) {
 	e.Members = make(map[string]ir.Constant)
 	e.Qualified = enum.Qualified
 	for i, v := range enum.Members {

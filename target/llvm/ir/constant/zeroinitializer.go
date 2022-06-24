@@ -3,22 +3,22 @@ package constant
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 type ZeroInitializer struct {
-	Typ core.Type
+	Typ ir.Type
 }
 
-func NewZeroInitializer(typ core.Type) *ZeroInitializer {
+func NewZeroInitializer(typ ir.Type) *ZeroInitializer {
 	return &ZeroInitializer{Typ: typ}
 }
 
 func (c *ZeroInitializer) String() string {
-	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type().String(), c.Ident())
 }
 
-func (c *ZeroInitializer) Type() core.Type {
+func (c *ZeroInitializer) Type() ir.Type {
 	return c.Typ
 }
 

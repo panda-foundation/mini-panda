@@ -1,10 +1,10 @@
-package types
+package ir_types
 
 import (
 	"fmt"
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 type IntType struct {
@@ -18,7 +18,7 @@ func NewIntType(bitSize int) *IntType {
 	}
 }
 
-func (t *IntType) Equal(u core.Type) bool {
+func (t *IntType) Equal(u ir.Type) bool {
 	if u, ok := u.(*IntType); ok {
 		return t.BitSize == u.BitSize
 	}

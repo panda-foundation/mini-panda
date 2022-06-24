@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/core"
-	"github.com/panda-io/micro-panda/ir/instruction"
-	"github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/instruction"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
 type Block struct {
-	core.LocalIdent
+	ir.LocalIdent
 	Insts      []instruction.Instruction
 	Terminated bool
 }
@@ -41,19 +41,19 @@ func (block *Block) InsertAlloca(inst *instruction.InstAlloca) {
 }
 
 func (block *Block) String() string {
-	return fmt.Sprintf("%s %s", block.Type(), block.Ident())
+	return fmt.Sprintf("%s %s", block.Type().String(), block.Ident())
 }
 
-func (block *Block) Type() core.Type {
-	return types.Label
+func (block *Block) Type() ir.Type {
+	return ir_types.Label
 }
 
 func (block *Block) WriteIR(w io.Writer) error {
 	name := ""
 	if block.LocalName == "" {
-		name = core.LabelID(block.LocalID)
+		name = ir.LabelID(block.LocalID)
 	} else {
-		name = core.LabelName(block.LocalName)
+		name = ir.LabelName(block.LocalName)
 	}
 	_, err := fmt.Fprintf(w, "%s\n", name)
 	if err != nil {

@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/panda-io/micro-panda/ir/core"
-	"github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
 type Struct struct {
-	Typ    *types.StructType
+	Typ    *ir_types.StructType
 	Fields []Constant
 }
 
-func NewStruct(t *types.StructType, fields ...Constant) *Struct {
+func NewStruct(t *ir_types.StructType, fields ...Constant) *Struct {
 	c := &Struct{
 		Fields: fields,
 		Typ:    t,
@@ -23,16 +23,16 @@ func NewStruct(t *types.StructType, fields ...Constant) *Struct {
 }
 
 func (c *Struct) String() string {
-	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type().String(), c.Ident())
 }
 
-func (c *Struct) Type() core.Type {
+func (c *Struct) Type() ir.Type {
 	if c.Typ == nil {
-		var fieldTypes []core.Type
+		var fieldTypes []ir.Type
 		for _, field := range c.Fields {
 			fieldTypes = append(fieldTypes, field.Type())
 		}
-		c.Typ = types.NewStructType("", fieldTypes...)
+		c.Typ = ir_types.NewStructType("", fieldTypes...)
 	}
 	return c.Typ
 }

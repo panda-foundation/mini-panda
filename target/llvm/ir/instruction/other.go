@@ -4,32 +4,32 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/core"
-	"github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
 type InstICmp struct {
-	core.LocalIdent
-	Pred core.IPred
-	X, Y core.Value // integer scalar, pointer, integer vector or pointer vector.
-	Typ  core.Type  // boolean or boolean vector
+	ir.LocalIdent
+	Pred ir.IPred
+	X, Y ir.Value // integer scalar, pointer, integer vector or pointer vector.
+	Typ  ir.Type  // boolean or boolean vector
 }
 
-func NewICmp(pred core.IPred, x, y core.Value) *InstICmp {
+func NewICmp(pred ir.IPred, x, y ir.Value) *InstICmp {
 	inst := &InstICmp{Pred: pred, X: x, Y: y}
 	inst.Type()
 	return inst
 }
 
 func (inst *InstICmp) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type().String(), inst.Ident())
 }
 
-func (inst *InstICmp) Type() core.Type {
+func (inst *InstICmp) Type() ir.Type {
 	if inst.Typ == nil {
 		switch xType := inst.X.Type().(type) {
-		case *types.IntType, *types.PointerType:
-			inst.Typ = types.I1
+		case *ir_types.IntType, *ir_types.PointerType:
+			inst.Typ = ir_types.I1
 		default:
 			panic(fmt.Errorf("invalid icmp operand type; expected *IntType or *PointerType, got %T", xType))
 		}
@@ -38,32 +38,32 @@ func (inst *InstICmp) Type() core.Type {
 }
 
 func (inst *InstICmp) WriteIR(w io.Writer) error {
-	_, err := fmt.Fprintf(w, "%s = icmp %s %s, %s", inst.Ident(), inst.Pred, inst.X, inst.Y.Ident())
+	_, err := fmt.Fprintf(w, "%s = icmp %s %s, %s", inst.Ident(), inst.Pred, inst.X.String(), inst.Y.Ident())
 	return err
 }
 
 type InstFCmp struct {
-	core.LocalIdent
-	Pred core.FPred
-	X, Y core.Value // floating-point scalar or floating-point vector
-	Typ  core.Type  // boolean or boolean vector
+	ir.LocalIdent
+	Pred ir.FPred
+	X, Y ir.Value // floating-point scalar or floating-point vector
+	Typ  ir.Type  // boolean or boolean vector
 }
 
-func NewFCmp(pred core.FPred, x, y core.Value) *InstFCmp {
+func NewFCmp(pred ir.FPred, x, y ir.Value) *InstFCmp {
 	inst := &InstFCmp{Pred: pred, X: x, Y: y}
 	inst.Type()
 	return inst
 }
 
 func (inst *InstFCmp) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type().String(), inst.Ident())
 }
 
-func (inst *InstFCmp) Type() core.Type {
+func (inst *InstFCmp) Type() ir.Type {
 	if inst.Typ == nil {
 		switch xType := inst.X.Type().(type) {
-		case *types.FloatType:
-			inst.Typ = types.I1
+		case *ir_types.FloatType:
+			inst.Typ = ir_types.I1
 		default:
 			panic(fmt.Errorf("invalid fcmp operand type; expected *FloatType, got %T", xType))
 		}
@@ -72,28 +72,28 @@ func (inst *InstFCmp) Type() core.Type {
 }
 
 func (inst *InstFCmp) WriteIR(w io.Writer) error {
-	_, err := fmt.Fprintf(w, "%s = fcmp %s %s, %s", inst.Ident(), inst.Pred, inst.X, inst.Y.Ident())
+	_, err := fmt.Fprintf(w, "%s = fcmp %s %s, %s", inst.Ident(), inst.Pred, inst.X.String(), inst.Y.Ident())
 	return err
 }
 
 type InstCall struct {
-	core.LocalIdent
-	Callee core.Value
-	Args   []core.Value
-	Typ    core.Type
+	ir.LocalIdent
+	Callee ir.Value
+	Args   []ir.Value
+	Typ    ir.Type
 }
 
-func NewCall(callee core.Value, args ...core.Value) *InstCall {
+func NewCall(callee ir.Value, args ...ir.Value) *InstCall {
 	inst := &InstCall{Callee: callee, Args: args}
 	inst.Type()
 	return inst
 }
 
 func (inst *InstCall) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type().String(), inst.Ident())
 }
 
-func (inst *InstCall) Type() core.Type {
+func (inst *InstCall) Type() ir.Type {
 	if inst.Typ == nil {
 		sig := inst.Sig()
 		inst.Typ = sig.RetType
@@ -103,14 +103,14 @@ func (inst *InstCall) Type() core.Type {
 
 func (inst *InstCall) WriteIR(w io.Writer) error {
 	var err error
-	if !inst.Type().Equal(types.Void) {
+	if !inst.Type().Equal(ir_types.Void) {
 		_, err = fmt.Fprintf(w, "%s = ", inst.Ident())
 		if err != nil {
 			return err
 		}
 	}
 	calleeType := inst.Type()
-	_, err = fmt.Fprintf(w, "call %s %s(", calleeType, inst.Callee.Ident())
+	_, err = fmt.Fprintf(w, "call %s %s(", calleeType.String(), inst.Callee.Ident())
 	if err != nil {
 		return err
 	}
@@ -130,12 +130,12 @@ func (inst *InstCall) WriteIR(w io.Writer) error {
 	return err
 }
 
-func (inst *InstCall) Sig() *types.FuncType {
-	t, ok := inst.Callee.Type().(*types.PointerType)
+func (inst *InstCall) Sig() *ir_types.FuncType {
+	t, ok := inst.Callee.Type().(*ir_types.PointerType)
 	if !ok {
 		panic(fmt.Errorf("invalid callee type; expected *PointerType, got %T", inst.Callee.Type()))
 	}
-	sig, ok := t.ElemType.(*types.FuncType)
+	sig, ok := t.ElemType.(*ir_types.FuncType)
 	if !ok {
 		panic(fmt.Errorf("invalid callee type; expected *FuncType, got %T", t.ElemType))
 	}

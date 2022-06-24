@@ -5,24 +5,24 @@ import (
 	"io"
 	"strings"
 
-	"github.com/panda-io/micro-panda/ir/core"
-	"github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
 type Func struct {
-	core.GlobalIdent
-	Sig    *types.FuncType
+	ir.GlobalIdent
+	Sig    *ir_types.FuncType
 	Params []*Param
 	Blocks []*Block // nil if declaration.
-	Typ    *types.PointerType
+	Typ    *ir_types.PointerType
 }
 
-func NewFunc(name string, retType core.Type, params ...*Param) *Func {
-	paramTypes := make([]core.Type, len(params))
+func NewFunc(name string, retType ir.Type, params ...*Param) *Func {
+	paramTypes := make([]ir.Type, len(params))
 	for i, param := range params {
 		paramTypes[i] = param.Type()
 	}
-	sig := types.NewFuncType(name, retType, paramTypes...)
+	sig := ir_types.NewFuncType(name, retType, paramTypes...)
 	f := &Func{Sig: sig, Params: params}
 	f.SetName(name)
 	f.Type()
@@ -36,12 +36,12 @@ func (f *Func) NewBlock(name string) *Block {
 }
 
 func (f *Func) String() string {
-	return fmt.Sprintf("%s %s", f.Type(), f.Ident())
+	return fmt.Sprintf("%s %s", f.Type().String(), f.Ident())
 }
 
-func (f *Func) Type() core.Type {
+func (f *Func) Type() ir.Type {
 	if f.Typ == nil {
-		f.Typ = types.NewPointerType(f.Sig)
+		f.Typ = ir_types.NewPointerType(f.Sig)
 	}
 	return f.Typ
 }
@@ -73,11 +73,11 @@ func (f *Func) assignIDs() error {
 			return err
 		}
 		for _, inst := range block.Insts {
-			n, ok := inst.(core.Ident)
+			n, ok := inst.(ir.Ident)
 			if !ok {
 				continue
 			}
-			if inst.Type().Equal(types.Void) {
+			if inst.Type().Equal(ir_types.Void) {
 				continue
 			}
 			if err := f.setName(n, &id); err != nil {
@@ -90,7 +90,7 @@ func (f *Func) assignIDs() error {
 
 func (f *Func) headerString() string {
 	buf := &strings.Builder{}
-	_, _ = fmt.Fprintf(buf, " %s", f.Sig.RetType)
+	_, _ = fmt.Fprintf(buf, " %s", f.Sig.RetType.String())
 	_, _ = fmt.Fprintf(buf, " %s(", f.Ident())
 	for i, param := range f.Params {
 		if i != 0 {
@@ -116,12 +116,12 @@ func (f *Func) bodyString() string {
 	return buf.String()
 }
 
-func (f *Func) setName(name core.Ident, id *int64) error {
+func (f *Func) setName(name ir.Ident, id *int64) error {
 	if name.Name() == "" {
 		if name.ID() != 0 && *id != name.ID() {
 			want := *id
 			got := name.ID()
-			return fmt.Errorf("invalid local ID, expected %s, got %s", core.LocalID(want), core.LocalID(got))
+			return fmt.Errorf("invalid local ID, expected %s, got %s", ir.LocalID(want), ir.LocalID(got))
 		}
 		name.SetID(*id)
 		(*id)++
@@ -130,21 +130,21 @@ func (f *Func) setName(name core.Ident, id *int64) error {
 }
 
 type Param struct {
-	core.LocalIdent
-	Typ core.Type
+	ir.LocalIdent
+	Typ ir.Type
 }
 
-func NewParam(typ core.Type) *Param {
+func NewParam(typ ir.Type) *Param {
 	return &Param{
 		Typ: typ,
 	}
 }
 
 func (p *Param) String() string {
-	return fmt.Sprintf("%s %s", p.Type(), p.Ident())
+	return fmt.Sprintf("%s %s", p.Type().String(), p.Ident())
 }
 
-func (p *Param) Type() core.Type {
+func (p *Param) Type() ir.Type {
 	return p.Typ
 }
 

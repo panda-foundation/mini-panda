@@ -3,9 +3,10 @@ package llvm
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/target/llvm"
 )
 
-func IfIR(c *Context, i *ast.If) {
+func IfIR(c llvm.Context, i *ast.If) {
 	ctx := c.NewContext()
 	ctx.Block = c.Block
 	if i.Initialization != nil {
@@ -22,7 +23,7 @@ func IfIR(c *Context, i *ast.If) {
 	if bodyContext.Returned {
 		ctx.Returned = true
 	} else if !bodyContext.Block.Terminated {
-		bodyContext.Block.AddInstruction(ir.NewBr(nextBlock))
+		bodyContext.Block().AddInstruction(ir.NewBr(nextBlock))
 	}
 
 	elseContext := ctx.NewContext()
@@ -34,7 +35,7 @@ func IfIR(c *Context, i *ast.If) {
 		StatementIR(elseContext, i.Else)
 		ctx.Returned = elseContext.Returned
 		if !elseContext.Block.Terminated {
-			elseContext.Block.AddInstruction(ir.NewBr(nextBlock))
+			elseContext.Block().AddInstruction(ir.NewBr(nextBlock))
 		}
 	}
 
@@ -44,7 +45,7 @@ func IfIR(c *Context, i *ast.If) {
 	} else {
 		condition = ExpressionIR(ctx, i.Condition)
 	}
-	ctx.Block.AddInstruction(ir.NewCondBr(condition, bodyBlock, elseBlock))
+	ctx.Block().AddInstruction(ir.NewCondBr(condition, bodyBlock, elseBlock))
 	c.Block = nextBlock
 	c.Returned = ctx.Returned
 }

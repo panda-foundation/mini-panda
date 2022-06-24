@@ -3,6 +3,8 @@ package declaration
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/target/llvm"
+	"github.com/panda-io/micro-panda/target/llvm/types"
 )
 
 type Variable struct {
@@ -13,9 +15,9 @@ type Variable struct {
 	Type     ir.Type
 }
 
-func (vv *Variable) GenerateIR(p *Program, v *ast.Variable) {
+func (vv *Variable) GenerateIR(p llvm.Program, v *ast.Variable) {
 	vv.Const = v.Const
-	vv.Type = TypeIR(v.Type)
+	vv.Type = types.TypeIR(v.Type)
 	if v.Value != nil {
 		value := ExpressionConstIR(p, v.Value)
 		vv.Variable = p.Module.NewGlobalDef(v.Qualified, value)

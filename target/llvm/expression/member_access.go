@@ -3,9 +3,10 @@ package expression
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/target/llvm/llvm"
 )
 
-func MemberAccessIR(c *Context, m *ast.MemberAccess) ir.Value {
+func MemberAccessIR(c llvm.Context, m *ast.MemberAccess) ir.Value {
 	if m.Qualified == "" {
 		if m.Const {
 			if i, ok := m.Parent.(*ast.Identifier); ok {
@@ -42,7 +43,7 @@ func MemberAccessIR(c *Context, m *ast.MemberAccess) ir.Value {
 	return nil
 }
 
-func MemberAccessConstIR(p *Program, m *ast.MemberAccess) ir.Constant {
+func MemberAccessConstIR(p llvm.Program, m *ast.MemberAccess) ir.Constant {
 	if m.Qualified == "" {
 		if m.Const {
 			if i, ok := m.Parent.(*ast.Identifier); ok {

@@ -3,9 +3,10 @@ package expression
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/target/llvm/llvm"
 )
 
-func IdentifierIR(c *Context, i *ast.Identifier) ir.Value {
+func IdentifierIR(c llvm.Context, i *ast.Identifier) ir.Value {
 	v := c.FindObject(i.Name)
 	if v == nil {
 		if i.Qualified == "" {
@@ -22,7 +23,7 @@ func IdentifierIR(c *Context, i *ast.Identifier) ir.Value {
 	return v
 }
 
-func IdentifierConstIR(p *Program, i *ast.Identifier) ir.Constant {
+func IdentifierConstIR(p llvm.Program, i *ast.Identifier) ir.Constant {
 	d := p.FindDeclaration(i.Qualified)
 	switch t := d.(type) {
 	case *Variable:

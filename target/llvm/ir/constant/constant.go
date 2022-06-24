@@ -1,53 +1,53 @@
 package constant
 
 import (
-	"github.com/panda-io/micro-panda/ir/core"
-	"github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
-func IsConstant(v core.Value) bool {
+func IsConstant(v ir.Value) bool {
 	_, ok := v.(Constant)
 	return ok
 }
 
 type Constant interface {
-	core.Value
+	ir.Value
 	IsConstant()
 }
 
 var (
-	True  = NewInt(types.I1, 1) // true
-	False = NewInt(types.I1, 0) // false
+	True  = NewInt(ir_types.I1, 1) // true
+	False = NewInt(ir_types.I1, 0) // false
 )
 
 // Constant is an LLVM IR constant; a value that is immutable at runtime, such
 // as an integer or floating-point literal, or the address of a function or
 // global variable.
 //
-// A Constant has one of the following underlying types.
+// A Constant has one of the following underlying ir_types.
 //
 // Simple constants
 //
 // https://llvm.org/docs/LangRef.html#simple-constants
 //
-//    *constant.Int         // https://godoc.org/github.com/llir/llvm/ir/constant#Int
-//    *constant.Float       // https://godoc.org/github.com/llir/llvm/ir/constant#Float
-//    *constant.Null        // https://godoc.org/github.com/llir/llvm/ir/constant#Null
+//    *Int         // https://godoc.org/github.com/llir/llvm/ir/constant#Int
+//    *Float       // https://godoc.org/github.com/llir/llvm/ir/constant#Float
+//    *Null        // https://godoc.org/github.com/llir/llvm/ir/constant#Null
 //
 // Complex constants
 //
 // https://llvm.org/docs/LangRef.html#complex-constants
 //
-//    *constant.Struct            // https://godoc.org/github.com/llir/llvm/ir/constant#Struct
-//    *constant.Array             // https://godoc.org/github.com/llir/llvm/ir/constant#Array
-//    *constant.CharArray         // https://godoc.org/github.com/llir/llvm/ir/constant#CharArray
+//    *Struct            // https://godoc.org/github.com/llir/llvm/ir/constant#Struct
+//    *Array             // https://godoc.org/github.com/llir/llvm/ir/constant#Array
+//    *CharArray         // https://godoc.org/github.com/llir/llvm/ir/constant#CharArray
 //
 // Global variable and function addresses
 //
 // https://llvm.org/docs/LangRef.html#global-variable-and-function-addresses
 //
-//    *ir.Global   // https://godoc.org/github.com/llir/llvm/ir#Global
-//    *ir.Func     // https://godoc.org/github.com/llir/llvm/ir#Func
+//    *Global   // https://godoc.org/github.com/llir/llvm/ir#Global
+//    *Func     // https://godoc.org/github.com/llir/llvm/ir#Func
 //
 // Constant expressions
 //

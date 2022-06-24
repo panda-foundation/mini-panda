@@ -1,17 +1,17 @@
 package types
 
 import (
-	ast_types "github.com/panda-io/micro-panda/ast/types"
-	ir_core "github.com/panda-io/micro-panda/ir/core"
-	ir_types "github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/ast/ast_types"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
-func TypeFunctionIR(f *ast_types.TypeFunction) ir_core.Type {
-	var types []ir_core.Type
+func TypeFunctionIR(f *ast_types.TypeFunction) ir.Type {
+	var types []ir.Type
 	for _, param := range f.Parameters {
 		types = append(types, TypeIR(param))
 	}
-	var t ir_core.Type = ir_types.Void
+	var t ir.Type = ir_types.Void
 	if f.ReturnType != nil {
 		t = TypeIR(f.ReturnType)
 	}

@@ -1,15 +1,15 @@
-package types
+package ir_types
 
 import (
 	"io"
 
-	"github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/ir/ir"
 )
 
 type VoidType struct {
 }
 
-func (t *VoidType) Equal(u core.Type) bool {
+func (t *VoidType) Equal(u ir.Type) bool {
 	if _, ok := u.(*VoidType); ok {
 		return true
 	}
