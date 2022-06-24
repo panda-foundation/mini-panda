@@ -1,16 +1,15 @@
-package llvm
+package types
 
 import (
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ir"
+	ast_types "github.com/panda-io/micro-panda/ast/types"
+	ir_core "github.com/panda-io/micro-panda/ir/core"
+	ir_types "github.com/panda-io/micro-panda/ir/types"
 )
 
-func TypeNameIR(t *ast.TypeName) ir.Type {
+func TypeNameIR(t *ast_types.TypeName) ir_core.Type {
 	if t.IsEnum {
-		return ir.UI8
+		return ir_types.UI8
 	} else {
-		s := ir.NewStructType()
-		s.TypeName = t.Qualified
-		return s
+		return ir_types.NewStructType(t.Qualified)
 	}
 }

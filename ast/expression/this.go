@@ -1,14 +1,12 @@
 package expression
 
-import (
-	"github.com/panda-io/micro-panda/ast/core"
-)
+import "github.com/panda-io/micro-panda/ast"
 
 type This struct {
 	ExpressionBase
 }
 
-func (t *This) Validate(c core.Context, expected core.Type) {
+func (t *This) Validate(c ast.Context, expected core.Type) {
 	t.Const = false
 	t.Typ = c.FindObject(core.StructThis)
 	if t.Typ == nil {

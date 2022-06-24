@@ -1,8 +1,6 @@
 package types
 
-import (
-	"github.com/panda-io/micro-panda/ast/core"
-)
+import "github.com/panda-io/micro-panda/ast/core"
 
 type TypeName struct {
 	TypeBase

@@ -1,6 +1,7 @@
 package statement
 
 import (
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/types"
 )
@@ -8,12 +9,12 @@ import (
 type If struct {
 	StatementBase
 	Initialization core.Statement
-	Condition      core.Expression
+	Condition      ast.Expression
 	Body           core.Statement
 	Else           core.Statement
 }
 
-func (i *If) Validate(c core.Context) {
+func (i *If) Validate(c ast.Context) {
 	ctx := c.NewContext()
 	if i.Initialization != nil {
 		i.Initialization.Validate(ctx)

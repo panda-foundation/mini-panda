@@ -1,32 +1,36 @@
 package llvm
 
 import (
-	"github.com/panda-io/micro-panda/ast"
+	ast_core "github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ir"
-	"github.com/panda-io/micro-panda/ir/value"
+	ir_core "github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/ir/instruction"
+	ir_types "github.com/panda-io/micro-panda/ir/types"
+	llvm_core "github.com/panda-io/micro-panda/target/llvm/core"
+	"github.com/panda-io/micro-panda/target/llvm/declaration"
 )
 
-func NewContext(p *Program) *Context {
+func NewContext(p *Program) llvm_core.Context {
 	return &Context{
 		Program: p,
-		objects: make(map[string]value.Value),
+		objects: make(map[string]ir_core.Value),
 	}
 }
 
 type Context struct {
 	Program  *Program
-	Function *Function
+	Function *declaration.Function
 
 	Block      *ir.Block
 	LeaveBlock *ir.Block
 	LoopBlock  *ir.Block
 	Returned   bool
 
-	parent  *Context
-	objects map[string]value.Value
+	parent  llvm_core.Context
+	objects map[string]ir_core.Value
 }
 
-func (c *Context) NewContext() *Context {
+func (c *Context) NewContext() llvm_core.Context {
 	return &Context{
 		Program:  c.Program,
 		Function: c.Function,
@@ -35,15 +39,15 @@ func (c *Context) NewContext() *Context {
 		LoopBlock:  c.LoopBlock,
 
 		parent:  c,
-		objects: make(map[string]value.Value),
+		objects: make(map[string]ir_core.Value),
 	}
 }
 
-func (c *Context) AddObject(name string, value value.Value) {
+func (c *Context) AddObject(name string, value ir_core.Value) {
 	c.objects[name] = value
 }
 
-func (c *Context) FindObject(name string) value.Value {
+func (c *Context) FindObject(name string) ir_core.Value {
 	if v, ok := c.objects[name]; ok {
 		return v
 	}
@@ -54,38 +58,38 @@ func (c *Context) FindObject(name string) value.Value {
 		}
 	}
 	if c.Function.Parent != nil && c.Function.Parent.HasVariable(name) {
-		this := c.FindObject(ast.StructThis)
+		this := c.FindObject(ast_core.StructThis)
 		return c.Function.Parent.GetMember(c, this, name)
 	}
 	return nil
 }
 
-func (c *Context) AutoLoad(value value.Value) value.Value {
+func (c *Context) AutoLoad(value ir_core.Value) ir_core.Value {
 	switch t := value.(type) {
 	// global define
 	case *ir.Global:
-		load := ir.NewLoad(t.ContentType, t)
+		load := instruction.NewLoad(t.ContentType, t)
 		c.Block.AddInstruction(load)
 		return load
 
 	// parameter
 	case *ir.Param:
-		if typ, ok := t.Type().(*ir.PointerType); ok {
-			load := ir.NewLoad(typ.ElemType, t)
+		if typ, ok := t.Type().(*ir_types.PointerType); ok {
+			load := instruction.NewLoad(typ.ElemType, t)
 			c.Block.AddInstruction(load)
 			return load
 		}
 
 	// alloca in function
-	case *ir.InstAlloca:
-		load := ir.NewLoad(t.ElemType, t)
+	case *instruction.InstAlloca:
+		load := instruction.NewLoad(t.ElemType, t)
 		c.Block.AddInstruction(load)
 		return load
 
 	// struct member
-	case *ir.InstGetElementPtr:
-		typ := t.Type().(*ir.PointerType)
-		load := ir.NewLoad(typ.ElemType, t)
+	case *instruction.InstGetElementPtr:
+		typ := t.Type().(*ir_types.PointerType)
+		load := instruction.NewLoad(typ.ElemType, t)
 		c.Block.AddInstruction(load)
 		return load
 	}

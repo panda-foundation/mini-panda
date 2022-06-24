@@ -1,12 +1,14 @@
 package statement
 
-import "github.com/panda-io/micro-panda/ast/core"
+import (
+	"github.com/panda-io/micro-panda/ast"
+)
 
 type ExpressionStatement struct {
 	StatementBase
-	Expression core.Expression
+	Expression ast.Expression
 }
 
-func (e *ExpressionStatement) Validate(c core.Context) {
+func (e *ExpressionStatement) Validate(c ast.Context) {
 	e.Expression.Validate(c, nil)
 }

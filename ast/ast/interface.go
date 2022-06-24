@@ -1,4 +1,4 @@
-package core
+package ast
 
 type Node interface {
 	GetPosition() int

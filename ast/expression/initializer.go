@@ -1,16 +1,17 @@
 package expression
 
 import (
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Initializer struct {
 	ExpressionBase
-	Expressions []core.Expression
+	Expressions []ast.Expression
 }
 
-func (i *Initializer) Validate(c core.Context, expected core.Type) {
+func (i *Initializer) Validate(c ast.Context, expected core.Type) {
 	if array, ok := expected.(*types.TypeArray); ok {
 		i.Typ = array
 		i.Const = true
@@ -29,7 +30,7 @@ func (i *Initializer) Validate(c core.Context, expected core.Type) {
 	}
 }
 
-func (i *Initializer) ValidateTypeArray(c core.Context, t *types.TypeArray, exprs []core.Expression) {
+func (i *Initializer) ValidateTypeArray(c ast.Context, t *types.TypeArray, exprs []ast.Expression) {
 	if t.Dimension[0] == 0 {
 		c.Error(i.GetPosition(), "initializer is not allowed to pointer type variable")
 	}

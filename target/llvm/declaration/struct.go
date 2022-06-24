@@ -1,8 +1,10 @@
-package llvm
+package declaration
 
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	ir_core "github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/target/llvm/context"
 )
 
 type Struct struct {
@@ -47,7 +49,7 @@ func (s *Struct) HasVariable(name string) bool {
 	return ok
 }
 
-func (s *Struct) GetMember(ctx *Context, this ir.Value, member string) ir.Value {
+func (s *Struct) GetMember(ctx context.Context, this ir_core.Value, member string) ir_core.Value {
 	if index, ok := s.VariableIndexes[member]; ok {
 		v := ir.NewGetElementPtr(s.Struct, this, ir.NewInt(ir.I32, 0), ir.NewInt(ir.I32, int64(index)))
 		ctx.Block.AddInstruction(v)

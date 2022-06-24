@@ -1,16 +1,17 @@
 package expression
 
 import (
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Increment struct {
 	ExpressionBase
-	Expression core.Expression
+	Expression ast.Expression
 }
 
-func (i *Increment) Validate(c core.Context, expected core.Type) {
+func (i *Increment) Validate(c ast.Context, expected core.Type) {
 	i.Const = false
 	i.Expression.Validate(c, expected)
 	if i.Expression.IsConstant() {

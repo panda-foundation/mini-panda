@@ -1,4 +1,4 @@
-package core
+package ast
 
 const (
 	Global = "global"

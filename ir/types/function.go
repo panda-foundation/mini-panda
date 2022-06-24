@@ -7,7 +7,7 @@ import (
 )
 
 type FuncType struct {
-	TypeName string
+	TypeName string //TO-DO
 	RetType  core.Type
 	Params   []core.Type
 }

@@ -1,16 +1,17 @@
 package expression
 
 import (
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Decrement struct {
 	ExpressionBase
-	Expression core.Expression
+	Expression ast.Expression
 }
 
-func (d *Decrement) Validate(c core.Context, expected core.Type) {
+func (d *Decrement) Validate(c ast.Context, expected core.Type) {
 	d.Expression.Validate(c, expected)
 	d.Const = false
 	if d.Expression.IsConstant() {

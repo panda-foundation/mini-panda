@@ -1,44 +1,49 @@
-package llvm
+package expression
 
 import (
 	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/ast/expression"
+	ast_types "github.com/panda-io/micro-panda/ast/types"
+	ir_core "github.com/panda-io/micro-panda/ir/core"
+	"github.com/panda-io/micro-panda/ir/instruction"
+	ir_types "github.com/panda-io/micro-panda/ir/types"
+	"github.com/panda-io/micro-panda/llvm/context"
 	"github.com/panda-io/micro-panda/token"
 )
 
 var (
-	ICMP = map[token.Token]ir.IPred{
-		token.Equal:        ir.IPredEQ,
-		token.NotEqual:     ir.IPredNE,
-		token.Less:         ir.IPredSLT,
-		token.LessEqual:    ir.IPredSLE,
-		token.Greater:      ir.IPredSGT,
-		token.GreaterEqual: ir.IPredSGE,
+	ICMP = map[token.Token]ir_core.IPred{
+		token.Equal:        ir_core.IPredEQ,
+		token.NotEqual:     ir_core.IPredNE,
+		token.Less:         ir_core.IPredSLT,
+		token.LessEqual:    ir_core.IPredSLE,
+		token.Greater:      ir_core.IPredSGT,
+		token.GreaterEqual: ir_core.IPredSGE,
 	}
 
-	UICMP = map[token.Token]ir.IPred{
-		token.Equal:        ir.IPredEQ,
-		token.NotEqual:     ir.IPredNE,
-		token.Less:         ir.IPredULT,
-		token.LessEqual:    ir.IPredULE,
-		token.Greater:      ir.IPredUGT,
-		token.GreaterEqual: ir.IPredUGE,
+	UICMP = map[token.Token]ir_core.IPred{
+		token.Equal:        ir_core.IPredEQ,
+		token.NotEqual:     ir_core.IPredNE,
+		token.Less:         ir_core.IPredULT,
+		token.LessEqual:    ir_core.IPredULE,
+		token.Greater:      ir_core.IPredUGT,
+		token.GreaterEqual: ir_core.IPredUGE,
 	}
 
-	FCMP = map[token.Token]ir.FPred{
-		token.Equal:        ir.FPredOEQ,
-		token.NotEqual:     ir.FPredONE,
-		token.Less:         ir.FPredOLT,
-		token.LessEqual:    ir.FPredOLE,
-		token.Greater:      ir.FPredOGT,
-		token.GreaterEqual: ir.FPredOGE,
+	FCMP = map[token.Token]ir_core.FPred{
+		token.Equal:        ir_core.FPredOEQ,
+		token.NotEqual:     ir_core.FPredONE,
+		token.Less:         ir_core.FPredOLT,
+		token.LessEqual:    ir_core.FPredOLE,
+		token.Greater:      ir_core.FPredOGT,
+		token.GreaterEqual: ir_core.FPredOGE,
 	}
 )
 
-func BinaryIR(c *Context, b *ast.Binary) ir.Value {
+func BinaryIR(c *context.Context, b *expression.Binary) ir_core.Value {
 	t := TypeIR(b.Left.Type())
-	var v1 ir.Value
-	var v2 ir.Value
+	var v1 ir_core.Value
+	var v2 ir_core.Value
 	if b.Left.IsConstant() {
 		v1 = ExpressionConstIR(c.Program, b.Left)
 	} else {
@@ -50,12 +55,12 @@ func BinaryIR(c *Context, b *ast.Binary) ir.Value {
 		v2 = ExpressionIR(c, b.Right)
 	}
 
-	var inst ir.Instruction
-	var ret ir.Value
+	var inst instruction.Instruction
+	var ret ir_core.Value
 	switch b.Operator {
 	case token.Assign:
-		if ast.IsPointer(b.Left.Type()) && ast.IsArray(b.Right.Type()) {
-			var gep ir.Instruction = ir.NewGetElementPtr(TypeIR(b.Right.Type()), v2, ir.NewInt(ir.I32, 0), ir.NewInt(ir.I32, 0))
+		if ast_types.IsPointer(b.Left.Type()) && ast_types.IsArray(b.Right.Type()) {
+			var gep instruction.Instruction = ir.NewGetElementPtr(TypeIR(b.Right.Type()), v2, ir.NewInt(ir_types.I32, 0), ir.NewInt(ir_types.I32, 0))
 			c.Block.AddInstruction(gep)
 			inst = ir.NewStore(gep.(ir.Value), v1)
 		} else {
@@ -87,27 +92,27 @@ func BinaryIR(c *Context, b *ast.Binary) ir.Value {
 			inst = ir.NewFMul(c.AutoLoad(v1), c.AutoLoad(v2))
 		}
 		c.Block.AddInstruction(inst)
-		inst = ir.NewStore(inst.(ir.Value), v1)
+		inst = ir.NewStore(inst.(ir_core.Value), v1)
 
 	case token.DivAssign:
 		if ir.IsInt(t) {
 			if t.(*ir.IntType).Unsigned {
-				inst = ir.NewUDiv(c.AutoLoad(v1), c.AutoLoad(v2))
+				inst = instruction.NewUDiv(c.AutoLoad(v1), c.AutoLoad(v2))
 			} else {
-				inst = ir.NewSDiv(c.AutoLoad(v1), c.AutoLoad(v2))
+				inst = instruction.NewSDiv(c.AutoLoad(v1), c.AutoLoad(v2))
 			}
-		} else if ir.IsFloat(t) {
-			inst = ir.NewFDiv(c.AutoLoad(v1), c.AutoLoad(v2))
+		} else if ir_types.IsFloat(t) {
+			inst = instruction.NewFDiv(c.AutoLoad(v1), c.AutoLoad(v2))
 		}
 		c.Block.AddInstruction(inst)
-		inst = ir.NewStore(inst.(ir.Value), v1)
+		inst = ir.NewStore(inst.(ir_core.Value), v1)
 		ret = v1
 
 	case token.RemAssign:
 		if t.(*ir.IntType).Unsigned {
-			inst = ir.NewURem(c.AutoLoad(v1), c.AutoLoad(v2))
+			inst = instruction.NewURem(c.AutoLoad(v1), c.AutoLoad(v2))
 		} else {
-			inst = ir.NewSRem(c.AutoLoad(v1), c.AutoLoad(v2))
+			inst = instruction.NewSRem(c.AutoLoad(v1), c.AutoLoad(v2))
 		}
 		c.Block.AddInstruction(inst)
 		inst = ir.NewStore(inst.(ir.Value), v1)
@@ -170,7 +175,7 @@ func BinaryIR(c *Context, b *ast.Binary) ir.Value {
 
 	case token.Equal, token.NotEqual, token.Less, token.LessEqual, token.Greater, token.GreaterEqual:
 		if ir.IsInt(t) {
-			var icmp ir.IPred
+			var icmp ir_core.IPred
 			if t.(*ir.IntType).Unsigned {
 				icmp = UICMP[b.Operator]
 			} else {
@@ -276,7 +281,7 @@ func BinaryConstIR(p *Program, b *ast.Binary) ir.Constant {
 
 	case token.Equal, token.NotEqual, token.Less, token.LessEqual, token.Greater, token.GreaterEqual:
 		if ir.IsInt(t) {
-			var icmp ir.IPred
+			var icmp ir_core.IPred
 			if t.(*ir.IntType).Unsigned {
 				icmp = UICMP[b.Operator]
 			} else {

@@ -1,6 +1,7 @@
 package statement
 
 import (
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/token"
@@ -9,7 +10,7 @@ import (
 type Switch struct {
 	StatementBase
 	Initialization core.Statement
-	Operand        core.Expression
+	Operand        ast.Expression
 	Cases          []*Case
 	Default        *Case
 }
@@ -17,11 +18,11 @@ type Switch struct {
 type Case struct {
 	StatementBase
 	Token token.Token
-	Case  core.Expression
+	Case  ast.Expression
 	Body  core.Statement
 }
 
-func (s *Switch) Validate(c core.Context) {
+func (s *Switch) Validate(c ast.Context) {
 	ctx := c.NewContext()
 	if s.Initialization != nil {
 		s.Initialization.Validate(ctx)

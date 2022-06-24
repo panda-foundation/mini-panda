@@ -1,12 +1,12 @@
 package parser
 
 import (
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/expression"
 	"github.com/panda-io/micro-panda/token"
 )
 
-func (p *Parser) parseExpression() core.Expression {
+func (p *Parser) parseExpression() ast.Expression {
 	return p.parseBinaryExpression(0)
 }
 
@@ -22,7 +22,7 @@ func (p *Parser) parseIdentifier() *expression.Identifier {
 	return e
 }
 
-func (p *Parser) parseOperand() core.Expression {
+func (p *Parser) parseOperand() ast.Expression {
 	switch p.token {
 	case token.IDENT:
 		return p.parseIdentifier()
@@ -93,7 +93,7 @@ func (p *Parser) parseOperand() core.Expression {
 	}
 }
 
-func (p *Parser) parsePrimaryExpression() core.Expression {
+func (p *Parser) parsePrimaryExpression() ast.Expression {
 	x := p.parseOperand()
 	for {
 		switch p.token {
@@ -143,7 +143,7 @@ func (p *Parser) parsePrimaryExpression() core.Expression {
 	}
 }
 
-func (p *Parser) parseUnaryExpression() core.Expression {
+func (p *Parser) parseUnaryExpression() ast.Expression {
 	switch p.token {
 	case token.Plus, token.Minus, token.Not, token.Complement, token.BitAnd, token.Mul:
 		e := &expression.Unary{}
@@ -158,7 +158,7 @@ func (p *Parser) parseUnaryExpression() core.Expression {
 	}
 }
 
-func (p *Parser) parseBinaryExpression(precedence int) core.Expression {
+func (p *Parser) parseBinaryExpression(precedence int) ast.Expression {
 	x := p.parseUnaryExpression()
 	for {
 		if p.token == token.Semi {

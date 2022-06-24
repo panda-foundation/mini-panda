@@ -1,4 +1,4 @@
-package llvm
+package declaration
 
 import (
 	"github.com/panda-io/micro-panda/ast"

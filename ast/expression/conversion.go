@@ -1,13 +1,14 @@
 package expression
 
 import (
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Conversion struct {
 	ExpressionBase
-	Value core.Expression
+	Value ast.Expression
 }
 
 func (c *Conversion) Validate(ctx core.Context, expected core.Type) {

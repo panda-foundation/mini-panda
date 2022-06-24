@@ -1,8 +1,9 @@
-package llvm
+package expression
 
 import (
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/ir/instruction"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -23,13 +24,13 @@ func UnaryIR(c *Context, u *ast.Unary) ir.Value {
 		}
 
 	case token.Not:
-		inst = ir.NewXor(c.AutoLoad(v), ir.True)
+		inst = instruction.NewXor(c.AutoLoad(v), ir.True)
 
 	case token.Complement:
-		inst = ir.NewXor(c.AutoLoad(v), ir.NewInt(t.(*ir.IntType), -1))
+		inst = instruction.NewXor(c.AutoLoad(v), ir.NewInt(t.(*ir.IntType), -1))
 
 	case token.BitAnd:
-		alloca := ir.NewAlloca(ir.NewPointerType(t))
+		alloca := instruction.NewAlloca(ir.NewPointerType(t))
 		c.Block.AddInstruction(alloca)
 		c.Block.AddInstruction(ir.NewStore(v, alloca))
 		return alloca

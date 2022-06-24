@@ -4,9 +4,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/declaration"
 	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ir/core"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -102,8 +103,8 @@ func (p *Parser) parseParameter() *declaration.Parameter {
 	return t
 }
 
-func (p *Parser) parseArguments() []core.Expression {
-	expressions := []core.Expression{}
+func (p *Parser) parseArguments() []ast.Expression {
+	expressions := []ast.Expression{}
 	p.expect(token.LeftParen)
 	if p.token == token.RightParen {
 		p.next()

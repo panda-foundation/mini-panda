@@ -7,14 +7,14 @@ import (
 )
 
 type StructType struct {
-	TypeName string
-	Fields   []core.Type
+	Qualified string
+	Fields    []core.Type
 }
 
-func NewStructType(typeName string, fields ...core.Type) *StructType {
+func NewStructType(qualified string, fields ...core.Type) *StructType {
 	return &StructType{
-		TypeName: typeName,
-		Fields:   fields,
+		Qualified: qualified,
+		Fields:    fields,
 	}
 }
 
@@ -34,7 +34,7 @@ func (t *StructType) Equal(u core.Type) bool {
 }
 
 func (t *StructType) String() string {
-	return t.TypeName
+	return t.Qualified
 }
 
 func (t *StructType) WriteIR(w io.Writer) error {

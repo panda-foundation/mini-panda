@@ -3,15 +3,15 @@ package statement
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast"
 )
 
 type Return struct {
 	StatementBase
-	Expression core.Expression
+	Expression ast.Expression
 }
 
-func (r *Return) Validate(c core.Context) {
+func (r *Return) Validate(c ast.Context) {
 	returnType := c.GetFunction().GetReturnType()
 	if returnType == nil {
 		if r.Expression != nil {

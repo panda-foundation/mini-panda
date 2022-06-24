@@ -1,30 +1,21 @@
 package llvm
 
 import (
+	"bytes"
 	"crypto/md5"
 	"fmt"
 	"sort"
-	"strings"
 
 	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ir"
+	"github.com/panda-io/micro-panda/ir/constant"
+	"github.com/panda-io/micro-panda/target/llvm/declaration"
 )
 
-type Declaration interface {
-	Declaration()
-}
-
-type DeclarationBase struct {
-	Qualified string
-}
-
-func (*DeclarationBase) Declaration() {
-}
-
 type Program struct {
-	Module       *ir.Module
-	Strings      map[string]ir.Constant
-	Declarations map[string]Declaration
+	Program      *ir.Program
+	Strings      map[string]constant.Constant
+	Declarations map[string]declaration.Declaration
 }
 
 func NewProgram() *Program {
@@ -33,35 +24,35 @@ func NewProgram() *Program {
 	return p
 }
 
-func (p *Program) AddString(value string) ir.Constant {
+func (p *Program) AddString(value string) constant.Constant {
 	bytes := []byte(value)
 	bytes = append(bytes, 0)
 	hash := fmt.Sprintf("%x", md5.Sum(bytes))
 	if v, ok := p.Strings[hash]; ok {
 		return v
 	}
-	array := ir.NewCharArray(bytes)
-	s := p.Module.NewGlobalDef("string."+hash, array)
+	array := constant.NewCharArray(bytes)
+	s := p.Program.NewGlobalDef("string."+hash, array)
 	s.Immutable = true
 	p.Strings[hash] = s
 	return s
 }
 
-func (p *Program) AddDeclaration(qualified string, d Declaration) {
+func (p *Program) AddDeclaration(qualified string, d declaration.Declaration) {
 	p.Declarations[qualified] = d
 }
 
-func (p *Program) FindDeclaration(qualified string) Declaration {
+func (p *Program) FindDeclaration(qualified string) declaration.Declaration {
 	return p.Declarations[qualified]
 }
 
 func (p *Program) Reset() {
-	p.Module = ir.NewModule()
-	p.Strings = make(map[string]ir.Constant)
-	p.Declarations = make(map[string]Declaration)
+	p.Program = ir.NewProgram()
+	p.Strings = make(map[string]constant.Constant)
+	p.Declarations = make(map[string]declaration.Declaration)
 }
 
-func (p *Program) GenerateIR(program *ast.Program) string {
+func (p *Program) GenerateIR(program *ast.Program) []byte {
 	var keys Keys
 	for key := range program.Modules {
 		keys = append(keys, key)
@@ -77,17 +68,17 @@ func (p *Program) GenerateIR(program *ast.Program) string {
 	for _, m := range modules {
 		program.Module = m
 		for _, f := range m.Functions {
-			ff := &Function{}
+			ff := &declaration.Function{}
 			ff.GenerateDefineIR(p, f)
 			p.AddDeclaration(f.QualifiedName(), ff)
 		}
 		for _, e := range m.Enums {
-			ee := &Enum{}
+			ee := &declaration.Enum{}
 			ee.GenerateIR(p, e)
 			p.AddDeclaration(e.QualifiedName(), ee)
 		}
 		for _, s := range m.Structs {
-			ss := &Struct{}
+			ss := &declaration.Struct{}
 			ss.GenerateDefineIR(p, s)
 			p.AddDeclaration(s.QualifiedName(), ss)
 		}
@@ -97,26 +88,26 @@ func (p *Program) GenerateIR(program *ast.Program) string {
 	for _, m := range modules {
 		program.Module = m
 		for _, v := range m.Variables {
-			vv := &Variable{}
+			vv := &declaration.Variable{}
 			vv.GenerateIR(p, v)
 			p.AddDeclaration(v.QualifiedName(), vv)
 		}
 		for _, f := range m.Functions {
-			ff := p.FindDeclaration(f.QualifiedName()).(*Function)
+			ff := p.FindDeclaration(f.QualifiedName()).(*declaration.Function)
 			ff.GenerateIR(p, f)
 		}
 		for _, s := range m.Structs {
-			ss := p.FindDeclaration(s.QualifiedName()).(*Struct)
+			ss := p.FindDeclaration(s.QualifiedName()).(*declaration.Struct)
 			ss.GenerateIR(p, s)
 		}
 	}
 
-	buf := &strings.Builder{}
-	_, err := p.Module.WriteTo(buf)
+	buf := &bytes.Buffer{}
+	err := p.Program.WriteIR(buf)
 	if err != nil {
 		panic(err)
 	}
-	return buf.String()
+	return buf.Bytes()
 }
 
 type Keys []string

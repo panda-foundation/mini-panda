@@ -3,13 +3,13 @@ package expression
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type MemberAccess struct {
 	ExpressionBase
-	Parent core.Expression
+	Parent ast.Expression
 	Member *Identifier
 
 	Qualified   string
@@ -21,7 +21,7 @@ parent expression could be: identifier$, member_access$, parentheses, subscripti
 possible incomplete parent expression. it need to combine with member access
 */
 
-func (m *MemberAccess) Validate(c core.Context, expected core.Type) {
+func (m *MemberAccess) Validate(c ast.Context, expected core.Type) {
 	m.Parent.Validate(c, nil)
 	if m.Parent.Type() == nil {
 		if i, ok := m.Parent.(*Identifier); ok {

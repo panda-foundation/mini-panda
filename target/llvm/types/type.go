@@ -1,47 +1,51 @@
-package llvm
+package types
 
 import (
-	"github.com/panda-io/micro-panda/ast"
+	ast_core "github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/declaration"
+	ast_types "github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/ir"
+	ir_core "github.com/panda-io/micro-panda/ir/core"
+	ir_types "github.com/panda-io/micro-panda/ir/types"
 )
 
-func TypeIR(typ ast.Type) ir.Type {
+func TypeIR(typ ast_core.Type) ir_core.Type {
 	switch t := typ.(type) {
-	case *ast.TypeBuiltin:
+	case *ast_types.TypeBuiltin:
 		return TypeBuiltinIR(t)
 
-	case *ast.TypeName:
+	case *ast_types.TypeName:
 		return TypeNameIR(t)
 
-	case *ast.TypePointer:
+	case *ast_types.TypePointer:
 		return TypePointerIR(t)
 
-	case *ast.TypeArray:
+	case *ast_types.TypeArray:
 		return TypeArrayIR(t)
 
-	case *ast.TypeFunction:
+	case *ast_types.TypeFunction:
 		return TypeFunctionIR(t)
 	}
 	return nil
 }
 
-func ParamIR(parameter *ast.Parameter) *ir.Param {
+func ParamIR(parameter *declaration.Parameter) *ir.Param {
 	var param *ir.Param
-	var paramType ir.Type
-	switch t := parameter.Type.(type) {
-	case *ast.TypeBuiltin:
+	var paramType ir_core.Type
+	switch t := parameter.Typ.(type) {
+	case *ast_types.TypeBuiltin:
 		paramType = TypeBuiltinIR(t)
 
-	case *ast.TypeName:
+	case *ast_types.TypeName:
 		paramType = TypeNameIR(t)
 
-	case *ast.TypePointer:
+	case *ast_types.TypePointer:
 		paramType = TypePointerIR(t)
 
-	case *ast.TypeArray:
+	case *ast_types.TypeArray:
 		paramType = TypeArrayIR(t)
 
-	case *ast.TypeFunction:
+	case *ast_types.TypeFunction:
 		paramType = TypeFunctionIR(t)
 	}
 	param = ir.NewParam(paramType)
@@ -49,14 +53,11 @@ func ParamIR(parameter *ast.Parameter) *ir.Param {
 	return param
 }
 
-func StructIR(qualified string) *ir.StructType {
-	t := ir.NewStructType()
-	t.TypeName = qualified
-	return t
+func StructIR(qualified string) *ir_types.StructType {
+	return ir_types.NewStructType(qualified)
 }
 
-func StructPointerIR(qualified string) *ir.PointerType {
-	t := ir.NewStructType()
-	t.TypeName = qualified
-	return ir.NewPointerType(t)
+func StructPointerIR(qualified string) *ir_types.PointerType {
+	t := ir_types.NewStructType(qualified)
+	return ir_types.NewPointerType(t)
 }

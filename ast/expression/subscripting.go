@@ -3,17 +3,18 @@ package expression
 import (
 	"fmt"
 
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Subscripting struct {
 	ExpressionBase
-	Parent  core.Expression
-	Indexes []core.Expression
+	Parent  ast.Expression
+	Indexes []ast.Expression
 }
 
-func (s *Subscripting) Validate(c core.Context, expected core.Type) {
+func (s *Subscripting) Validate(c ast.Context, expected core.Type) {
 	s.Const = false
 	s.Parent.Validate(c, nil)
 	if t, ok := s.Parent.Type().(*types.TypeArray); ok {

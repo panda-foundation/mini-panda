@@ -3,6 +3,7 @@ package statement
 import (
 	"fmt"
 
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/expression"
 )
@@ -11,10 +12,10 @@ type DeclarationStatement struct {
 	StatementBase
 	Name  *expression.Identifier
 	Type  core.Type
-	Value core.Expression
+	Value ast.Expression
 }
 
-func (d *DeclarationStatement) Validate(c core.Context) {
+func (d *DeclarationStatement) Validate(c ast.Context) {
 	d.Type = c.ResolveType(d.Type)
 	if d.Value != nil {
 		d.Value.Validate(c, d.Type)

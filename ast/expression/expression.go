@@ -1,9 +1,5 @@
 package expression
 
-import (
-	"github.com/panda-io/micro-panda/ast/core"
-)
-
 type ExpressionBase struct {
 	core.NodeBase
 	Const bool

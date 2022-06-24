@@ -3,12 +3,12 @@ package ast
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/declaration"
 	"github.com/panda-io/micro-panda/ast/types"
 )
 
-func NewContext(p *Program) core.Context {
+func NewContext(p *Program) ast.Context {
 	return &Context{
 		Program: p,
 		objects: make(map[string]core.Type),
@@ -27,7 +27,7 @@ func (c *Context) Error(offset int, message string) {
 	c.Program.Error(offset, message)
 }
 
-func (c *Context) NewContext() core.Context {
+func (c *Context) NewContext() ast.Context {
 	return &Context{
 		Program:  c.Program,
 		Function: c.Function,

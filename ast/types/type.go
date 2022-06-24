@@ -1,7 +1,6 @@
 package types
 
 import (
-	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/token"
 )
 

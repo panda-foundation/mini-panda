@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"strconv"
 
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/token"
@@ -16,7 +17,7 @@ type Literal struct {
 	Value string
 }
 
-func (l *Literal) Validate(c core.Context, expected core.Type) {
+func (l *Literal) Validate(c ast.Context, expected core.Type) {
 	l.Const = true
 	switch l.Token {
 	case token.STRING:

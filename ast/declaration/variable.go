@@ -1,14 +1,12 @@
 package declaration
 
-import (
-	"github.com/panda-io/micro-panda/ast/core"
-)
+import "github.com/panda-io/micro-panda/ast/ast"
 
 type Variable struct {
 	DeclarationBase
 	Typ   core.Type
 	Const bool
-	Value core.Expression
+	Value ast.Expression
 
 	Parent *Struct
 }
@@ -25,11 +23,11 @@ func (v *Variable) Type() core.Type {
 	return v.Typ
 }
 
-func (v *Variable) ResolveType(c core.Context) {
+func (v *Variable) ResolveType(c ast.Context) {
 	v.Typ = c.ResolveType(v.Typ)
 }
 
-func (v *Variable) Validate(c core.Context) {
+func (v *Variable) Validate(c ast.Context) {
 	if v.Value != nil {
 		v.Value.Validate(c, v.Typ)
 	}

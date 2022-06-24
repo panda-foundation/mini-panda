@@ -3,7 +3,7 @@ package declaration
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/types"
 )
 
@@ -85,7 +85,7 @@ func (s *Struct) PointerType() *types.TypePointer {
 	}
 }
 
-func (s *Struct) ResolveType(c core.Context) {
+func (s *Struct) ResolveType(c ast.Context) {
 	if len(s.Variables) == 0 {
 		c.Error(s.GetPosition(), "struct should contain at least 1 variable member.")
 	}
@@ -98,7 +98,7 @@ func (s *Struct) ResolveType(c core.Context) {
 	}
 }
 
-func (s *Struct) Validate(c core.Context) {
+func (s *Struct) Validate(c ast.Context) {
 	for _, v := range s.Variables {
 		v.Validate(c)
 		if v.Value != nil {
@@ -110,7 +110,7 @@ func (s *Struct) Validate(c core.Context) {
 	}
 }
 
-func (s *Struct) ValidateInitializer(c core.Context, expressions []core.Expression) {
+func (s *Struct) ValidateInitializer(c ast.Context, expressions []ast.Expression) {
 	if len(s.Variables) == len(expressions) {
 		for idx, e := range expressions {
 			e.Validate(c, s.Variables[idx].Typ)

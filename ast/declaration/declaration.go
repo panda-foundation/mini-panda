@@ -1,7 +1,7 @@
 package declaration
 
 import (
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/expression"
 )
 
@@ -13,7 +13,7 @@ type Attribute struct {
 }
 
 type DeclarationBase struct {
-	core.NodeBase
+	ast.NodeBase
 	Attributes []*Attribute
 	Public     bool
 	Name       *expression.Identifier

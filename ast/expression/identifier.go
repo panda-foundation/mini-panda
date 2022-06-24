@@ -3,6 +3,7 @@ package expression
 import (
 	"fmt"
 
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 )
 
@@ -14,7 +15,7 @@ type Identifier struct {
 	IsNamespace bool
 }
 
-func (i *Identifier) Validate(c core.Context, expected core.Type) {
+func (i *Identifier) Validate(c ast.Context, expected core.Type) {
 	t := c.FindObject(i.Name)
 	if t == nil {
 		d := c.FindLocalDeclaration(i.Name)

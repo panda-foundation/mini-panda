@@ -1,7 +1,7 @@
 package declaration
 
 import (
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/statement"
 	"github.com/panda-io/micro-panda/ast/types"
 )
@@ -38,7 +38,7 @@ func (f *Function) GetReturnType() core.Type {
 	return f.ReturnType
 }
 
-func (f *Function) ResolveType(c core.Context) {
+func (f *Function) ResolveType(c ast.Context) {
 	f.Typ.ReturnType = f.ReturnType
 	if f.HasAttribute(core.AttriExtern) {
 		f.Typ.Extern = true

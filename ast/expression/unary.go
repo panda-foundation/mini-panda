@@ -1,6 +1,7 @@
 package expression
 
 import (
+	"github.com/panda-io/micro-panda/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/token"
@@ -9,10 +10,10 @@ import (
 type Unary struct {
 	ExpressionBase
 	Operator   token.Token
-	Expression core.Expression
+	Expression ast.Expression
 }
 
-func (u *Unary) Validate(c core.Context, expected core.Type) {
+func (u *Unary) Validate(c ast.Context, expected core.Type) {
 	u.Expression.Validate(c, expected)
 	u.Const = u.Expression.IsConstant()
 	u.Typ = u.Expression.Type()

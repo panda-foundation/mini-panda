@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/expression"
 	"github.com/panda-io/micro-panda/token"
 )
@@ -19,11 +19,11 @@ func (e *Enum) IsConstant() bool {
 	return false
 }
 
-func (e *Enum) Kind() core.DeclarationKind {
-	return core.DeclarationEnum
+func (e *Enum) Kind() ast.DeclarationKind {
+	return ast.DeclarationEnum
 }
 
-func (e *Enum) Type() core.Type {
+func (e *Enum) Type() ast.Type {
 	return nil
 }
 
@@ -44,10 +44,10 @@ func (e *Enum) HasMember(name string) bool {
 	return false
 }
 
-func (e *Enum) ResolveType(c core.Context) {
+func (e *Enum) ResolveType(c ast.Context) {
 }
 
-func (e *Enum) Validate(c core.Context) {
+func (e *Enum) Validate(c ast.Context) {
 	var index int
 	for _, v := range e.Members {
 		if index >= 256 {

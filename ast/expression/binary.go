@@ -1,6 +1,7 @@
 package expression
 
 import (
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/core"
 	"github.com/panda-io/micro-panda/ast/types"
 	"github.com/panda-io/micro-panda/token"
@@ -8,12 +9,12 @@ import (
 
 type Binary struct {
 	ExpressionBase
-	Left     core.Expression
+	Left     ast.Expression
 	Operator token.Token
-	Right    core.Expression
+	Right    ast.Expression
 }
 
-func (b *Binary) Validate(c core.Context, expected core.Type) {
+func (b *Binary) Validate(c ast.Context, expected core.Type) {
 	b.Left.Validate(c, expected)
 	b.Right.Validate(c, b.Left.Type())
 
