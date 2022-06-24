@@ -1,18 +1,17 @@
 package expression
 
 import (
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
-	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 )
 
 type Sizeof struct {
 	ExpressionBase
-	Target core.Type
+	Target ast.Type
 }
 
-func (s *Sizeof) Validate(c ast.Context, expected core.Type) {
+func (s *Sizeof) Validate(c ast.Context, expected ast.Type) {
 	s.Target = c.ResolveType(s.Target)
-	s.Typ = types.TypeU32
+	s.Typ = ast_types.TypeU32
 	s.Const = true
 }

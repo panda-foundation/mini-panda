@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/panda-io/micro-panda/ast/ast"
-	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 )
 
 type Struct struct {
@@ -17,8 +17,8 @@ func (s *Struct) IsConstant() bool {
 	return false
 }
 
-func (s *Struct) Kind() core.DeclarationKind {
-	return core.DeclarationStruct
+func (s *Struct) Kind() ast.DeclarationKind {
+	return ast.DeclarationStruct
 }
 
 func (s *Struct) AddVariable(v *Variable) error {
@@ -57,7 +57,7 @@ func (s *Struct) HasMember(member string) bool {
 	return s.IsRedeclared(member)
 }
 
-func (s *Struct) MemberType(member string) core.Type {
+func (s *Struct) MemberType(member string) ast.Type {
 	for _, variable := range s.Variables {
 		if member == variable.Name.Name {
 			return variable.Typ
@@ -71,16 +71,16 @@ func (s *Struct) MemberType(member string) core.Type {
 	return nil
 }
 
-func (s *Struct) Type() core.Type {
-	return &types.TypeName{
+func (s *Struct) Type() ast.Type {
+	return &ast_types.TypeName{
 		Name:      s.Name.Name,
 		Qualified: s.Qualified,
 		IsEnum:    false,
 	}
 }
 
-func (s *Struct) PointerType() *types.TypePointer {
-	return &types.TypePointer{
+func (s *Struct) PointerType() *ast_types.TypePointer {
+	return &ast_types.TypePointer{
 		ElementType: s.Type(),
 	}
 }

@@ -1,13 +1,12 @@
 package statement
 
 import (
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 )
 
 type Block struct {
 	StatementBase
-	Statements []core.Statement
+	Statements []ast.Statement
 }
 
 func (b *Block) Validate(c ast.Context) {

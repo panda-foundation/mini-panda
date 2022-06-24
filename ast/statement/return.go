@@ -3,7 +3,7 @@ package statement
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast"
+	"github.com/panda-io/micro-panda/ast/ast"
 )
 
 type Return struct {

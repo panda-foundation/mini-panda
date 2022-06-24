@@ -1,6 +1,6 @@
-package types
+package ast_types
 
-import "github.com/panda-io/micro-panda/ast/core"
+import "github.com/panda-io/micro-panda/ast/ast"
 
 type TypeName struct {
 	TypeBase
@@ -10,7 +10,7 @@ type TypeName struct {
 	IsEnum bool
 }
 
-func (n *TypeName) Equal(t core.Type) bool {
+func (n *TypeName) Equal(t ast.Type) bool {
 	if t, ok := t.(*TypeName); ok {
 		return n.Qualified != "" && t.Qualified == n.Qualified
 	}

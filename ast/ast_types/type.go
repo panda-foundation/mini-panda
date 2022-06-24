@@ -1,6 +1,7 @@
-package types
+package ast_types
 
 import (
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -39,53 +40,53 @@ var (
 )
 
 type TypeBase struct {
-	core.NodeBase
+	ast.NodeBase
 }
 
-func IsInteger(t core.Type) bool {
+func IsInteger(t ast.Type) bool {
 	if b, ok := t.(*TypeBuiltin); ok {
 		return b.Token.IsInteger()
 	}
 	return false
 }
 
-func IsFloat(t core.Type) bool {
+func IsFloat(t ast.Type) bool {
 	if b, ok := t.(*TypeBuiltin); ok {
 		return b.Token.IsFloat()
 	}
 	return false
 }
 
-func IsNumber(t core.Type) bool {
+func IsNumber(t ast.Type) bool {
 	if b, ok := t.(*TypeBuiltin); ok {
 		return b.Token.IsNumber()
 	}
 	return false
 }
 
-func IsBool(t core.Type) bool {
+func IsBool(t ast.Type) bool {
 	if b, ok := t.(*TypeBuiltin); ok {
 		return b.Token == token.Bool
 	}
 	return false
 }
 
-func IsStruct(t core.Type) bool {
+func IsStruct(t ast.Type) bool {
 	n, ok := t.(*TypeName)
 	return ok && !n.IsEnum
 }
 
-func IsArray(t core.Type) bool {
+func IsArray(t ast.Type) bool {
 	array, ok := t.(*TypeArray)
 	return ok && array.Dimension[0] != 0
 }
 
-func IsFunction(t core.Type) bool {
+func IsFunction(t ast.Type) bool {
 	_, ok := t.(*TypeFunction)
 	return ok
 }
 
-func IsPointer(t core.Type) bool {
+func IsPointer(t ast.Type) bool {
 	_, ok := t.(*TypePointer)
 	if ok {
 		return true
@@ -138,7 +139,7 @@ func TypeBuiltinSize(t *TypeBuiltin) int {
 	}
 }
 
-func GetElementType(t core.Type) core.Type {
+func GetElementType(t ast.Type) ast.Type {
 	if t, ok := t.(*TypePointer); ok {
 		return t.ElementType
 	}

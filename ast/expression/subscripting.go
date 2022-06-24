@@ -3,9 +3,8 @@ package expression
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
-	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 )
 
 type Subscripting struct {
@@ -14,26 +13,26 @@ type Subscripting struct {
 	Indexes []ast.Expression
 }
 
-func (s *Subscripting) Validate(c ast.Context, expected core.Type) {
+func (s *Subscripting) Validate(c ast.Context, expected ast.Type) {
 	s.Const = false
 	s.Parent.Validate(c, nil)
-	if t, ok := s.Parent.Type().(*types.TypeArray); ok {
+	if t, ok := s.Parent.Type().(*ast_types.TypeArray); ok {
 		if len(s.Indexes) == len(t.Dimension) {
 			s.Typ = t.ElementType
 			for _, e := range s.Indexes {
 				e.Validate(c, nil)
-				if !types.IsInteger(e.Type()) {
+				if !ast_types.IsInteger(e.Type()) {
 					c.Error(e.GetPosition(), fmt.Sprintf("expect integer index for array, got '%s'", e.Type().String()))
 				}
 			}
 		} else if len(s.Indexes) < len(t.Dimension) {
-			array := &types.TypeArray{
+			array := &ast_types.TypeArray{
 				ElementType: t.ElementType,
 				Dimension:   []int{0},
 			}
 			for _, e := range s.Indexes {
 				e.Validate(c, nil)
-				if !types.IsInteger(e.Type()) {
+				if !ast_types.IsInteger(e.Type()) {
 					c.Error(e.GetPosition(), fmt.Sprintf("expect integer index for array, got '%s'", e.Type().String()))
 				}
 			}

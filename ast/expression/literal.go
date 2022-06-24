@@ -5,9 +5,8 @@ import (
 	"math/big"
 	"strconv"
 
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
-	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -17,7 +16,7 @@ type Literal struct {
 	Value string
 }
 
-func (l *Literal) Validate(c ast.Context, expected core.Type) {
+func (l *Literal) Validate(c ast.Context, expected ast.Type) {
 	l.Const = true
 	switch l.Token {
 	case token.STRING:
@@ -30,48 +29,48 @@ func (l *Literal) Validate(c ast.Context, expected core.Type) {
 			// `` raw string
 			length = len(l.Value) - 1
 		}
-		l.Typ = &types.TypeArray{
-			ElementType: types.TypeU8,
+		l.Typ = &ast_types.TypeArray{
+			ElementType: ast_types.TypeU8,
 			Dimension:   []int{length},
 		}
 
 	case token.CHAR:
-		l.Typ = types.TypeU8
+		l.Typ = ast_types.TypeU8
 
 	case token.FLOAT:
 		if expected != nil {
-			if types.IsFloat(expected) {
+			if ast_types.IsFloat(expected) {
 				l.Typ = expected
 			} else {
 				c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect '%s' got 'float'", expected.String()))
 			}
 		} else {
-			l.Typ = types.TypeF32
+			l.Typ = ast_types.TypeF32
 		}
 
 	case token.INT:
 		if expected != nil {
-			if types.IsNumber(expected) {
+			if ast_types.IsNumber(expected) {
 				l.Typ = expected
 			} else {
 				c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect '%s' got 'int'", expected.String()))
 			}
 		} else {
-			l.Typ = types.TypeI32
+			l.Typ = ast_types.TypeI32
 		}
 
 	case token.BOOL:
-		if expected != nil && !types.IsBool(expected) {
+		if expected != nil && !ast_types.IsBool(expected) {
 			c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect '%s' got 'bool'", expected.String()))
 		} else {
-			l.Typ = types.TypeBool
+			l.Typ = ast_types.TypeBool
 		}
 
 	case token.NULL:
 		if expected == nil {
 			c.Error(l.GetPosition(), "expect type for 'null'")
 		} else {
-			if types.IsPointer(expected) {
+			if ast_types.IsPointer(expected) {
 				l.Typ = expected
 			} else {
 				c.Error(l.GetPosition(), fmt.Sprintf("type mismatch, expect 'pointer' got '%s'", expected.String()))

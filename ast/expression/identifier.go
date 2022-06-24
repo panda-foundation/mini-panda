@@ -3,8 +3,7 @@ package expression
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 )
 
 type Identifier struct {
@@ -15,13 +14,13 @@ type Identifier struct {
 	IsNamespace bool
 }
 
-func (i *Identifier) Validate(c ast.Context, expected core.Type) {
+func (i *Identifier) Validate(c ast.Context, expected ast.Type) {
 	t := c.FindObject(i.Name)
 	if t == nil {
 		d := c.FindLocalDeclaration(i.Name)
 		if d == nil {
 			i.IsNamespace = c.IsNamespace(i.Name)
-		} else if d.Kind() != core.DeclarationStruct {
+		} else if d.Kind() != ast.DeclarationStruct {
 			i.Const = d.IsConstant()
 			i.Typ = d.Type()
 			i.Qualified = d.QualifiedName()

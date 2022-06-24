@@ -1,17 +1,16 @@
 package statement
 
 import (
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
-	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 )
 
 type If struct {
 	StatementBase
-	Initialization core.Statement
+	Initialization ast.Statement
 	Condition      ast.Expression
-	Body           core.Statement
-	Else           core.Statement
+	Body           ast.Statement
+	Else           ast.Statement
 }
 
 func (i *If) Validate(c ast.Context) {
@@ -22,8 +21,8 @@ func (i *If) Validate(c ast.Context) {
 	if i.Condition == nil {
 		c.Error(i.GetPosition(), "expect condition expression")
 	} else {
-		i.Condition.Validate(ctx, types.TypeBool)
-		if i.Condition.Type() != nil && !i.Condition.Type().Equal(types.TypeBool) {
+		i.Condition.Validate(ctx, ast_types.TypeBool)
+		if i.Condition.Type() != nil && !i.Condition.Type().Equal(ast_types.TypeBool) {
 			c.Error(i.Condition.GetPosition(), "expect bool type condition")
 		}
 	}

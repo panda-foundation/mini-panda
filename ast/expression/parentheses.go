@@ -1,8 +1,7 @@
 package expression
 
 import (
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 )
 
 type Parentheses struct {
@@ -10,7 +9,7 @@ type Parentheses struct {
 	Expression ast.Expression
 }
 
-func (p *Parentheses) Validate(c ast.Context, expected core.Type) {
+func (p *Parentheses) Validate(c ast.Context, expected ast.Type) {
 	p.Expression.Validate(c, expected)
 	p.Const = p.Expression.IsConstant()
 	p.Typ = p.Expression.Type()

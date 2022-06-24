@@ -3,15 +3,14 @@ package statement
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/expression"
 )
 
 type DeclarationStatement struct {
 	StatementBase
 	Name  *expression.Identifier
-	Type  core.Type
+	Type  ast.Type
 	Value ast.Expression
 }
 

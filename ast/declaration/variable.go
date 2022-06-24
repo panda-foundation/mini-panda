@@ -4,7 +4,7 @@ import "github.com/panda-io/micro-panda/ast/ast"
 
 type Variable struct {
 	DeclarationBase
-	Typ   core.Type
+	Typ   ast.Type
 	Const bool
 	Value ast.Expression
 
@@ -15,11 +15,11 @@ func (v *Variable) IsConstant() bool {
 	return v.Const
 }
 
-func (v *Variable) Kind() core.DeclarationKind {
-	return core.DeclarationVariable
+func (v *Variable) Kind() ast.DeclarationKind {
+	return ast.DeclarationVariable
 }
 
-func (v *Variable) Type() core.Type {
+func (v *Variable) Type() ast.Type {
 	return v.Typ
 }
 

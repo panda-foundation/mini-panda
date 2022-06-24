@@ -2,45 +2,45 @@ package declaration
 
 import (
 	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 	"github.com/panda-io/micro-panda/ast/statement"
-	"github.com/panda-io/micro-panda/ast/types"
 )
 
 type Parameter struct {
-	core.NodeBase
+	ast.NodeBase
 	Name string
-	Typ  core.Type
+	Typ  ast.Type
 }
 
 type Function struct {
 	DeclarationBase
 	Parameters []*Parameter
-	ReturnType core.Type
+	ReturnType ast.Type
 	Body       *statement.Block
 
 	Parent *Struct
-	Typ    *types.TypeFunction
+	Typ    *ast_types.TypeFunction
 }
 
 func (f *Function) IsConstant() bool {
 	return true
 }
 
-func (f *Function) Kind() core.DeclarationKind {
-	return core.DeclarationFunction
+func (f *Function) Kind() ast.DeclarationKind {
+	return ast.DeclarationFunction
 }
 
-func (f *Function) Type() core.Type {
+func (f *Function) Type() ast.Type {
 	return f.Typ
 }
 
-func (f *Function) GetReturnType() core.Type {
+func (f *Function) GetReturnType() ast.Type {
 	return f.ReturnType
 }
 
 func (f *Function) ResolveType(c ast.Context) {
 	f.Typ.ReturnType = f.ReturnType
-	if f.HasAttribute(core.AttriExtern) {
+	if f.HasAttribute(ast.AttriExtern) {
 		f.Typ.Extern = true
 	} else if f.Body == nil {
 		f.Typ.TypeDefine = true
@@ -57,13 +57,13 @@ func (f *Function) ResolveType(c ast.Context) {
 	c.ResolveType(f.Typ)
 }
 
-func (f *Function) Validate(ctx core.Context) {
+func (f *Function) Validate(ctx ast.Context) {
 	if f.Body == nil {
 		if f.Parent != nil {
 			ctx.Error(f.GetPosition(), "function body is required for member function")
 		}
 		if f.Typ.Extern {
-			if l := f.GetAttribute(core.AttriExtern, "name"); l != nil {
+			if l := f.GetAttribute(ast.AttriExtern, "name"); l != nil {
 				if n, ok := l.String(); ok {
 					f.Typ.ExternName = n
 				}
@@ -76,10 +76,10 @@ func (f *Function) Validate(ctx core.Context) {
 		c := ctx.NewContext()
 		c.SetFunction(f)
 		if f.Parent != nil {
-			p := &types.TypePointer{
+			p := &ast_types.TypePointer{
 				ElementType: f.Parent.Type(),
 			}
-			_ = c.AddObject(core.StructThis, p)
+			_ = c.AddObject(ast.StructThis, p)
 		}
 		if f.Typ.Extern {
 			c.Error(f.GetPosition(), "extern function has no body")

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -16,11 +16,11 @@ type Error struct {
 type Namespace struct {
 	Name         string
 	Qualified    string
-	Declarations map[string]core.Declaration // by local name
-	Children     map[string]*Namespace       // by sub namespace
+	Declarations map[string]ast.Declaration // by local name
+	Children     map[string]*Namespace      // by sub namespace
 }
 
-func (n *Namespace) AddDeclaration(d core.Declaration) error {
+func (n *Namespace) AddDeclaration(d ast.Declaration) error {
 	qualified := d.QualifiedName()
 	names := strings.Split(qualified, ".")
 	namespace := n
@@ -38,7 +38,7 @@ func (n *Namespace) AddDeclaration(d core.Declaration) error {
 				namespace.Children[name] = &Namespace{
 					Name:         name,
 					Qualified:    fmt.Sprintf("%s.%s", namespace.Qualified, name),
-					Declarations: make(map[string]core.Declaration),
+					Declarations: make(map[string]ast.Declaration),
 					Children:     make(map[string]*Namespace),
 				}
 			}
@@ -68,7 +68,7 @@ type Program struct {
 	Modules map[string]*Module
 	Module  *Module
 
-	Declarations map[string]core.Declaration // by qualified name
+	Declarations map[string]ast.Declaration // by qualified name
 	Namespace    *Namespace
 
 	Errors []*Error
@@ -82,15 +82,15 @@ func NewProgram() *Program {
 
 func (p *Program) Reset() {
 	p.Modules = make(map[string]*Module)
-	p.Declarations = make(map[string]core.Declaration)
+	p.Declarations = make(map[string]ast.Declaration)
 	p.Namespace = &Namespace{
-		Declarations: make(map[string]core.Declaration),
+		Declarations: make(map[string]ast.Declaration),
 		Children:     make(map[string]*Namespace),
 	}
 	p.Errors = p.Errors[:0]
 }
 
-func (p *Program) AddDeclaration(d core.Declaration) error {
+func (p *Program) AddDeclaration(d ast.Declaration) error {
 	qualified := d.QualifiedName()
 	if p.Declarations[qualified] != nil {
 		return fmt.Errorf("duplicated declaration with qualified name: %s", qualified)

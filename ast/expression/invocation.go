@@ -1,9 +1,8 @@
 package expression
 
 import (
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
-	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 	"github.com/panda-io/micro-panda/token"
 )
 
@@ -12,14 +11,14 @@ type Invocation struct {
 	Function  ast.Expression
 	Arguments []ast.Expression
 
-	FunctionDefine *types.TypeFunction
+	FunctionDefine *ast_types.TypeFunction
 }
 
-func (i *Invocation) Validate(c ast.Context, expected core.Type) {
+func (i *Invocation) Validate(c ast.Context, expected ast.Type) {
 	i.Function.Validate(c, expected)
 	i.Const = false
 	t := i.Function.Type()
-	if f, ok := t.(*types.TypeFunction); ok {
+	if f, ok := t.(*ast_types.TypeFunction); ok {
 		i.FunctionDefine = f
 		i.Typ = f.ReturnType
 		if f.MemberFunction {
@@ -32,14 +31,14 @@ func (i *Invocation) Validate(c ast.Context, expected core.Type) {
 				u.SetPosition(i.Function.GetPosition())
 				i.Arguments = append([]ast.Expression{u}, i.Arguments...)
 			} else if m, ok := i.Function.(*MemberAccess); ok {
-				if types.IsStruct(m.Parent.Type()) {
+				if ast_types.IsStruct(m.Parent.Type()) {
 					u := &Unary{
 						Operator:   token.BitAnd,
 						Expression: m.Parent,
 					}
 					u.SetPosition(m.Parent.GetPosition())
 					i.Arguments = append([]ast.Expression{u}, i.Arguments...)
-				} else if types.IsPointer(m.Parent.Type()) {
+				} else if ast_types.IsPointer(m.Parent.Type()) {
 					i.Arguments = append([]ast.Expression{m.Parent}, i.Arguments...)
 				}
 			}

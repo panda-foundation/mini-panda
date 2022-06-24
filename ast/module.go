@@ -1,12 +1,13 @@
 package ast
 
 import (
+	"github.com/panda-io/micro-panda/ast/ast"
 	"github.com/panda-io/micro-panda/ast/declaration"
 	"github.com/panda-io/micro-panda/token"
 )
 
 type Import struct {
-	core.NodeBase
+	ast.NodeBase
 	Namespace string
 }
 

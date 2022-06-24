@@ -1,17 +1,16 @@
 package statement
 
 import (
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
-	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 )
 
 type For struct {
 	StatementBase
-	Initialization core.Statement
+	Initialization ast.Statement
 	Condition      ast.Expression
-	Post           core.Statement
-	Body           core.Statement
+	Post           ast.Statement
+	Body           ast.Statement
 }
 
 func (f *For) Validate(c ast.Context) {
@@ -21,8 +20,8 @@ func (f *For) Validate(c ast.Context) {
 	}
 	if f.Condition != nil {
 		conditionCtx := ctx.NewContext()
-		f.Condition.Validate(conditionCtx, types.TypeBool)
-		if f.Condition.Type() != nil && !f.Condition.Type().Equal(types.TypeBool) {
+		f.Condition.Validate(conditionCtx, ast_types.TypeBool)
+		if f.Condition.Type() != nil && !f.Condition.Type().Equal(ast_types.TypeBool) {
 			c.Error(f.Condition.GetPosition(), "expect bool type condition")
 		}
 	}

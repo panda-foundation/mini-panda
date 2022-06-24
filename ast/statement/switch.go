@@ -1,15 +1,14 @@
 package statement
 
 import (
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
-	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 	"github.com/panda-io/micro-panda/token"
 )
 
 type Switch struct {
 	StatementBase
-	Initialization core.Statement
+	Initialization ast.Statement
 	Operand        ast.Expression
 	Cases          []*Case
 	Default        *Case
@@ -19,7 +18,7 @@ type Case struct {
 	StatementBase
 	Token token.Token
 	Case  ast.Expression
-	Body  core.Statement
+	Body  ast.Statement
 }
 
 func (s *Switch) Validate(c ast.Context) {
@@ -27,14 +26,14 @@ func (s *Switch) Validate(c ast.Context) {
 	if s.Initialization != nil {
 		s.Initialization.Validate(ctx)
 	}
-	var operandType core.Type
+	var operandType ast.Type
 	if s.Operand == nil {
 		c.Error(s.GetPosition(), "expect switch operand")
 		return
 	} else {
 		s.Operand.Validate(ctx, nil)
 		operandType = s.Operand.Type()
-		if !types.IsInteger(operandType) {
+		if !ast_types.IsInteger(operandType) {
 			c.Error(s.Operand.GetPosition(), "expect integer operand")
 			return
 		}
@@ -49,7 +48,7 @@ func (s *Switch) Validate(c ast.Context) {
 	}
 }
 
-func (c *Case) Validate(ctx core.Context, operandType core.Type) {
+func (c *Case) Validate(ctx ast.Context, operandType ast.Type) {
 	if c.Case == nil {
 		ctx.Error(c.GetPosition(), "expect case expression")
 	} else {

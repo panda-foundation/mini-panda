@@ -1,15 +1,15 @@
-package types
+package ast_types
 
 import (
 	"strings"
 
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 )
 
 type TypeFunction struct {
 	TypeBase
-	ReturnType core.Type
-	Parameters []core.Type
+	ReturnType ast.Type
+	Parameters []ast.Type
 
 	MemberFunction bool
 	Extern         bool
@@ -17,7 +17,7 @@ type TypeFunction struct {
 	TypeDefine     bool
 }
 
-func (f *TypeFunction) Equal(t core.Type) bool {
+func (f *TypeFunction) Equal(t ast.Type) bool {
 	if t, ok := t.(*TypeFunction); ok {
 		if f.ReturnType != nil && t.ReturnType != nil {
 			if !f.ReturnType.Equal(t.ReturnType) {

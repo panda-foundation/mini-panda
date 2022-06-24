@@ -4,14 +4,14 @@ import (
 	"fmt"
 
 	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 	"github.com/panda-io/micro-panda/ast/declaration"
-	"github.com/panda-io/micro-panda/ast/types"
 )
 
 func NewContext(p *Program) ast.Context {
 	return &Context{
 		Program: p,
-		objects: make(map[string]core.Type),
+		objects: make(map[string]ast.Type),
 	}
 }
 
@@ -20,7 +20,7 @@ type Context struct {
 	Function *declaration.Function
 
 	parent  *Context
-	objects map[string]core.Type
+	objects map[string]ast.Type
 }
 
 func (c *Context) Error(offset int, message string) {
@@ -33,11 +33,11 @@ func (c *Context) NewContext() ast.Context {
 		Function: c.Function,
 
 		parent:  c,
-		objects: make(map[string]core.Type),
+		objects: make(map[string]ast.Type),
 	}
 }
 
-func (c *Context) AddObject(name string, t core.Type) error {
+func (c *Context) AddObject(name string, t ast.Type) error {
 	if _, ok := c.objects[name]; ok {
 		return fmt.Errorf("redeclared variable: %s", name)
 	}
@@ -45,7 +45,7 @@ func (c *Context) AddObject(name string, t core.Type) error {
 	return nil
 }
 
-func (c *Context) FindObject(name string) core.Type {
+func (c *Context) FindObject(name string) ast.Type {
 	if v, ok := c.objects[name]; ok {
 		return v
 	}
@@ -61,9 +61,9 @@ func (c *Context) FindObject(name string) core.Type {
 	return nil
 }
 
-func (c *Context) ResolveType(v core.Type) core.Type {
+func (c *Context) ResolveType(v ast.Type) ast.Type {
 	switch t := v.(type) {
-	case *types.TypeName:
+	case *ast_types.TypeName:
 		d := c.FindDeclaration(t)
 		if d == nil {
 			c.Program.Error(v.GetPosition(), "type not defined")
@@ -84,7 +84,7 @@ func (c *Context) ResolveType(v core.Type) core.Type {
 		}
 		return t
 
-	case *types.TypeArray:
+	case *ast_types.TypeArray:
 		t.ElementType = c.ResolveType(t.ElementType)
 		if t.Dimension[0] < 0 {
 			c.Program.Error(v.GetPosition(), "invalid array index")
@@ -96,18 +96,18 @@ func (c *Context) ResolveType(v core.Type) core.Type {
 		}
 		return t
 
-	case *types.TypePointer:
+	case *ast_types.TypePointer:
 		t.ElementType = c.ResolveType(t.ElementType)
 		return t
 
-	case *types.TypeFunction:
+	case *ast_types.TypeFunction:
 		t.ReturnType = c.ResolveType(t.ReturnType)
 		for i := 0; i < len(t.Parameters); i++ {
 			t.Parameters[i] = c.ResolveType(t.Parameters[i])
-			if types.IsStruct(t.Parameters[i]) {
+			if ast_types.IsStruct(t.Parameters[i]) {
 				c.Program.Error(t.Parameters[i].GetPosition(), "struct is not allowed as parameter, use pointer instead")
 			}
-			if types.IsArray(t.Parameters[i]) {
+			if ast_types.IsArray(t.Parameters[i]) {
 				c.Program.Error(t.Parameters[i].GetPosition(), "array is not allowed as parameter, use pointer instead")
 			}
 		}
@@ -118,8 +118,8 @@ func (c *Context) ResolveType(v core.Type) core.Type {
 	}
 }
 
-func (c *Context) FindDeclaration(t core.Type) core.Declaration {
-	typeName := t.(*types.TypeName)
+func (c *Context) FindDeclaration(t ast.Type) ast.Declaration {
+	typeName := t.(*ast_types.TypeName)
 	if typeName.Qualified == "" {
 		return c.FindLocalDeclaration(typeName.Name)
 	}
@@ -131,12 +131,12 @@ func (c *Context) FindDeclaration(t core.Type) core.Declaration {
 	return d
 }
 
-func (c *Context) FindLocalDeclaration(name string) core.Declaration {
+func (c *Context) FindLocalDeclaration(name string) ast.Declaration {
 	qualified := fmt.Sprintf("%s.%s", c.Program.Module.Namespace, name)
 	if d, ok := c.Program.Declarations[qualified]; ok {
 		return d
 	}
-	qualified = fmt.Sprintf("%s.%s", core.Global, name)
+	qualified = fmt.Sprintf("%s.%s", ast.Global, name)
 	if d, ok := c.Program.Declarations[qualified]; ok {
 		return d
 	}
@@ -149,7 +149,7 @@ func (c *Context) FindLocalDeclaration(name string) core.Declaration {
 	return nil
 }
 
-func (c *Context) FindQualifiedDeclaration(qualified string) core.Declaration {
+func (c *Context) FindQualifiedDeclaration(qualified string) ast.Declaration {
 	return c.Program.Declarations[qualified]
 }
 
@@ -157,10 +157,10 @@ func (c *Context) IsNamespace(name string) bool {
 	return c.Program.IsNamespace(name)
 }
 
-func (c *Context) SetFunction(f core.Function) {
+func (c *Context) SetFunction(f ast.Function) {
 	c.Function = f.(*declaration.Function)
 }
 
-func (c *Context) GetFunction() core.Function {
+func (c *Context) GetFunction() ast.Function {
 	return c.Function
 }

@@ -1,17 +1,17 @@
-package types
+package ast_types
 
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 )
 
 type TypePointer struct {
 	TypeBase
-	ElementType core.Type
+	ElementType ast.Type
 }
 
-func (p *TypePointer) Equal(t core.Type) bool {
+func (p *TypePointer) Equal(t ast.Type) bool {
 	if pointer, ok := t.(*TypePointer); ok {
 		return p.ElementType.Equal(pointer.ElementType)
 	} else if array, ok := t.(*TypeArray); ok {

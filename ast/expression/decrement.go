@@ -1,9 +1,8 @@
 package expression
 
 import (
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/core"
-	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 )
 
 type Decrement struct {
@@ -11,13 +10,13 @@ type Decrement struct {
 	Expression ast.Expression
 }
 
-func (d *Decrement) Validate(c ast.Context, expected core.Type) {
+func (d *Decrement) Validate(c ast.Context, expected ast.Type) {
 	d.Expression.Validate(c, expected)
 	d.Const = false
 	if d.Expression.IsConstant() {
 		c.Error(d.GetPosition(), "expect variable")
 	}
-	if !types.IsInteger(d.Expression.Type()) {
+	if !ast_types.IsInteger(d.Expression.Type()) {
 		c.Error(d.GetPosition(), "expect integer expression")
 	}
 }

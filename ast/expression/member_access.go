@@ -3,8 +3,8 @@ package expression
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/ast/types"
+	"github.com/panda-io/micro-panda/ast/ast"
+	"github.com/panda-io/micro-panda/ast/ast_types"
 )
 
 type MemberAccess struct {
@@ -21,7 +21,7 @@ parent expression could be: identifier$, member_access$, parentheses, subscripti
 possible incomplete parent expression. it need to combine with member access
 */
 
-func (m *MemberAccess) Validate(c ast.Context, expected core.Type) {
+func (m *MemberAccess) Validate(c ast.Context, expected ast.Type) {
 	m.Parent.Validate(c, nil)
 	if m.Parent.Type() == nil {
 		if i, ok := m.Parent.(*Identifier); ok {
@@ -29,7 +29,7 @@ func (m *MemberAccess) Validate(c ast.Context, expected core.Type) {
 				qualified := fmt.Sprintf("%s.%s", i.Name, m.Member.Name)
 				d := c.FindQualifiedDeclaration(qualified)
 				// struct has no static members
-				if d != nil && d.Kind() != core.DeclarationStruct {
+				if d != nil && d.Kind() != ast.DeclarationStruct {
 					m.Typ = d.Type()
 					m.Const = d.IsConstant()
 					m.Qualified = d.QualifiedName()
@@ -38,8 +38,8 @@ func (m *MemberAccess) Validate(c ast.Context, expected core.Type) {
 					m.Qualified = qualified
 				}
 			} else if d := c.FindQualifiedDeclaration(i.Qualified); d != nil {
-				if d.Kind() == core.DeclarationEnum && d.(core.Enum).HasMember(m.Member.Name) {
-					m.Typ = types.TypeU8
+				if d.Kind() == ast.DeclarationEnum && d.(ast.Enum).HasMember(m.Member.Name) {
+					m.Typ = ast_types.TypeU8
 					m.Const = true
 				}
 			}
@@ -48,7 +48,7 @@ func (m *MemberAccess) Validate(c ast.Context, expected core.Type) {
 				qualified := fmt.Sprintf("%s.%s", mm.Qualified, m.Member.Name)
 				d := c.FindQualifiedDeclaration(qualified)
 				// struct has no static members
-				if d != nil && d.Kind() != core.DeclarationStruct {
+				if d != nil && d.Kind() != ast.DeclarationStruct {
 					m.Typ = d.Type()
 					m.Const = d.IsConstant()
 					m.Qualified = d.QualifiedName()
@@ -57,22 +57,22 @@ func (m *MemberAccess) Validate(c ast.Context, expected core.Type) {
 					m.Qualified = qualified
 				}
 			} else if d := c.FindQualifiedDeclaration(mm.Qualified); d != nil {
-				if d.Kind() == core.DeclarationEnum && d.(core.Enum).HasMember(m.Member.Name) {
-					m.Typ = types.TypeU8
+				if d.Kind() == ast.DeclarationEnum && d.(ast.Enum).HasMember(m.Member.Name) {
+					m.Typ = ast_types.TypeU8
 					m.Const = true
 				}
 			}
 		}
 	} else {
 		t := m.Parent.Type()
-		if p, ok := t.(*types.TypePointer); ok {
+		if p, ok := t.(*ast_types.TypePointer); ok {
 			t = p.ElementType
 		}
-		if n, ok := t.(*types.TypeName); ok {
+		if n, ok := t.(*ast_types.TypeName); ok {
 			d := c.FindDeclaration(n)
 			if d != nil {
-				if d.Kind() == core.DeclarationStruct {
-					m.Typ = d.(core.Struct).MemberType(m.Member.Name)
+				if d.Kind() == ast.DeclarationStruct {
+					m.Typ = d.(ast.Struct).MemberType(m.Member.Name)
 					m.Const = false
 				}
 			}

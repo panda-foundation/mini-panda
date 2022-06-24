@@ -1,18 +1,18 @@
-package types
+package ast_types
 
 import (
 	"fmt"
 
-	"github.com/panda-io/micro-panda/ast/core"
+	"github.com/panda-io/micro-panda/ast/ast"
 )
 
 type TypeArray struct {
 	TypeBase
-	ElementType core.Type
+	ElementType ast.Type
 	Dimension   []int
 }
 
-func (a *TypeArray) Equal(t core.Type) bool {
+func (a *TypeArray) Equal(t ast.Type) bool {
 	if array, ok := t.(*TypeArray); ok {
 		if len(a.Dimension) == len(array.Dimension) {
 			for i := 1; i < len(a.Dimension); i++ {
