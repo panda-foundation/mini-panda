@@ -1,9 +1,7 @@
 package ir
 
-import "fmt"
-
 type Value interface {
-	fmt.Stringer
+	String() string
 	Type() Type
 	Ident() string
 }

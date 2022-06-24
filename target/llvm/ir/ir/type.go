@@ -1,9 +1,7 @@
 package ir
 
-import "fmt"
-
 type Type interface {
 	IRWriter
-	fmt.Stringer
+	String() string
 	Equal(u Type) bool
 }
