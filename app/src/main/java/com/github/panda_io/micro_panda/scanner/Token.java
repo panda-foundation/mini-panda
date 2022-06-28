@@ -129,7 +129,7 @@ public enum Token {
         return this.token;
     }
 
-    public int Precedence() {
+    public int precedence() {
         switch (this) {
             case Assign:
             case MulAssign:
@@ -187,35 +187,35 @@ public enum Token {
         }
     }
 
-    public static boolean IsLiteral(Token token) {
-        return token.compareTo(IDENT) >= 0 && token.compareTo(NULL) <= 0;
+    public boolean isLiteral() {
+        return this.compareTo(IDENT) >= 0 && this.compareTo(NULL) <= 0;
     }
 
-    public static boolean IsOperator(Token token) {
-        return token.compareTo(LeftParen) >= 0 && token.compareTo(Dot) <= 0;
+    public boolean isOperator() {
+        return this.compareTo(LeftParen) >= 0 && this.compareTo(Dot) <= 0;
     }
 
-    public static boolean IsKeyword(Token token) {
-        return token.compareTo(Break) >= 0 && token.compareTo(Var) <= 0;
+    public boolean isKeyword() {
+        return this.compareTo(Break) >= 0 && this.compareTo(Var) <= 0;
     }
 
-    public static boolean IsScalar(Token token) {
-        return token.compareTo(Bool) >= 0 && token.compareTo(Void) <= 0;
+    public boolean isScalar() {
+        return this.compareTo(Bool) >= 0 && this.compareTo(Void) <= 0;
     }
 
-    public static boolean IsInteger(Token token) {
-        return token.compareTo(Int8) >= 0 && token.compareTo(Uint64) <= 0;
+    public boolean isInteger() {
+        return this.compareTo(Int8) >= 0 && this.compareTo(Uint64) <= 0;
     }
 
-    public static boolean IsFloat(Token token) {
-        return token.compareTo(Float16) >= 0 && token.compareTo(Float64) <= 0;
+    public boolean isFloat() {
+        return this.compareTo(Float16) >= 0 && this.compareTo(Float64) <= 0;
     }
 
-    public static boolean IsNumber(Token token) {
-        return token.compareTo(Int8) >= 0 && token.compareTo(Float64) <= 0;
+    public boolean isNumber() {
+        return this.compareTo(Int8) >= 0 && this.compareTo(Float64) <= 0;
     }
 
-    public static boolean IsAssign(Token token) {
-        return token.compareTo(Assign) >= 0 && token.compareTo(RightShiftAssign) <= 0;
+    public boolean isAssign() {
+        return this.compareTo(Assign) >= 0 && this.compareTo(RightShiftAssign) <= 0;
     }
 }
