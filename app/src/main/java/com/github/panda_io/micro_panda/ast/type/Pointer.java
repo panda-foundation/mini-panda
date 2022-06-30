@@ -1,7 +1,7 @@
 package com.github.panda_io.micro_panda.ast.type;
 
 public class Pointer extends Type {
-    Type elementType;
+    public Type elementType;
 
     public Pointer(Type elementType) {
         this.elementType = elementType;

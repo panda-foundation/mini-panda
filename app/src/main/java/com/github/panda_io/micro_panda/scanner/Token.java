@@ -1,6 +1,6 @@
 package com.github.panda_io.micro_panda.scanner;
 
-import java.util.HashMap;
+import java.util.*;
 
 public enum Token {
     ILLEGAL("ILLEGAL"),
@@ -94,7 +94,7 @@ public enum Token {
     Semi(";"),
     Dot(".");
 
-    private static final HashMap<String, Token> tokens = new HashMap<>();
+    private static final Map<String, Token> tokens = new HashMap<>();
     static {
         for (Token t : values()) {
             tokens.put(t.token, t);

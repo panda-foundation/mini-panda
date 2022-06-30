@@ -1,8 +1,8 @@
 package com.github.panda_io.micro_panda.ast.type;
 
 public class Name extends Type {
-    String name;
-
+    public String name;
+    
     public String qualified;
     public boolean isEnum;
 

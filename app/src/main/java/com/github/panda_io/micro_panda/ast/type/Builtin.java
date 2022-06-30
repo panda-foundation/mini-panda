@@ -3,7 +3,7 @@ package com.github.panda_io.micro_panda.ast.type;
 import com.github.panda_io.micro_panda.scanner.Token;
 
 public class Builtin extends Type {
-    Token token;
+    public Token token;
 
     public Builtin(Token token) {
         this.token = token;

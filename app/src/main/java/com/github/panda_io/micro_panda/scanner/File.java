@@ -1,12 +1,12 @@
 package com.github.panda_io.micro_panda.scanner;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class File {
     String name;
     int size;
     int base;
-    ArrayList<Integer> lines;
+    List<Integer> lines;
 
     static class Location {
         int line;

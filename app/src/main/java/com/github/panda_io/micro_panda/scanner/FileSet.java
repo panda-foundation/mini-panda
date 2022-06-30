@@ -1,9 +1,9 @@
 package com.github.panda_io.micro_panda.scanner;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class FileSet {
-    ArrayList<File> files;
+    List<File> files;
     int base;
 
     public FileSet() {

@@ -1,10 +1,10 @@
 package com.github.panda_io.micro_panda.ast.type;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Function extends Type {
     public Type returnType;
-    public ArrayList<Type> parameters;
+    public List<Type> parameters;
 
     public boolean isMemberFunction;
     public boolean isExtern;

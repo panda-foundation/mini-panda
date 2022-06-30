@@ -1,9 +1,9 @@
 package com.github.panda_io.micro_panda.scanner;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class OperatorNode {
-    HashMap<Byte, OperatorNode> children;
+    Map<Byte, OperatorNode> children;
     Token token;
 
     static OperatorNode root;

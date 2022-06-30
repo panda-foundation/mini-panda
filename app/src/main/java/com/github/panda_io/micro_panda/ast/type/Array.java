@@ -1,10 +1,10 @@
 package com.github.panda_io.micro_panda.ast.type;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Array extends Type {
-	Type elementType;
-	ArrayList<Integer> dimensions;
+	public Type elementType;
+	public List<Integer> dimensions;
 
     public Array(Type elementType) {
         this.elementType = elementType;
