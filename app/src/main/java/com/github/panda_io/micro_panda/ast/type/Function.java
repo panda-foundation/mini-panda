@@ -13,6 +13,9 @@ public class Function extends Type {
 
     public Function() {
         this.parameters = new ArrayList<>();
+        this.isMemberFunction = false;
+        this.isExtern = false;
+        this.isDefine = false;
     }
 
     public boolean equal(Type type) {

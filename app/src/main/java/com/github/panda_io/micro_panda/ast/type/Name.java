@@ -8,6 +8,7 @@ public class Name extends Type {
 
     public Name(String name) {
         this.name = name;
+        this.isEnum = false;
     }
 
     public boolean equal(Type type) {

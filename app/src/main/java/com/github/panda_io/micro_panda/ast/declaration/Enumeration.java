@@ -1,76 +1,68 @@
 package com.github.panda_io.micro_panda.ast.declaration;
 
+import java.util.*;
+
 import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.ast.Context;
+import com.github.panda_io.micro_panda.ast.expression.Literal;
+import com.github.panda_io.micro_panda.scanner.Token;
 
 public class Enumeration extends Declaration {
-    public boolean isConstant()  {
-        return false;
-    }
+	public List<Variable> members;
+	public List<Integer> values;
 
-    public Type getType()  {
-        return null;
-    }
-
-    public void resolveType(Context context) {
-    }
-
-	public void validate(Context context) {
-	}
-	
-	public boolean hasMember(String memberName) {
+	public boolean isConstant() {
 		return false;
 	}
-	/*
-type Enum struct {
-	DeclarationBase
-	Members []*Variable
-	Values  []uint8
-}
 
-func (e *Enum) AddMember(m *Variable) error {
-	if e.HasMember(m.Name.Name) {
-		return fmt.Errorf("%s redeclared", m.Name.Name)
+	public Type getType() {
+		return null;
 	}
-	e.Members = append(e.Members, m)
-	return nil
-}
 
-func (e *Enum) HasMember(name string) bool {
-	for _, v := range e.Members {
-		if v.Name.Name == name {
-			return true
-		}
+	public void resolveType(Context context) {
 	}
-	return false
-}
 
-func (e *Enum) ResolveType(c ast.Context) {
-}
-
-func (e *Enum) Validate(c ast.Context) {
-	var index int
-	for _, v := range e.Members {
-		if index >= 256 {
-			c.Error(v.GetPosition(), "enum value shoud be less than 256")
-		}
-		if v.Value == nil {
-			e.Values = append(e.Values, uint8(index))
-			index++
-		} else {
-			if literal, ok := v.Value.(*expression.Literal); ok && literal.Token == token.INT {
-				if i, _ := strconv.Atoi(literal.Value); i >= index {
-					index = i
-					e.Values = append(e.Values, uint8(index))
-					index++
-				} else {
-					c.Error(v.GetPosition(), fmt.Sprintf("enum value here should be greater than %d.", i-1))
-				}
+	public void validate(Context context) {
+		int index = 0;
+		for (Variable member : this.members) {
+			if (index > 255) {
+				context.addError(member.getOffset(), "enum value shoud be less than 256");
+			}
+			if (member.value == null) {
+				this.values.add(index);
+				index++;
 			} else {
-				c.Error(v.GetPosition(), "enum value must be const integer.")
+				if ((member.value instanceof Literal) && ((Literal) member.value).token == Token.INT) {
+					int i = Integer.parseInt(((Literal) member.value).value);
+					if (i >= index) {
+						index = i;
+						this.values.add(index);
+						index++;
+					} else {
+						context.addError(member.getOffset(),
+								String.format("enum value here should be greater than %d.", i - 1));
+					}
+				} else {
+					context.addError(member.getOffset(), "enum value must be constant integer.");
+				}
 			}
 		}
 	}
-}*/
 
+	public boolean addMember(Variable member) {
+		if (this.hasMember(member.name.name)) {
+			return false;
+		}
+		this.members.add(member);
+		return true;
+	}
+
+	public boolean hasMember(String memberName) {
+		for (Variable variable : this.members) {
+			if (variable.name.name == memberName) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

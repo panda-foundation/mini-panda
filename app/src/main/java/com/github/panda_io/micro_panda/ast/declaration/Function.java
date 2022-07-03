@@ -1,97 +1,93 @@
 package com.github.panda_io.micro_panda.ast.declaration;
 
+import java.util.*;
+
+import com.github.panda_io.micro_panda.ast.*;
+import com.github.panda_io.micro_panda.ast.expression.Literal;
+import com.github.panda_io.micro_panda.ast.type.*;
+import com.github.panda_io.micro_panda.scanner.Token;
+import com.github.panda_io.micro_panda.ast.statement.Block;
+
 public class Function extends Declaration {
-    
-type Parameter struct {
-	ast.NodeBase
-	Name string
-	Typ  ast.Type
-}
-
-type Function struct {
-	DeclarationBase
-	Parameters []*Parameter
-	ReturnType ast.Type
-	Body       *statement.Block
-
-	Parent *Struct
-	Typ    *ast_types.TypeFunction
-}
-
-func (f *Function) IsConstant() bool {
-	return true
-}
-
-func (f *Function) Kind() ast.DeclarationKind {
-	return ast.DeclarationFunction
-}
-
-func (f *Function) Type() ast.Type {
-	return f.Typ
-}
-
-func (f *Function) GetReturnType() ast.Type {
-	return f.ReturnType
-}
-
-func (f *Function) ResolveType(c ast.Context) {
-	f.Typ.ReturnType = f.ReturnType
-	if f.HasAttribute(ast.AttriExtern) {
-		f.Typ.Extern = true
-	} else if f.Body == nil {
-		f.Typ.TypeDefine = true
+	public static class Parameter extends Node {
+		public String name;
+		public Type type;
 	}
-	if f.Parent != nil {
-		f.Typ.MemberFunction = true
-		f.Typ.Parameters = append(f.Typ.Parameters, f.Parent.PointerType())
+
+	public List<Parameter> parameters;
+	public Type returnType;
+	public Block body;
+	public Struct parent;
+	public com.github.panda_io.micro_panda.ast.type.Function type;
+
+	public boolean isConstant() {
+		return true;
 	}
-	if f.Parameters != nil {
-		for _, param := range f.Parameters {
-			f.Typ.Parameters = append(f.Typ.Parameters, param.Typ)
+
+	public Type getType() {
+		return this.type;
+	}
+
+    public void resolveType(Context context) {
+		this.type = new com.github.panda_io.micro_panda.ast.type.Function();
+		this.type.returnType = this.returnType;
+		if (this.hasAttribute(Constant.attriExtern)) {
+			this.type.isExtern = true;
+		} else if (this.body == null) {
+			this.type.isDefine = true;
 		}
-	}
-	c.ResolveType(f.Typ)
-}
 
-func (f *Function) Validate(ctx ast.Context) {
-	if f.Body == nil {
-		if f.Parent != nil {
-			ctx.Error(f.GetPosition(), "function body is required for member function")
+		if (this.parent != null) {
+			this.type.isMemberFunction = true;
+			this.type.parameters.add(this.parent.pointerType());
 		}
-		if f.Typ.Extern {
-			if l := f.GetAttribute(ast.AttriExtern, "name"); l != nil {
-				if n, ok := l.String(); ok {
-					f.Typ.ExternName = n
+		if (this.parameters.size() > 0) {
+			for (Parameter parameter:this.parameters) {
+				this.type.parameters.add(parameter.type);
+			}
+		}
+		context.resolveType(this.type);
+	}
+
+    public void validate(Context context) {
+		if (this.body == null) {
+			if (this.parent == null) {
+				context.addError(this.getOffset(), "function body is required for member function");
+			}
+			if (this.type.isExtern) {
+				Literal literal = this.getAttribute(Constant.attriExtern, "name"); 
+				if (literal != null) {
+					if (literal.token == Token.STRING) {
+						f.Typ.ExternName = n
+					}
+				}
+				if (this.type.externName == null) {
+					context.addError(this.getOffset(), "'name' of meta data is required for extern function")
 				}
 			}
-			if f.Typ.ExternName == "" {
-				ctx.Error(f.GetPosition(), "'name' of meta data is required for extern function")
+		} else {
+			Context ctx = context.newContext();
+			c.SetFunction(f)
+			if f.Parent != nil {
+				p := &ast_types.TypePointer{
+					ElementType: f.Parent.Type(),
+				}
+				_ = c.AddObject(ast.StructThis, p)
 			}
-		}
-	} else {
-		c := ctx.NewContext()
-		c.SetFunction(f)
-		if f.Parent != nil {
-			p := &ast_types.TypePointer{
-				ElementType: f.Parent.Type(),
+			if f.Typ.Extern {
+				c.Error(f.GetPosition(), "extern function has no body")
 			}
-			_ = c.AddObject(ast.StructThis, p)
-		}
-		if f.Typ.Extern {
-			c.Error(f.GetPosition(), "extern function has no body")
-		}
-		if f.Parameters != nil {
-			for _, param := range f.Parameters {
-				err := c.AddObject(param.Name, param.Typ)
-				if err != nil {
-					c.Error(param.GetPosition(), err.Error())
+			if f.Parameters != nil {
+				for _, param := range f.Parameters {
+					err := c.AddObject(param.Name, param.Typ)
+					if err != nil {
+						c.Error(param.GetPosition(), err.Error())
+					}
 				}
 			}
+			f.Body.Validate(c)
 		}
-		f.Body.Validate(c)
+		//TO-DO check terminated
+		//c.Program.Error(f.Position, "missing return")
 	}
-	//TO-DO check terminated
-	//c.Program.Error(f.Position, "missing return")
-}
-
 }

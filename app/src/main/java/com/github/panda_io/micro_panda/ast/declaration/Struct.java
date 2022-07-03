@@ -115,13 +115,16 @@ func (s *Struct) Type() ast.Type {
 		IsEnum:    false,
 	}
 }
-
-func (s *Struct) PointerType() *ast_types.TypePointer {
-	return &ast_types.TypePointer{
-		ElementType: s.Type(),
+*/
+	public Type pointerType() {
+		//TO-DO
+		/*
+		return &ast_types.TypePointer{
+			ElementType: s.Type(),
+		}*/
+		return null;
 	}
-}
-
+/*
 func (s *Struct) ResolveType(c ast.Context) {
 	if len(s.Variables) == 0 {
 		c.Error(s.GetPosition(), "struct should contain at least 1 variable member.")

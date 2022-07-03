@@ -1,5 +1,64 @@
 package com.github.panda_io.micro_panda.ast;
 
+import java.util.*;
+
+import com.github.panda_io.micro_panda.ast.declaration.Declaration;
+import com.github.panda_io.micro_panda.scanner.Position;
+
 public class Program {
-    
+    static class Error {
+        Position position;
+        String message;
+
+        Error(Position position, String message) {
+            this.position = position;
+            this.message = message;
+        }
+    }
+
+    Map<String, Module> modules;
+	Module  module;
+	Map<String, Declaration> declarations; // by qualified name
+	Namespace  namespace;
+	List<Error> errors;
+
+    public Program() {
+        this.modules = new HashMap<>();
+        this.declarations = new HashMap<>();
+        this.namespace = new Namespace("", "");
+        this.errors = new ArrayList<>();
+    }
+
+    public void addDeclaration(Declaration declaration) {
+        if (this.declarations.containsKey(declaration.qualified)) {
+            this.addError(declaration.getOffset(), String.format("duplicated declaration with qualified name: %s", declaration.qualified));
+        }
+        this.declarations.put(declaration.qualified, declaration);
+        this.namespace.addDeclaration(this, declaration);
+    }
+
+    public boolean isNamespace(String ns) {
+        return this.namespace.isNamespace(ns);
+    }
+
+    public void validate() {
+        for (Module module : this.modules.values()) {
+            // TO-DO check if import is valid // must be valid, cannot import self, cannot duplicated
+            module.resolveType(this);
+        }
+        for (Module module : this.modules.values()) {
+            module.validate(this);
+        }
+    }
+
+    public boolean printErrors() {
+        for (Error error : this.errors) {
+            System.out.printf("%s : %s \n", error.position.getLocation());
+        }
+        return this.errors.size() > 0;
+    }
+
+    void addError(int offset, String message) {
+        this.errors.add(new Error(this.module.file.getPosition(offset), message));
+    }
 }
