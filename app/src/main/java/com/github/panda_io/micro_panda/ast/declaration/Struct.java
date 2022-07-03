@@ -2,168 +2,98 @@ package com.github.panda_io.micro_panda.ast.declaration;
 
 import java.util.*;
 
+import com.github.panda_io.micro_panda.ast.type.Name;
+import com.github.panda_io.micro_panda.ast.type.Pointer;
 import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.ast.Context;
 
 public class Struct extends Declaration {
 	public List<Variable> variables;
+	public List<Function> functions;
 
 	public boolean isConstant() {
 		return false;
 	}
 
     public Type getType()  {
-        return null;
-		/*
-			return &ast_types.TypeName{
-		Name:      s.Name.Name,
-		Qualified: s.Qualified,
-		IsEnum:    false,
-	}*/
+		Name name = new Name(this.name.name);
+		name.qualified = this.qualified;
+		name.isEnum = false;
+        return name;
     }
 
 	public void resolveType(Context context) {
-		/*
-				if len(s.Variables) == 0 {
-			c.Error(s.GetPosition(), "struct should contain at least 1 variable member.")
+		if (this.variables == null || this.variables.size() == 0) {
+			context.addError(this.getOffset(), "struct should contain at least 1 variable member");
 		}
-		for _, v := range s.Variables {
-			v.ResolveType(c)
+		for (Variable variable:this.variables) {
+			variable.resolveType(context);
 		}
-		for _, f := range s.Functions {
-			f.ResolveType(c)
-			f.Qualified = s.Qualified + "." + f.Name.Name
+		for (Function function:this.functions) {
+			function.resolveType(context);
+			function.qualified = String.format("%s.%s", this.qualified, function.name.name);
 		}
-	}*/
     }
 
 	public void validate(Context context) {
+		for (Variable variable:this.variables) {
+			variable.validate(context);
+			if (variable.value != null) {
+				context.addError(variable.getOffset(), "struct member has no initialize value");
+			}
+		}
+		for (Function function:this.functions) {
+			function.validate(context);
+		}
 	}
 
-	public Type memberType(String memberName) {
+	public boolean hasMember(String member) {
+		for (Variable variable:this.variables) {
+			if (variable.name.name.equals(member)) {
+				return true;
+			}
+		}
+		for (Function function:this.functions) {
+			if (function.name.name.equals(member)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Type memberType(String member) {
+		for (Variable variable:this.variables) {
+			if (variable.name.name.equals(member)) {
+				return variable.getType();
+			}
+		}
+		for (Function function:this.functions) {
+			if (function.name.name.equals(member)) {
+				return function.getType();
+			}
+		}
 		return null;
 	}
-    /*
-type Struct struct {
-	DeclarationBase
-	Functions []*Function
-	Variables []*Variable
-}
 
-func (s *Struct) IsConstant() bool {
-	return false
-}
-
-func (s *Struct) Kind() ast.DeclarationKind {
-	return ast.DeclarationStruct
-}
-
-func (s *Struct) AddVariable(v *Variable) error {
-	if s.IsRedeclared(v.Name.Name) {
-		return fmt.Errorf("%s redeclared", v.Name.Name)
-	}
-	v.Parent = s
-	s.Variables = append(s.Variables, v)
-	return nil
-}
-
-func (s *Struct) AddFunction(f *Function) error {
-	if s.IsRedeclared(f.Name.Name) {
-		return fmt.Errorf("%s redeclared", f.Name.Name)
-	}
-	f.Parent = s
-	s.Functions = append(s.Functions, f)
-	return nil
-}
-
-func (s *Struct) IsRedeclared(name string) bool {
-	for _, variable := range s.Variables {
-		if name == variable.Name.Name {
-			return true
+	public boolean addVariable(Variable variable) {
+		if (this.hasMember(variable.name.name)) {
+			return false;
 		}
+		variable.parent = this;
+		this.variables.add(variable);
+		return true;
 	}
-	for _, function := range s.Functions {
-		if name == function.Name.Name {
-			return true
-		}
-	}
-	return false
-}
 
-func (s *Struct) HasMember(member string) bool {
-	return s.IsRedeclared(member)
-}
-
-func (s *Struct) MemberType(member string) ast.Type {
-	for _, variable := range s.Variables {
-		if member == variable.Name.Name {
-			return variable.Typ
+	public boolean  addFunction(Function function) {
+		if (this.hasMember(function.name.name)) {
+			return false;
 		}
+		function.parent = this;
+		this.functions.add(function);
+		return true;
 	}
-	for _, function := range s.Functions {
-		if member == function.Name.Name {
-			return function.Typ
-		}
-	}
-	return nil
-}
 
-func (s *Struct) Type() ast.Type {
-	return &ast_types.TypeName{
-		Name:      s.Name.Name,
-		Qualified: s.Qualified,
-		IsEnum:    false,
-	}
-}
-*/
 	public Type pointerType() {
-		//TO-DO
-		/*
-		return &ast_types.TypePointer{
-			ElementType: s.Type(),
-		}*/
-		return null;
+		return new Pointer(this.getType());
 	}
-/*
-func (s *Struct) ResolveType(c ast.Context) {
-	if len(s.Variables) == 0 {
-		c.Error(s.GetPosition(), "struct should contain at least 1 variable member.")
-	}
-	for _, v := range s.Variables {
-		v.ResolveType(c)
-	}
-	for _, f := range s.Functions {
-		f.ResolveType(c)
-		f.Qualified = s.Qualified + "." + f.Name.Name
-	}
-}
-
-func (s *Struct) Validate(c ast.Context) {
-	for _, v := range s.Variables {
-		v.Validate(c)
-		if v.Value != nil {
-			c.Error(v.GetPosition(), "struct member has no initialize value")
-		}
-	}
-	for _, f := range s.Functions {
-		f.Validate(c)
-	}
-}
-
-func (s *Struct) ValidateInitializer(c ast.Context, expressions []ast.Expression) {
-	if len(s.Variables) == len(expressions) {
-		for idx, e := range expressions {
-			e.Validate(c, s.Variables[idx].Typ)
-			if !e.IsConstant() {
-				c.Error(e.GetPosition(), "expect constant expression initializer")
-			}
-			if e.Type() != nil && !e.Type().Equal(s.Variables[idx].Typ) {
-				c.Error(e.GetPosition(), "type mismatch")
-			}
-		}
-	} else {
-		c.Error(expressions[0].GetPosition(), "element number mismatch")
-	}
-}
-*/
 }

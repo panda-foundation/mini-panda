@@ -56,36 +56,34 @@ public class Function extends Declaration {
 			}
 			if (this.type.isExtern) {
 				Literal literal = this.getAttribute(Constant.attriExtern, "name"); 
-				if (literal != null) {
+				if (literal != null && literal.token == Token.STRING) {
 					if (literal.token == Token.STRING) {
-						f.Typ.ExternName = n
+						//this.type.externName = literal.value/string? TO-DO check regex name
+						//f.Typ.ExternName = n
 					}
-				}
-				if (this.type.externName == null) {
-					context.addError(this.getOffset(), "'name' of meta data is required for extern function")
+				} else {
+					context.addError(this.getOffset(), "'name' of meta data is required for extern function");
 				}
 			}
 		} else {
 			Context ctx = context.newContext();
-			c.SetFunction(f)
-			if f.Parent != nil {
-				p := &ast_types.TypePointer{
-					ElementType: f.Parent.Type(),
-				}
-				_ = c.AddObject(ast.StructThis, p)
+			ctx.setFunction(this);
+			if (this.parent != null) {
+				Pointer pointer = new Pointer(this.parent.getType());
+				ctx.insertObject(Constant.structThis, pointer);
 			}
-			if f.Typ.Extern {
-				c.Error(f.GetPosition(), "extern function has no body")
+			if (this.type.isExtern) {
+				ctx.addError(this.getOffset(), "extern function has no body");
 			}
-			if f.Parameters != nil {
-				for _, param := range f.Parameters {
-					err := c.AddObject(param.Name, param.Typ)
-					if err != nil {
-						c.Error(param.GetPosition(), err.Error())
+			if (this.parameters != null) {
+				for (Parameter parameter : this.parameters) {
+					boolean success = ctx.insertObject(parameter.name, parameter.type);
+					if (!success) {
+						ctx.addError(parameter.getOffset(), String.format("redeclared parameter with name %s", parameter.name));
 					}
 				}
 			}
-			f.Body.Validate(c)
+			this.body.validate(context);
 		}
 		//TO-DO check terminated
 		//c.Program.Error(f.Position, "missing return")
