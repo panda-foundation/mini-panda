@@ -10,11 +10,11 @@ public class Variable extends Declaration {
     public Expression value;
     public Struct parent;
 
-    public boolean isConstant()  {
+    public boolean isConstant() {
         return this.constant;
     }
 
-    public Type getType()  {
+    public Type getType() {
         return this.type;
     }
 

@@ -28,7 +28,7 @@ public class Function extends Declaration {
 		return this.type;
 	}
 
-    public void resolveType(Context context) {
+	public void resolveType(Context context) {
 		this.type = new com.github.panda_io.micro_panda.ast.type.Function();
 		this.type.returnType = this.returnType;
 		if (this.hasAttribute(Constant.attriExtern)) {
@@ -42,24 +42,24 @@ public class Function extends Declaration {
 			this.type.parameters.add(this.parent.pointerType());
 		}
 		if (this.parameters.size() > 0) {
-			for (Parameter parameter:this.parameters) {
+			for (Parameter parameter : this.parameters) {
 				this.type.parameters.add(parameter.type);
 			}
 		}
 		context.resolveType(this.type);
 	}
 
-    public void validate(Context context) {
+	public void validate(Context context) {
 		if (this.body == null) {
 			if (this.parent == null) {
 				context.addError(this.getOffset(), "function body is required for member function");
 			}
 			if (this.type.isExtern) {
-				Literal literal = this.getAttribute(Constant.attriExtern, "name"); 
+				Literal literal = this.getAttribute(Constant.attriExtern, "name");
 				if (literal != null && literal.token == Token.STRING) {
 					if (literal.token == Token.STRING) {
-						//this.type.externName = literal.value/string? TO-DO check regex name
-						//f.Typ.ExternName = n
+						// this.type.externName = literal.value/string? TO-DO check regex name
+						// f.Typ.ExternName = n
 					}
 				} else {
 					context.addError(this.getOffset(), "'name' of meta data is required for extern function");
@@ -79,13 +79,14 @@ public class Function extends Declaration {
 				for (Parameter parameter : this.parameters) {
 					boolean success = ctx.insertObject(parameter.name, parameter.type);
 					if (!success) {
-						ctx.addError(parameter.getOffset(), String.format("redeclared parameter with name %s", parameter.name));
+						ctx.addError(parameter.getOffset(),
+								String.format("redeclared parameter with name %s", parameter.name));
 					}
 				}
 			}
 			this.body.validate(context);
 		}
-		//TO-DO check terminated
-		//c.Program.Error(f.Position, "missing return")
+		// TO-DO check terminated
+		// c.Program.Error(f.Position, "missing return")
 	}
 }

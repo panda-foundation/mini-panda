@@ -1,11 +1,7 @@
-package statement
+package com.github.panda_io.micro_panda.ast.statement;
 
-import (
-	"github.com/panda-io/micro-panda/ast/ast"
-	"github.com/panda-io/micro-panda/ast/ast_types"
-	"github.com/panda-io/micro-panda/token"
-)
-
+public class Switch extends Statement {
+    
 type Switch struct {
 	StatementBase
 	Initialization ast.Statement
@@ -60,4 +56,6 @@ func (c *Case) Validate(ctx ast.Context, operandType ast.Type) {
 	if c.Body != nil {
 		c.Body.Validate(ctx)
 	}
+}
+
 }

@@ -22,8 +22,11 @@ public abstract class Declaration extends Node {
     public String qualified;
 
     public abstract Type getType();
-	public abstract void validate(Context context);
-	public abstract boolean isConstant();
+
+    public abstract void validate(Context context);
+
+    public abstract boolean isConstant();
+
     public abstract void resolveType(Context context);
 
     public boolean hasAttribute(String name) {
