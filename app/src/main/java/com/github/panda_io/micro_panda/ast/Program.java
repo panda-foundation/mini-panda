@@ -53,7 +53,7 @@ public class Program {
 
     public boolean printErrors() {
         for (Error error : this.errors) {
-            System.out.printf("%s : %s \n", error.position.getLocation());
+            System.out.printf("%s : %s \n", error.position.string());
         }
         return this.errors.size() > 0;
     }

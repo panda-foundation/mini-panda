@@ -4,7 +4,7 @@ import com.github.panda_io.micro_panda.scanner.*;
 
 public class App {
     public static void main(String[] args) {
-        String message = "Hello MicroPanda";
+        String message = "Hello Micro Panda";
         byte[] data = message.getBytes();
         File file = new File("<in memory>", data.length);
         Scanner scanner = new Scanner(null);
@@ -12,7 +12,9 @@ public class App {
             scanner.loadSource(file, data);
             while (scanner.token != Token.EOF) {
                 scanner.scan();
-                System.out.printf("scan: %s \n", scanner.literal);
+                if (scanner.token != Token.EOF) {
+                    System.out.printf("scan: %s \n", scanner.literal);
+                }
             }
 
         } catch (Exception e) {
