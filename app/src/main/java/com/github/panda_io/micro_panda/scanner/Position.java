@@ -9,7 +9,7 @@ public class Position {
         this.offset = offset;
     }
 
-    public String getLocation() {
+    public String string() {
         File.Location location = this.file.getLocation(this.offset);
         return String.format("%s:%d:%d", this.file.name, location.line, location.column);
     }

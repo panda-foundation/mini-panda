@@ -18,13 +18,13 @@ public class OperatorNode {
         }
     }
 
-    static Operator ReadOperator(byte[] bytes) {
-        return root.find(bytes);
-    }
-
     OperatorNode() {
         this.children = new HashMap<>();
         this.token = Token.ILLEGAL;
+    }
+
+    static Operator readOperator(byte[] bytes) {
+        return root.find(bytes);
     }
 
     void insert(String operator) {

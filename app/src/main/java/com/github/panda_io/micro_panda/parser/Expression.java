@@ -1,6 +1,18 @@
 package com.github.panda_io.micro_panda.parser;
 
+import com.github.panda_io.micro_panda.ast.expression.Identifier;
+
 public class Expression {
+	Parser parser;
+
+	Expression(Parser parser) {
+		this.parser = parser;
+	}
+	
+	/*
+	com.github.panda_io.micro_panda.ast.expression.Expression parseExpression()  {
+		return Expression.parseBinaryExpression(0);
+	}*/
     /*
 
 func (p *Parser) parseExpression() ast.Expression {

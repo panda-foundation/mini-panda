@@ -1,11 +1,22 @@
 package com.github.panda_io.micro_panda;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import com.github.panda_io.micro_panda.scanner.*;
 
+public class App {
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        String message = "Hello MicroPanda";
+        byte[] data = message.getBytes();
+        File file = new File("<in memory>", data.length);
+        Scanner scanner = new Scanner(null);
+        try {
+            scanner.loadSource(file, data);
+            while (scanner.token != Token.EOF) {
+                scanner.scan();
+                System.out.printf("scan: %s \n", scanner.literal);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
