@@ -2,12 +2,10 @@ package com.github.panda_io.micro_panda.ast.type;
 
 public class TypeName extends Type {
     public String name;
-    
     public String qualified;
     public boolean isEnum;
 
-    public TypeName(String name) {
-        this.name = name;
+    public TypeName() {
         this.isEnum = false;
     }
 

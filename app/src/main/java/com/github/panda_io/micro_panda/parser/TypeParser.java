@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import com.github.panda_io.micro_panda.ast.declaration.Function.Parameter;
 import com.github.panda_io.micro_panda.ast.expression.Expression;
 import com.github.panda_io.micro_panda.ast.type.*;
-import com.github.panda_io.micro_panda.scanner.Scanner;
 import com.github.panda_io.micro_panda.scanner.Token;
 
 public class TypeParser {
@@ -39,12 +38,13 @@ public class TypeParser {
 		if (context.scanner.token == Token.INT) {
 			count = Integer.parseInt(context.scanner.literal);
 			if (count < 1) {
-				context.program.addError(context.scanner.position, "array count must > 0");
+				context.addError(context.scanner.position, "array count must > 0");
 			}
 			context.scanner.scan();
 		}
 		context.expect(Token.RightBracket);
-		TypeArray array = new TypeArray(parseType(context));
+		TypeArray array = new TypeArray();
+		array.elementType = parseType(context);
 		array.setOffset(offset);
 		if (count > 0) {
 			array.dimensions.add(count);
@@ -52,96 +52,89 @@ public class TypeParser {
 		return array;
 	}
 
-	static TypeName parseTypeName(Context context) {
-		/*
-		t := &ast_types.TypeName{}
-		t.SetPosition(p.position)
-		qualified := p.parseQualified()
-		if strings.Contains(qualified, ".") {
-			t.Qualified = qualified
-			names := strings.Split(qualified, ".")
-			t.Name = names[len(names)-1]
+	static TypeName parseTypeName(Context context) throws Exception {
+		TypeName name = new TypeName();
+		name.setOffset(context.scanner.position);
+		String qualified = context.parseQualified();
+		if (qualified.contains(".")) {
+			name.qualified = qualified;
+			String[] names = qualified.split(".");
+			name.name = names[names.length - 1];
 		} else {
-			t.Name = qualified
-		}*/
-		return null;
+			name.name = qualified;
+		}
+		return name;
 	}
 
-	static TypePointer parseTypePointer(Context context) {
-		/*
-		t := &ast_types.TypePointer{}
-		if p.token == token.Less {
-			p.next()
-			t.ElementType = p.parseType()
-			p.expect(token.Greater)
+	static TypePointer parseTypePointer(Context context) throws Exception {
+		TypePointer pointer = new TypePointer();
+		if (context.scanner.token == Token.Less) {
+			context.scanner.scan();
+			pointer.elementType = parseType(context);
+			context.expect(Token.Greater);
 		} else {
-			t.ElementType = ast_types.TypeU8
-		}*/
-		return null;
+			pointer.elementType = Type.u8;
+		}
+		return pointer;
 	}
 
-	static List<Parameter> parseParameters(Context context) {
-		/*
-		t := []*declaration.Parameter{}
-		p.expect(token.LeftParen)
-		if p.token == token.RightParen {
-			p.next()
-			return nil
+	static List<Parameter> parseParameters(Context context) throws Exception {
+		List<Parameter> parameters = new ArrayList<>();
+		context.expect(Token.LeftParen);
+		if (context.scanner.token == Token.RightParen) {
+			context.scanner.scan();
+			return parameters;
 		}
-		t = append(t, p.parseParameter())
-		for p.token == token.Comma {
-			p.next()
-			t = append(t, p.parseParameter())
+		parameters.add(parseParameter(context));
+		while (context.scanner.token == Token.Comma) {
+			context.scanner.scan();
+			parameters.add(parseParameter(context));
 		}
-		p.expect(token.RightParen)*/
-		return null;
+		context.expect(Token.RightParen);
+		return parameters;
 	}
 
-	static Parameter parseParameter(Context context) {
-		/*
-		t := &declaration.Parameter{}
-		t.SetPosition(p.position)
-		t.Name = p.parseIdentifier().Name
-		t.Typ = p.parseType()*/
-		return null;
+	static Parameter parseParameter(Context context) throws Exception {
+		Parameter parameter = new Parameter();
+		parameter.setOffset(context.scanner.position);
+		parameter.name = context.parseIdentifier().name;
+		parameter.type = parseType(context);
+		return parameter;
 	}
 
-	static List<Expression> parseArguments(Context context) {
-		/*
-		expressions := []ast.Expression{}
-		p.expect(token.LeftParen)
-		if p.token == token.RightParen {
-			p.next()
-			return expressions
+	static List<Expression> parseArguments(Context context) throws Exception {
+		List<Expression> expressions = new ArrayList<>();
+		context.expect(Token.LeftParen);
+		if (context.scanner.token == Token.RightParen) {
+			context.scanner.scan();
+			return expressions;
 		}
-		expressions = append(expressions, p.parseExpression())
-		for p.token == token.Comma {
-			p.next()
-			expressions = append(expressions, p.parseExpression())
+		expressions.add(ExpressionParser.parseExpression(context));
+		while (context.scanner.token == Token.Comma) {
+			context.scanner.scan();
+			expressions.add(ExpressionParser.parseExpression(context));
 		}
-		p.expect(token.RightParen)
-		return expressions*/
-		return null;
+		context.expect(Token.RightParen);
+		return expressions;
 	}
 
 	static TypeFunction parseFunctionType(Context context) throws Exception {
-		/*
-		t := &ast_types.TypeFunction{}
-		t.SetPosition(p.position)
-		p.expect(token.LeftParen)
-		if p.token == token.RightParen {
-			p.next()
-			return t
+		TypeFunction function = new TypeFunction();
+		function.setOffset(context.scanner.position);
+		context.expect(Token.LeftParen);
+		if (context.scanner.token == Token.RightParen) {
+			context.scanner.scan();
+			return function;
 		}
-		t.Parameters = append(t.Parameters, p.parseType())
-		for p.token == token.Comma {
-			p.next()
-			t.Parameters = append(t.Parameters, p.parseType())
+		function.parameters.add(parseType(context));
+		while (context.scanner.token == Token.Comma) {
+			context.scanner.scan();
+			function.parameters.add(parseType(context));
 		}
-		p.expect(token.RightParen)
-		if p.token != token.Semi && p.token != token.Assign {
-			t.ReturnType = p.parseType()
-		}*/
-		return null;
+		context.expect(Token.RightParen);
+		if (context.scanner.token != Token.Semi && context.scanner.token != Token.Assign) {
+			function.returnType = parseType(context);
+		}
+		return function;
 	}
 }

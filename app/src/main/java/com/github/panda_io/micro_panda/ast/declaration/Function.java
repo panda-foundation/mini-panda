@@ -69,7 +69,8 @@ public class Function extends Declaration {
 			Context ctx = context.newContext();
 			ctx.setFunction(this);
 			if (this.parent != null) {
-				TypePointer pointer = new TypePointer(this.parent.getType());
+				TypePointer pointer = new TypePointer();
+				pointer.elementType = this.parent.getType();
 				ctx.insertObject(Constant.structThis, pointer);
 			}
 			if (this.type.isExtern) {

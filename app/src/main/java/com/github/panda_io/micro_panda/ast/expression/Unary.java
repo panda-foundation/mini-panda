@@ -40,7 +40,9 @@ public class Unary extends Expression {
                             "pointer, function and array are not allowed to use '&' operator");
                     return;
                 }
-                this.type = new TypePointer(this.type);
+                TypePointer pointer = new TypePointer();
+                pointer.elementType = this.type;
+                this.type = pointer;
                 if (this.expression.isConstant()) {
                     context.addError(this.getOffset(),
                             "expect variable, constant expression is not allowed to use '&' operator");

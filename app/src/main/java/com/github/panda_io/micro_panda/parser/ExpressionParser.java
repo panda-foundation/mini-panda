@@ -2,11 +2,10 @@ package com.github.panda_io.micro_panda.parser;
 
 import com.github.panda_io.micro_panda.ast.expression.Identifier;
 import com.github.panda_io.micro_panda.ast.expression.Expression;
-import com.github.panda_io.micro_panda.scanner.Scanner;
 
 public class ExpressionParser {
 
-	Expression parseExpression(Scanner scanner)  {
+	static Expression parseExpression(Context context)  {
 		return null;
 	}
     /*
@@ -15,17 +14,6 @@ func (p *Parser) parseExpression() ast.Expression {
 	return p.parseBinaryExpression(0)
 }
 
-func (p *Parser) parseIdentifier() *expression.Identifier {
-	e := &expression.Identifier{}
-	e.SetPosition(p.position)
-	if p.token == token.IDENT {
-		e.Name = p.literal
-		p.next()
-	} else {
-		p.expect(token.IDENT)
-	}
-	return e
-}
 
 func (p *Parser) parseOperand() ast.Expression {
 	switch p.token {

@@ -3,8 +3,7 @@ package com.github.panda_io.micro_panda.ast.type;
 public class TypePointer extends Type {
     public Type elementType;
 
-    public TypePointer(Type elementType) {
-        this.elementType = elementType;
+    public TypePointer() {
     }
 
     public boolean equal(Type type) {

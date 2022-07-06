@@ -1,6 +1,6 @@
 package com.github.panda_io.micro_panda.parser;
 
-public class Statement {
+public class StatementParser {
     /*
 
 func (p *Parser) parseStatement() ast.Statement {

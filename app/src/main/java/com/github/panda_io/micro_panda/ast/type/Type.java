@@ -20,7 +20,6 @@ public abstract class Type extends Node {
     public static final TypeBuiltin f16 = new TypeBuiltin(Token.Float16);
     public static final TypeBuiltin f32 = new TypeBuiltin(Token.Float32);
     public static final TypeBuiltin f64 = new TypeBuiltin(Token.Float64);
-    public static final TypePointer rawPointer = new TypePointer(u8);
 
     public boolean isInteger() {
         if (this instanceof TypeBuiltin) {
@@ -87,7 +86,8 @@ public abstract class Type extends Node {
                 if (array.dimensions.size() == 1) {
                     return array.elementType;
                 } else {
-                    TypeArray type = new TypeArray(array.elementType);
+                    TypeArray type = new TypeArray();
+                    type.elementType = array.elementType;
                     for (int i = 1; i < array.dimensions.size(); i++) {
                         type.dimensions.add(array.dimensions.get(i));
                     }

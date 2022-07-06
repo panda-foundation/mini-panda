@@ -1,6 +1,6 @@
 package com.github.panda_io.micro_panda.parser;
 
-public class Module {
+public class ModuleParser {
     /*
 
 func (p *Parser) parseSourceFile(file *token.File) {
@@ -93,14 +93,6 @@ func (p *Parser) parseImports() []*ast.Import {
 	}
 	return imports
 }
-
-func (p *Parser) parseQualified() string {
-	qualified := p.parseIdentifier().Name
-	for p.token == token.Dot {
-		p.next()
-		qualified += "." + p.parseIdentifier().Name
-	}
-	return qualified
-}
 */
+
 }

@@ -1,11 +1,12 @@
 package com.github.panda_io.micro_panda.parser;
 
 import com.github.panda_io.micro_panda.ast.Program;
+import com.github.panda_io.micro_panda.ast.expression.Identifier;
 import com.github.panda_io.micro_panda.scanner.Scanner;
 import com.github.panda_io.micro_panda.scanner.Token;
 
 public class Context {
-    Program program;
+    private Program program;
     Scanner scanner;
 
     public Context(Program program, Scanner scanner) {
@@ -33,4 +34,29 @@ public class Context {
         }
         this.program.addError(position, expect);
     }
+
+	void addError(int offset, String message) {
+        this.program.addError(offset, message);
+    }
+
+    Identifier  parseIdentifier() throws Exception {
+        Identifier identifier = new Identifier();
+        identifier.setOffset(this.scanner.position);
+        if (this.scanner.token == Token.IDENT) {
+            identifier.name = this.scanner.literal;
+            this.scanner.scan();
+        } else {
+            this.expect(Token.IDENT);
+        }
+        return identifier;
+    }
+
+	String parseQualified() throws Exception {
+		String qualified = this.parseIdentifier().name;
+		while(this.scanner.token == Token.Dot) {
+			this.scanner.scan();
+			qualified += "." + this.parseIdentifier().name;
+		}
+		return qualified;
+	}
 }

@@ -16,7 +16,8 @@ public class Struct extends Declaration {
 	}
 
 	public Type getType() {
-		TypeName name = new TypeName(this.name.name);
+		TypeName name = new TypeName();
+		name.name = this.name.name;
 		name.qualified = this.qualified;
 		name.isEnum = false;
 		return name;
@@ -94,6 +95,8 @@ public class Struct extends Declaration {
 	}
 
 	public Type pointerType() {
-		return new TypePointer(this.getType());
+		TypePointer pointer = new TypePointer();
+		pointer.elementType = this.getType();
+		return pointer;
 	}
 }

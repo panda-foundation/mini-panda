@@ -14,7 +14,8 @@ public class Literal extends Expression {
 		switch (this.token) {
 		case STRING:
 			//TO-DO check & test unquote
-			TypeArray array = new TypeArray(Type.u8);
+			TypeArray array = new TypeArray();
+			array.elementType = Type.u8;
 			array.dimensions.add(this.value.length() - 1);
 			this.type = array;
 			break;

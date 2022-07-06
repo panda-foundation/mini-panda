@@ -29,7 +29,6 @@ public enum Token {
     Namespace("namespace"),
     Pointer("pointer"),
     Public("public"),
-    Sizeof("sizeof"),
     Return("return"),
     Struct("struct"),
     Switch("switch"),

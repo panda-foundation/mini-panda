@@ -6,8 +6,7 @@ public class TypeArray extends Type {
 	public Type elementType;
 	public List<Integer> dimensions;
 
-    public TypeArray(Type elementType) {
-        this.elementType = elementType;
+    public TypeArray() {
         this.dimensions = new ArrayList<>();
     }
 

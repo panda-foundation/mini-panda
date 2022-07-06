@@ -50,7 +50,8 @@ public class Initializer extends Expression {
 				context.addError(this.getOffset(), "array length mismatch");
 			}
 		} else if (expressions.size() == array.dimensions.get(0)) {
-			TypeArray sub = new TypeArray(array.elementType);
+			TypeArray sub = new TypeArray();
+			sub.elementType = array.elementType;
 			sub.dimensions = array.dimensions.subList(1, array.dimensions.size());
 			for (Expression expression : expressions) {
 				if (expression instanceof Initializer) {

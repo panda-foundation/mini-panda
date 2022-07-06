@@ -1,6 +1,6 @@
 package com.github.panda_io.micro_panda.parser;
 
-public class Declaration {
+public class DeclarationParser {
  /*
  
 func (p *Parser) parseVariable(public bool, attributes []*declaration.Attribute) *declaration.Variable {
