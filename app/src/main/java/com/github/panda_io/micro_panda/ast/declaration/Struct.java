@@ -2,8 +2,8 @@ package com.github.panda_io.micro_panda.ast.declaration;
 
 import java.util.*;
 
-import com.github.panda_io.micro_panda.ast.type.Name;
-import com.github.panda_io.micro_panda.ast.type.Pointer;
+import com.github.panda_io.micro_panda.ast.type.TypeName;
+import com.github.panda_io.micro_panda.ast.type.TypePointer;
 import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.ast.Context;
 
@@ -16,7 +16,7 @@ public class Struct extends Declaration {
 	}
 
 	public Type getType() {
-		Name name = new Name(this.name.name);
+		TypeName name = new TypeName(this.name.name);
 		name.qualified = this.qualified;
 		name.isEnum = false;
 		return name;
@@ -94,6 +94,6 @@ public class Struct extends Declaration {
 	}
 
 	public Type pointerType() {
-		return new Pointer(this.getType());
+		return new TypePointer(this.getType());
 	}
 }

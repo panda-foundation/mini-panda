@@ -70,9 +70,9 @@ public class MemberAccess extends Expression {
 		} else {
 			Type parentType = this.parent.type;
 			if (parentType.isPointer()) {
-				parentType = ((Pointer)parentType).elementType;
+				parentType = ((TypePointer)parentType).elementType;
 			}
-			if (parentType instanceof Name) {
+			if (parentType instanceof TypeName) {
 				Declaration declaration = context.findDeclaration(parentType);
 				if (declaration != null) {
 					if (declaration instanceof Struct) {

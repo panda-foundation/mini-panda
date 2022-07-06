@@ -58,7 +58,7 @@ public class Program {
         return this.errors.size() > 0;
     }
 
-    void addError(int offset, String message) {
+    public void addError(int offset, String message) {
         this.errors.add(new Error(this.module.file.getPosition(offset), message));
     }
 }

@@ -2,10 +2,7 @@ package com.github.panda_io.micro_panda.ast;
 
 import java.util.*;
 
-import com.github.panda_io.micro_panda.ast.type.Name;
-import com.github.panda_io.micro_panda.ast.type.Pointer;
-import com.github.panda_io.micro_panda.ast.type.Type;
-import com.github.panda_io.micro_panda.ast.type.Array;
+import com.github.panda_io.micro_panda.ast.type.*;
 import com.github.panda_io.micro_panda.ast.declaration.*;
 import com.github.panda_io.micro_panda.ast.declaration.Enumeration;
 
@@ -56,7 +53,7 @@ public class Context {
     }
 
     public Type resolveType(Type type) {
-        if (type instanceof Name) {
+        if (type instanceof TypeName) {
             Declaration declaration = this.findDeclaration(type);
             if (declaration == null) {
                 this.program.addError(type.getOffset(), "type not defined");
@@ -65,13 +62,13 @@ public class Context {
                     return ((Function)declaration).type;
                 } else if (declaration instanceof Struct) {
                 } else if (declaration instanceof Enumeration) {
-                    ((Name)type).isEnum = true;
+                    ((TypeName)type).isEnum = true;
                 } else {
                     this.program.addError(type.getOffset(), "type not defined");
                 }
             }
-        } else if (type instanceof Array) {
-            Array array = (Array)type;
+        } else if (type instanceof TypeArray) {
+            TypeArray array = (TypeArray)type;
             array.elementType = this.resolveType(array.elementType);
             if (array.dimensions.size() == 0 || array.dimensions.get(0) < 0) {
                 this.program.addError(type.getOffset(), "invalid array index");
@@ -81,11 +78,11 @@ public class Context {
                     this.program.addError(type.getOffset(), "invalid array index");
                 }
             }
-        } else if (type instanceof Pointer) {
-            Pointer pointer = (Pointer)type;
+        } else if (type instanceof TypePointer) {
+            TypePointer pointer = (TypePointer)type;
             pointer.elementType = this.resolveType(pointer.elementType);
-        } else if (type instanceof com.github.panda_io.micro_panda.ast.type.Function) {
-            com.github.panda_io.micro_panda.ast.type.Function function = (com.github.panda_io.micro_panda.ast.type.Function)type;
+        } else if (type instanceof TypeFunction) {
+            TypeFunction function = (TypeFunction)type;
             function.returnType = this.resolveType(function.returnType);
             for (int i = 0; i < function.parameters.size(); i++) {
                 Type parameter = this.resolveType(function.parameters.get(i));
@@ -101,7 +98,7 @@ public class Context {
     }
 
 	public Declaration findDeclaration(Type type) {
-        Name name = (Name)type;
+        TypeName name = (TypeName)type;
         if (name.qualified == null) {
             return this.findLocalDeclaration(name.name);
         }

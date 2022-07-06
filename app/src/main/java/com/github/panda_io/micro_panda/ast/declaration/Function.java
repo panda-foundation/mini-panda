@@ -6,7 +6,7 @@ import com.github.panda_io.micro_panda.ast.*;
 import com.github.panda_io.micro_panda.ast.expression.Literal;
 import com.github.panda_io.micro_panda.ast.type.*;
 import com.github.panda_io.micro_panda.scanner.Token;
-import com.github.panda_io.micro_panda.ast.statement.Block;
+import com.github.panda_io.micro_panda.ast.statement.BlockStatement;
 
 public class Function extends Declaration {
 	public static class Parameter extends Node {
@@ -16,9 +16,9 @@ public class Function extends Declaration {
 
 	public List<Parameter> parameters;
 	public Type returnType;
-	public Block body;
+	public BlockStatement body;
 	public Struct parent;
-	public com.github.panda_io.micro_panda.ast.type.Function type;
+	public TypeFunction type;
 
 	public boolean isConstant() {
 		return true;
@@ -29,7 +29,7 @@ public class Function extends Declaration {
 	}
 
 	public void resolveType(Context context) {
-		this.type = new com.github.panda_io.micro_panda.ast.type.Function();
+		this.type = new TypeFunction();
 		this.type.returnType = this.returnType;
 		if (this.hasAttribute(Constant.attriExtern)) {
 			this.type.isExtern = true;
@@ -69,7 +69,7 @@ public class Function extends Declaration {
 			Context ctx = context.newContext();
 			ctx.setFunction(this);
 			if (this.parent != null) {
-				Pointer pointer = new Pointer(this.parent.getType());
+				TypePointer pointer = new TypePointer(this.parent.getType());
 				ctx.insertObject(Constant.structThis, pointer);
 			}
 			if (this.type.isExtern) {

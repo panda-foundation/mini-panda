@@ -2,7 +2,7 @@ package com.github.panda_io.micro_panda.ast.type;
 
 import java.util.*;
 
-public class Function extends Type {
+public class TypeFunction extends Type {
     public Type returnType;
     public List<Type> parameters;
 
@@ -11,7 +11,7 @@ public class Function extends Type {
     public String externName;
     public boolean isDefine;
 
-    public Function() {
+    public TypeFunction() {
         this.parameters = new ArrayList<>();
         this.isMemberFunction = false;
         this.isExtern = false;
@@ -19,8 +19,8 @@ public class Function extends Type {
     }
 
     public boolean equal(Type type) {
-        if (type instanceof Function) {
-            Function function = (Function) type;
+        if (type instanceof TypeFunction) {
+            TypeFunction function = (TypeFunction) type;
             if (this.returnType != null && function.returnType != null) {
                 if (!this.returnType.equal(function.returnType)) {
                     return false;

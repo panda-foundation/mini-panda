@@ -2,16 +2,16 @@ package com.github.panda_io.micro_panda.ast.type;
 
 import com.github.panda_io.micro_panda.scanner.Token;
 
-public class Builtin extends Type {
+public class TypeBuiltin extends Type {
     public Token token;
 
-    public Builtin(Token token) {
+    public TypeBuiltin(Token token) {
         this.token = token;
     }
 
     public boolean equal(Type type) {
-        if (type instanceof Builtin) {
-            return this.token == ((Builtin) type).token;
+        if (type instanceof TypeBuiltin) {
+            return this.token == ((TypeBuiltin) type).token;
         }
         return false;
     }

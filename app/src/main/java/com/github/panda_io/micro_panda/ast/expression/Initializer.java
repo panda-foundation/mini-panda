@@ -2,8 +2,8 @@ package com.github.panda_io.micro_panda.ast.expression;
 
 import java.util.*;
 
-import com.github.panda_io.micro_panda.ast.type.Array;
-import com.github.panda_io.micro_panda.ast.type.Name;
+import com.github.panda_io.micro_panda.ast.type.TypeArray;
+import com.github.panda_io.micro_panda.ast.type.TypeName;
 import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.ast.declaration.Declaration;
 import com.github.panda_io.micro_panda.ast.declaration.Struct;
@@ -13,12 +13,12 @@ public class Initializer extends Expression {
 	public List<Expression> expressions;
 
 	public void validate(Context context, Type expected) {
-		if (expected != null && expected instanceof Array) {
-			Array array = (Array) expected;
+		if (expected != null && expected instanceof TypeArray) {
+			TypeArray array = (TypeArray) expected;
 			this.type = array;
 			this.constant = true;
 			this.validateArray(context, array, this.expressions);
-		} else if (expected != null && expected instanceof Name) {
+		} else if (expected != null && expected instanceof TypeName) {
 			Declaration declaration = context.findDeclaration(expected);
 			this.type = expected;
 			this.constant = true;
@@ -32,7 +32,7 @@ public class Initializer extends Expression {
 		}
 	}
 
-	public void validateArray(Context context, Array array, List<Expression> expressions) {
+	public void validateArray(Context context, TypeArray array, List<Expression> expressions) {
 		if (array.dimensions.get(0) == 0) {
 			context.addError(this.getOffset(), "initializer is not allowed for pointer");
 		}
@@ -50,7 +50,7 @@ public class Initializer extends Expression {
 				context.addError(this.getOffset(), "array length mismatch");
 			}
 		} else if (expressions.size() == array.dimensions.get(0)) {
-			Array sub = new Array(array.elementType);
+			TypeArray sub = new TypeArray(array.elementType);
 			sub.dimensions = array.dimensions.subList(1, array.dimensions.size());
 			for (Expression expression : expressions) {
 				if (expression instanceof Initializer) {

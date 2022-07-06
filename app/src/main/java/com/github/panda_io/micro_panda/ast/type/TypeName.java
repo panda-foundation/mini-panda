@@ -1,19 +1,19 @@
 package com.github.panda_io.micro_panda.ast.type;
 
-public class Name extends Type {
+public class TypeName extends Type {
     public String name;
     
     public String qualified;
     public boolean isEnum;
 
-    public Name(String name) {
+    public TypeName(String name) {
         this.name = name;
         this.isEnum = false;
     }
 
     public boolean equal(Type type) {
-        if (type instanceof Name) {
-            return this.qualified != null && this.qualified.equals(((Name) type).qualified);
+        if (type instanceof TypeName) {
+            return this.qualified != null && this.qualified.equals(((TypeName) type).qualified);
         }
         return false;
     }

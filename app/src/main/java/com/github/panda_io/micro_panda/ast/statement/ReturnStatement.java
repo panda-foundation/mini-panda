@@ -2,9 +2,10 @@ package com.github.panda_io.micro_panda.ast.statement;
 
 import com.github.panda_io.micro_panda.ast.Context;
 import com.github.panda_io.micro_panda.ast.type.*;
+import com.github.panda_io.micro_panda.ast.expression.Expression;
 
-public class Return extends Statement {
-    public com.github.panda_io.micro_panda.ast.expression.Expression expression;
+public class ReturnStatement extends Statement {
+    public Expression expression;
 
     public void validate(Context context) {
         Type returnType = context.getFunction().returnType;

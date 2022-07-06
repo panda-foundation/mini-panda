@@ -10,14 +10,14 @@ public class Invocation extends Expression {
 	public Expression function;
 	public List<Expression> arguments;
 
-	public Function define;
+	public TypeFunction define;
 
 	public void validate(Context context, Type expected) {
 		this.function.validate(context, expected);
 		this.constant = false;
 		Type functionType = this.function.type;
-		if (functionType instanceof Function) {
-			this.define = (Function) functionType;
+		if (functionType instanceof TypeFunction) {
+			this.define = (TypeFunction) functionType;
 			if (this.define.isMemberFunction) {
 				// implicit conversion
 				if (this.function instanceof MemberAccess) {

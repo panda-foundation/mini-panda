@@ -1,6 +1,6 @@
 package com.github.panda_io.micro_panda.ast.expression;
 
-import com.github.panda_io.micro_panda.ast.type.Pointer;
+import com.github.panda_io.micro_panda.ast.type.TypePointer;
 import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.ast.Context;
 import com.github.panda_io.micro_panda.scanner.Token;
@@ -40,7 +40,7 @@ public class Unary extends Expression {
                             "pointer, function and array are not allowed to use '&' operator");
                     return;
                 }
-                this.type = new Pointer(this.type);
+                this.type = new TypePointer(this.type);
                 if (this.expression.isConstant()) {
                     context.addError(this.getOffset(),
                             "expect variable, constant expression is not allowed to use '&' operator");
@@ -49,7 +49,7 @@ public class Unary extends Expression {
 
             case Mul:
                 if (this.type.isPointer()) {
-                    this.type = ((Pointer) this.type).elementType();
+                    this.type = ((TypePointer) this.type).elementType();
                 } else {
                     context.addError(this.getOffset(), "only pointer type is allowed to use '*' operator");
                 }

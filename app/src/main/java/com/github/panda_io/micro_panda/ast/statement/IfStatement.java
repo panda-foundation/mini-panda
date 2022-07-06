@@ -2,10 +2,11 @@ package com.github.panda_io.micro_panda.ast.statement;
 
 import com.github.panda_io.micro_panda.ast.Context;
 import com.github.panda_io.micro_panda.ast.type.Type;
+import com.github.panda_io.micro_panda.ast.expression.Expression;
 
-public class If extends Statement {
+public class IfStatement extends Statement {
     public Statement initialization;
-    public com.github.panda_io.micro_panda.ast.expression.Expression condition;
+    public Expression condition;
     public Statement body;
     public Statement elseStatement;
 

@@ -2,7 +2,7 @@ package com.github.panda_io.micro_panda.ast.expression;
 
 import java.util.*;
 
-import com.github.panda_io.micro_panda.ast.type.Array;
+import com.github.panda_io.micro_panda.ast.type.TypeArray;
 import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.ast.Context;
 
@@ -13,8 +13,8 @@ public class Subscripting extends Expression {
 	public void validate(Context context, Type expected) {
 		this.constant = false;
 		this.parent.validate(context, null);
-		if (this.parent.type instanceof Array) {
-			Array array = (Array) this.parent.type;
+		if (this.parent.type instanceof TypeArray) {
+			TypeArray array = (TypeArray) this.parent.type;
 			for (Expression index : this.indexes) {
 				index.validate(context, null);
 				if (!index.type.isInteger()) {
@@ -25,7 +25,7 @@ public class Subscripting extends Expression {
 			if (this.indexes.size() == array.dimensions.size()) {
 				this.type = array.elementType;
 			} else if (this.indexes.size() < array.dimensions.size()) {
-				Array elementType = new Array(array.elementType);
+				TypeArray elementType = new TypeArray(array.elementType);
 				elementType.dimensions.add(0);
 				for (int i = array.dimensions.size() - this.indexes.size() - 1; i > 0; i--) {
 					elementType.dimensions.add(array.dimensions.get(array.dimensions.size() - i));

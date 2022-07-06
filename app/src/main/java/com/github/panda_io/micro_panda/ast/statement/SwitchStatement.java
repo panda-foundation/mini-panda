@@ -6,11 +6,12 @@ import com.github.panda_io.micro_panda.ast.Context;
 import com.github.panda_io.micro_panda.ast.Node;
 import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.scanner.Token;
+import com.github.panda_io.micro_panda.ast.expression.Expression;
 
-public class Switch extends Statement {
+public class SwitchStatement extends Statement {
 	public static class Case extends Node {
 		public Token token;
-		public com.github.panda_io.micro_panda.ast.expression.Expression caseExpr;
+		public Expression caseExpr;
 		public Statement body;
 
 		public void validate(Context context, Type operandType) {
@@ -29,7 +30,7 @@ public class Switch extends Statement {
 	}
 
 	public Statement initialization;
-	public com.github.panda_io.micro_panda.ast.expression.Expression operand;
+	public Expression operand;
 	public List<Case> cases;
 	public Case defaultCase;
 

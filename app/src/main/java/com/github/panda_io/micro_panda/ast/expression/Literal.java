@@ -1,6 +1,6 @@
 package com.github.panda_io.micro_panda.ast.expression;
 
-import com.github.panda_io.micro_panda.ast.type.Array;
+import com.github.panda_io.micro_panda.ast.type.TypeArray;
 import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.ast.Context;
 import com.github.panda_io.micro_panda.scanner.Token;
@@ -14,7 +14,7 @@ public class Literal extends Expression {
 		switch (this.token) {
 		case STRING:
 			//TO-DO check & test unquote
-			Array array = new Array(Type.u8);
+			TypeArray array = new TypeArray(Type.u8);
 			array.dimensions.add(this.value.length() - 1);
 			this.type = array;
 			break;

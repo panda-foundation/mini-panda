@@ -1,13 +1,13 @@
 package com.github.panda_io.micro_panda.ast.statement;
 
 import com.github.panda_io.micro_panda.ast.Context;
-import com.github.panda_io.micro_panda.ast.expression.Identifier;
+import com.github.panda_io.micro_panda.ast.expression.*;
 import com.github.panda_io.micro_panda.ast.type.*;
 
-public class Declaration extends Statement {
+public class DeclarationStatement extends Statement {
     public Identifier name;
     public Type type;
-    public com.github.panda_io.micro_panda.ast.expression.Expression value;
+    public Expression value;
 
     public void validate(Context context) {
         this.type = context.resolveType(this.type);

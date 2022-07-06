@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.github.panda_io.micro_panda.ast.Context;
 
-public class Block extends Statement {
+public class BlockStatement extends Statement {
     public List<Statement> statements;
 
     // TO-DO warning: unreachable code //Start, End of block

@@ -2,7 +2,7 @@ package com.github.panda_io.micro_panda.ast.statement;
 
 import com.github.panda_io.micro_panda.ast.Context;
 
-public class Break extends Statement {
+public class BreakStatement extends Statement {
     public void validate(Context context) {
         /*
          * if c.LeaveBlock == nil {
