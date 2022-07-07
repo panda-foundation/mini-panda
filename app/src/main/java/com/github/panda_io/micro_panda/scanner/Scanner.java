@@ -398,13 +398,13 @@ public class Scanner {
 
 	String scanOperators() throws Exception {
 		int start = this.offset - 1;
-		byte[] data = new byte[3];
-		Arrays.copyOfRange(this.source, start, start + 3); // 3 is max length of operator
+		byte[] data = Arrays.copyOfRange(this.source, start, start + 3); // 3 is max length of operator
 		OperatorNode.Operator operator = OperatorNode.readOperator(data);
 		if (operator.length > 0) {
 			for (int i = 1; i < operator.length; i++) {
 				this.next();
 			}
+			this.token = operator.token;
 			return new String(this.source, start, this.offset - start);
 		}
 		return "";

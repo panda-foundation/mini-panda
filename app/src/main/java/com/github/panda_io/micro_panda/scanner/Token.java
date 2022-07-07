@@ -98,6 +98,11 @@ public enum Token {
         for (Token t : values()) {
             tokens.put(t.token, t);
         }
+
+        OperatorNode.root = new OperatorNode();
+        for (int i = LeftParen.ordinal(); i <= Dot.ordinal(); i++) {
+            OperatorNode.root.insert(values()[i].toString());
+        }
     }
 
     public static Token valueOfToken(String token) {

@@ -30,7 +30,7 @@ public class OperatorNode {
     void insert(String operator) {
         this.insertOperator(operator.getBytes(), 0);
     }
-    
+
     void insertOperator(byte[] operator, int position) {
         if (position < operator.length) {
             Byte character = operator[position];
@@ -43,24 +43,23 @@ public class OperatorNode {
         } else {
             this.token = Token.readToken(new String(operator));
         }
-    }   
+    }
 
     Operator find(byte[] operator) {
         return this.findOperator(operator, 0);
     }
-    
+
     Operator findOperator(byte[] operator, int offset) {
         if (this.children.containsKey(operator[offset])) {
+            OperatorNode child = this.children.get(operator[offset]);
             offset++;
             if (offset < operator.length) {
-                return this.children.get(operator[offset]).findOperator(operator, offset);
+                return child.findOperator(operator, offset);
             }
+            return new Operator(child.token, offset);
         } else if (offset > 0) {
-            //return ReadToken(string(bytes[:offset])), offset
-            //TO-DO
-            return null;
+            return new Operator(Token.readToken(new String(Arrays.copyOf(operator, offset))), offset);
         }
         return new Operator(Token.ILLEGAL, 1);
     }
 }
-
