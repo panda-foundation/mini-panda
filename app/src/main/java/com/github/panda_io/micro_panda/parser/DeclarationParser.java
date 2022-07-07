@@ -15,14 +15,14 @@ public class DeclarationParser {
 		Variable variable = new Variable();
 		variable.isPublic = isPublic;
 		variable.attributes = attributes;
-		if (context.scanner.token == Token.Const) {
+		if (context.token == Token.Const) {
 			variable.constant = true;
 		}
-		context.scanner.scan();
+		context.next();
 		variable.name = context.parseIdentifier();
 		variable.type = TypeParser.parseType(context);
-		if (context.scanner.token == Token.Assign) {
-			context.scanner.scan();
+		if (context.token == Token.Assign) {
+			context.next();
 			variable.value = ExpressionParser.parseExpression(context);
 		}
 		if (variable.constant && variable.value == null) {
@@ -37,16 +37,16 @@ public class DeclarationParser {
 		Function function = new Function();
 		function.isPublic = isPublic;
 		function.attributes = attributes;
-		context.scanner.scan();
+		context.next();
 		function.name = context.parseIdentifier();
 		function.parameters = TypeParser.parseParameters(context);
-		if (context.scanner.token != Token.Semi && context.scanner.token != Token.LeftBrace) {
+		if (context.token != Token.Semi && context.token != Token.LeftBrace) {
 			function.returnType = TypeParser.parseType(context);
 		}
-		if (context.scanner.token == Token.LeftBrace) {
+		if (context.token == Token.LeftBrace) {
 			function.body = StatementParser.parseBlockStatement(context);
-		} else if (context.scanner.token == Token.Semi) {
-			context.scanner.scan();
+		} else if (context.token == Token.Semi) {
+			context.next();
 		}
 		return function;
 	}
@@ -56,15 +56,15 @@ public class DeclarationParser {
 		Enumeration enumeration = new Enumeration();
 		enumeration.isPublic = isPublic;
 		enumeration.attributes = attributes;
-		context.scanner.scan();
+		context.next();
 		enumeration.name = context.parseIdentifier();
 		context.expect(Token.LeftBrace);
-		while (context.scanner.token != Token.RightBrace) {
+		while (context.token != Token.RightBrace) {
 			Variable variable = new Variable();
 			variable.constant = true;
 			variable.name = context.parseIdentifier();
-			if (context.scanner.token == Token.Assign) {
-				context.scanner.scan();
+			if (context.token == Token.Assign) {
+				context.next();
 				variable.value = ExpressionParser.parseExpression(context);
 			}
 			boolean success = enumeration.addMember(variable);
@@ -72,10 +72,10 @@ public class DeclarationParser {
 				context.addError(variable.getOffset(),
 						String.format("duplicated enum member '%s'", variable.name.name));
 			}
-			if (context.scanner.token != Token.Comma) {
+			if (context.token != Token.Comma) {
 				break;
 			}
-			context.scanner.scan();
+			context.next();
 		}
 		context.expect(Token.RightBrace);
 		return enumeration;
@@ -86,13 +86,13 @@ public class DeclarationParser {
 		Struct struct = new Struct();
 		struct.isPublic = isPublic;
 		struct.attributes = attributes;
-		context.scanner.scan();
+		context.next();
 		struct.name = context.parseIdentifier();
 		context.expect(Token.LeftBrace);
-		while (context.scanner.token != Token.RightBrace) {
+		while (context.token != Token.RightBrace) {
 			List<Declaration.Attribute> memberAttri = parseAttributes(context);
 			boolean isPublicMember = parseModifier(context);
-			switch (context.scanner.token) {
+			switch (context.token) {
 				case Const:
 				case Var:
 					Variable variable = parseVariable(context, isPublicMember, memberAttri);
@@ -121,8 +121,8 @@ public class DeclarationParser {
 	}
 
 	static boolean parseModifier(Context context) throws Exception {
-		if (context.scanner.token == Token.Public) {
-			context.scanner.scan();
+		if (context.token == Token.Public) {
+			context.next();
 			return true;
 		}
 		return false;
@@ -130,56 +130,56 @@ public class DeclarationParser {
 
 	static List<Declaration.Attribute> parseAttributes(Context context) throws Exception {
 		List<Declaration.Attribute> attributes = new ArrayList<>();
-		if (context.scanner.token != Token.META) {
+		if (context.token != Token.META) {
 			return attributes;
 		}
-		while (context.scanner.token == Token.META) {
-			context.scanner.scan();
-			if (context.scanner.token != Token.IDENT) {
+		while (context.token == Token.META) {
+			context.next();
+			if (context.token != Token.IDENT) {
 				context.expect(Token.IDENT);
 			}
 			Declaration.Attribute attribute = new Declaration.Attribute();
 			attribute.values = new HashMap<>();
-			attribute.setOffset(context.scanner.position);
-			attribute.name = context.scanner.literal;
-			context.scanner.scan();
+			attribute.setOffset(context.position);
+			attribute.name = context.literal;
+			context.next();
 
-			if (context.scanner.token == Token.STRING) {
-				attribute.text = context.scanner.literal;
-				context.scanner.scan();
-			} else if (context.scanner.token == Token.LeftParen) {
-				context.scanner.scan();
-				if (context.scanner.token == Token.STRING) {
-					attribute.text = context.scanner.literal;
-					context.scanner.scan();
+			if (context.token == Token.STRING) {
+				attribute.text = context.literal;
+				context.next();
+			} else if (context.token == Token.LeftParen) {
+				context.next();
+				if (context.token == Token.STRING) {
+					attribute.text = context.literal;
+					context.next();
 				} else {
 					while (true) {
-						if (context.scanner.token != Token.IDENT) {
-							String name = context.scanner.literal;
-							context.scanner.scan();
+						if (context.token != Token.IDENT) {
+							String name = context.literal;
+							context.next();
 							context.expect(Token.Assign);
-							switch (context.scanner.token) {
+							switch (context.token) {
 								case CHAR:
 								case INT:
 								case FLOAT:
 								case STRING:
 								case BOOL:
 									if (attribute.values.containsKey(name)) {
-										context.addError(context.scanner.position, "duplicated attribute " + name);
+										context.addError(context.position, "duplicated attribute " + name);
 									}
 									Literal literal = new Literal();
-									literal.setOffset(context.scanner.position);
-									literal.token = context.scanner.token;
-									literal.value = context.scanner.literal;
+									literal.setOffset(context.position);
+									literal.token = context.token;
+									literal.value = context.literal;
 									attribute.values.put(name, literal);
 									break;
 
 								default:
-									context.expectedError(context.scanner.position,
+									context.expectedError(context.position,
 											"basic literal (bool, char, int, float, string)");
 							}
-							context.scanner.scan();
-							if (context.scanner.token == Token.RightParen) {
+							context.next();
+							if (context.token == Token.RightParen) {
 								break;
 							}
 							context.expect(Token.Comma);

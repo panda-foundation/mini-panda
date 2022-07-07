@@ -10,9 +10,11 @@ public class Scanner {
 	public static final int BOM = 0xFEFF;
 	public static final int EOF = -1;
 
-	public int position;
-	public Token token;
-	public String literal;
+	public static class Result {
+		public int position;
+		public Token token;
+		public String literal;
+	}
 
 	Set<String> flags;
 
@@ -40,9 +42,6 @@ public class Scanner {
 		this.character = 0;
 		this.offset = 0;
 		this.readOffset = 0;
-		this.position = 0;
-		this.token = Token.ILLEGAL;
-		this.literal = "";
 		this.next();
 		if (this.character == BOM) {
 			this.next();
@@ -59,24 +58,27 @@ public class Scanner {
 		}
 	}
 
-	public void scan() throws Exception {
+	public Result scan() throws Exception {
 		while (this.character == ' ' || this.character == '\t' || this.character == '\n' || this.character == '\r') {
 			this.next();
 		}
-		this.position = this.offset;
-		this.token = Token.ILLEGAL;
+
+		Result result = new Result();
+		result.token = Token.ILLEGAL;
+		result.literal = "";
+		result.position = this.offset;
 
 		if (this.isLetter(this.character)) {
-			this.literal = this.scanIdentifier();
-			this.token = Token.readToken(this.literal);
+			result.literal = this.scanIdentifier();
+			result.token = Token.readToken(result.literal);
 		} else if (this.isDecimal(this.character) || (this.character == '.' && this.isDecimal(this.peek()))) {
-			this.literal = this.scanNumber();
+			this.scanNumber(result);
 		} else {
 			int character = this.character;
 			this.next();
 			switch (character) {
 				case EOF:
-					this.token = Token.EOF;
+					result.token = Token.EOF;
 					/*
 					 * if s.preprocessorLevel > 0 {
 					 * s.error(s.offset, "preprocessor not terminated, expecting #end")
@@ -85,50 +87,50 @@ public class Scanner {
 					break;
 
 				case '\'':
-					this.token = Token.CHAR;
-					this.literal = this.scanChar();
+					result.token = Token.CHAR;
+					result.literal = this.scanChar();
 					break;
 
 				case '"':
-					this.token = Token.STRING;
-					this.literal = this.scanString();
+					result.token = Token.STRING;
+					result.literal = this.scanString();
 					break;
 
 				case '`':
-					this.token = Token.STRING;
-					this.literal = this.scanRawString();
+					result.token = Token.STRING;
+					result.literal = this.scanRawString();
 					break;
 
 				case '/':
 					if (this.character == '/' || this.character == '*') {
 						this.scanComment();
-						this.scan();
-						break;
+						return this.scan();
 					}
-					this.literal = this.scanOperators();
+					this.scanOperators(result);
 					break;
 
 				case '@':
-					this.token = Token.META;
-					this.literal = "@";
+					result.token = Token.META;
+					result.literal = "@";
 					break;
 
 				case ';':
-					this.token = Token.Semi;
-					this.literal = ";";
+					result.token = Token.Semi;
+					result.literal = ";";
 					break;
 
 				// case '#':
 				// return s.scanPreprossesor()
 
 				default:
-					this.literal = this.scanOperators();
-					if (this.token == Token.ILLEGAL) {
+					this.scanOperators(result);
+					if (result.token == Token.ILLEGAL) {
 						throw new RuntimeException(
 								String.format("invalid token:\n%s", this.file.getPosition(this.offset).string()));
 					}
 			}
 		}
+		return result;
 	}
 
 	void next() throws Exception {
@@ -197,9 +199,9 @@ public class Scanner {
 		return new String(this.source, start, this.offset - start, StandardCharsets.UTF_8);
 	}
 
-	String scanNumber() throws Exception {
+	void scanNumber(Result result) throws Exception {
 		int start = this.offset;
-		this.token = Token.INT;
+		result.token = Token.INT;
 		if (this.character != '.') {
 			if (this.character == '0') {
 				this.next();
@@ -217,23 +219,24 @@ public class Scanner {
 							break;
 						default:
 							if (this.isDecimal(this.character)) {
-								this.token = Token.ILLEGAL;
+								result.token = Token.ILLEGAL;
 								throw new RuntimeException(String.format("invalid integer:\n%s",
 										this.file.getPosition(this.offset).string()));
 							} else {
-								return "0";
+								result.literal = "0";
+								return;
 							}
 					}
-					if (this.token != Token.ILLEGAL) {
+					if (result.token != Token.ILLEGAL) {
 						this.next();
 						this.scanDigits(base);
 						if (this.offset - start <= 2) {
-							this.token = Token.ILLEGAL;
+							result.token = Token.ILLEGAL;
 							throw new RuntimeException(
 									String.format("invalid number:\n%s", this.file.getPosition(this.offset).string()));
 						}
 						if (this.character == '.') {
-							this.token = Token.ILLEGAL;
+							result.token = Token.ILLEGAL;
 							throw new RuntimeException(String.format("invalid radix point:\n%s",
 									this.file.getPosition(this.offset).string()));
 						}
@@ -245,16 +248,16 @@ public class Scanner {
 		}
 		if (this.character == '.') {
 			int offset = this.offset;
-			this.token = Token.FLOAT;
+			result.token = Token.FLOAT;
 			this.next();
 			this.scanDigits(10);
 			if (offset == this.offset - 1) {
-				this.token = Token.ILLEGAL;
+				result.token = Token.ILLEGAL;
 				throw new RuntimeException(String.format("float has no digits after '.':\n%s",
 						this.file.getPosition(this.offset).string()));
 			}
 		}
-		return new String(this.source, start, this.offset - start);
+		result.literal = new String(this.source, start, this.offset - start);
 	}
 
 	void scanDigits(int base) throws Exception {
@@ -396,7 +399,7 @@ public class Scanner {
 		}
 	}
 
-	String scanOperators() throws Exception {
+	void scanOperators(Result result) throws Exception {
 		int start = this.offset - 1;
 		byte[] data = Arrays.copyOfRange(this.source, start, start + 3); // 3 is max length of operator
 		OperatorNode.Operator operator = OperatorNode.readOperator(data);
@@ -404,10 +407,9 @@ public class Scanner {
 			for (int i = 1; i < operator.length; i++) {
 				this.next();
 			}
-			this.token = operator.token;
-			return new String(this.source, start, this.offset - start);
+			result.token = operator.token;
+			result.literal = new String(this.source, start, this.offset - start);
 		}
-		return "";
 	}
 
 	int digitValue(int character) {

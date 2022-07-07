@@ -10,7 +10,7 @@ public class ExpressionParser {
 	}
 
 	static Expression parseOperand(Context context) throws Exception {
-		switch (context.scanner.token) {
+		switch (context.token) {
 			case IDENT:
 				return context.parseIdentifier();
 
@@ -29,7 +29,7 @@ public class ExpressionParser {
 			case Pointer:
 			case LeftBracket:
 				Conversion conversion = new Conversion();
-				conversion.setOffset(context.scanner.position);
+				conversion.setOffset(context.position);
 				conversion.setType(TypeParser.parseType(context));
 				context.expect(Token.LeftParen);
 				conversion.value = parseExpression(context);
@@ -44,33 +44,33 @@ public class ExpressionParser {
 			case NULL:
 			case Void:
 				Literal literal = new Literal();
-				literal.setOffset(context.scanner.position);
-				literal.token = context.scanner.token;
-				literal.value = context.scanner.literal;
-				context.scanner.scan();
+				literal.setOffset(context.position);
+				literal.token = context.token;
+				literal.value = context.literal;
+				context.next();
 				return literal;
 
 			case LeftParen:
 				Parentheses parentheses = new Parentheses();
-				parentheses.setOffset(context.scanner.position);
-				context.scanner.scan();
+				parentheses.setOffset(context.position);
+				context.next();
 				parentheses.expression = parseExpression(context);
 				context.expect(Token.RightParen);
 				return parentheses;
 
 			case LeftBrace:
 				Initializer initializer = new Initializer();
-				initializer.setOffset(context.scanner.position);
-				context.scanner.scan();
+				initializer.setOffset(context.position);
+				context.next();
 				while (true) {
 					initializer.expressions.add(parseExpression(context));
-					if (context.scanner.token == Token.Comma) {
-						context.scanner.scan();
-					} else if (context.scanner.token == Token.RightBrace) {
-						context.scanner.scan();
+					if (context.token == Token.Comma) {
+						context.next();
+					} else if (context.token == Token.RightBrace) {
+						context.next();
 						break;
 					} else {
-						context.addError(context.scanner.position, "unexpected " + context.scanner.token.toString());
+						context.addError(context.position, "unexpected " + context.token.toString());
 						return null;
 					}
 				}
@@ -78,12 +78,12 @@ public class ExpressionParser {
 
 			case This:
 				This thisExpr = new This();
-				thisExpr.setOffset(context.scanner.position);
-				context.scanner.scan();
+				thisExpr.setOffset(context.position);
+				context.next();
 				return thisExpr;
 
 			default:
-				context.addError(context.scanner.position, "unexpected " + context.scanner.token.toString());
+				context.addError(context.position, "unexpected " + context.token.toString());
 				return null;
 		}
 	}
@@ -91,11 +91,11 @@ public class ExpressionParser {
 	static Expression parsePrimaryExpression(Context context) throws Exception {
 		Expression x = parseOperand(context);
 		while (true) {
-			switch (context.scanner.token) {
+			switch (context.token) {
 				case Dot:
 					MemberAccess memberAccess = new MemberAccess();
-					memberAccess.setOffset(context.scanner.position);
-					context.scanner.scan();
+					memberAccess.setOffset(context.position);
+					context.next();
 					memberAccess.parent = x;
 					memberAccess.member = context.parseIdentifier();
 					x = memberAccess;
@@ -103,10 +103,10 @@ public class ExpressionParser {
 
 				case LeftBracket:
 					Subscripting subscripting = new Subscripting();
-					subscripting.setOffset(context.scanner.position);
+					subscripting.setOffset(context.position);
 					subscripting.parent = x;
-					while (context.scanner.token == Token.LeftBracket) {
-						context.scanner.scan();
+					while (context.token == Token.LeftBracket) {
+						context.next();
 						subscripting.indexes.add(parseExpression(context));
 						context.expect(Token.RightBracket);
 					}
@@ -115,7 +115,7 @@ public class ExpressionParser {
 
 				case LeftParen:
 					Invocation invocation = new Invocation();
-					invocation.setOffset(context.scanner.position);
+					invocation.setOffset(context.position);
 					invocation.function = x;
 					invocation.arguments = TypeParser.parseArguments(context);
 					x = invocation;
@@ -123,16 +123,16 @@ public class ExpressionParser {
 
 				case PlusPlus:
 					Increment increment = new Increment();
-					increment.setOffset(context.scanner.position);
+					increment.setOffset(context.position);
 					increment.expression = x;
-					context.scanner.scan();
+					context.next();
 					return increment;
 
 				case MinusMinus:
 					Decrement decrement = new Decrement();
-					decrement.setOffset(context.scanner.position);
+					decrement.setOffset(context.position);
 					decrement.expression = x;
-					context.scanner.scan();
+					context.next();
 					return decrement;
 
 				default:
@@ -142,7 +142,7 @@ public class ExpressionParser {
 	}
 
 	static Expression parseUnaryExpression(Context context) throws Exception {
-		switch (context.scanner.token) {
+		switch (context.token) {
 			case Plus:
 			case Minus:
 			case Not:
@@ -150,9 +150,9 @@ public class ExpressionParser {
 			case BitAnd:
 			case Mul:
 				Unary unary = new Unary();
-				unary.setOffset(context.scanner.position);
-				unary.operator = context.scanner.token;
-				context.scanner.scan();
+				unary.setOffset(context.position);
+				unary.operator = context.token;
+				context.next();
 				unary.expression = parseUnaryExpression(context);
 				return unary;
 
@@ -164,15 +164,15 @@ public class ExpressionParser {
 	static Expression parseBinaryExpression(Context context, int precedence) throws Exception {
 		Expression x = parseUnaryExpression(context);
 		while (true) {
-			if (context.scanner.token == Token.Semi) {
+			if (context.token == Token.Semi) {
 				return x;
 			}
-			Token operator = context.scanner.token;
+			Token operator = context.token;
 			int operatorPrecedenc = operator.precedence();
 			if (operatorPrecedenc <= precedence) {
 				return x;
 			}
-			context.scanner.scan();
+			context.next();
 			Expression y = parseBinaryExpression(context, operatorPrecedenc);
 			Binary binary = new Binary();
 			binary.left = x;

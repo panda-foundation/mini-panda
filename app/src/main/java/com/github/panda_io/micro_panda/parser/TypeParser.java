@@ -11,36 +11,36 @@ import com.github.panda_io.micro_panda.scanner.Token;
 public class TypeParser {
 
 	static Type parseType(Context context) throws Exception {
-		if (context.scanner.token.isScalar()) {
-			Type type = new TypeBuiltin(context.scanner.token);
-			type.setOffset(context.scanner.position);
-			context.scanner.scan();
+		if (context.token.isScalar()) {
+			Type type = new TypeBuiltin(context.token);
+			type.setOffset(context.position);
+			context.next();
 			return type;
 		}
-		if (context.scanner.token == Token.Function) {
-			context.scanner.scan();
+		if (context.token == Token.Function) {
+			context.next();
 			return parseFunctionType(context);
 		}
-		if (context.scanner.token == Token.LeftBracket) {
+		if (context.token == Token.LeftBracket) {
 			return parseTypeArray(context);
 		}
-		if (context.scanner.token == Token.Pointer) {
-			context.scanner.scan();
+		if (context.token == Token.Pointer) {
+			context.next();
 			return parseTypePointer(context);
 		}
 		return parseTypeName(context);
 	}
 
 	static TypeArray parseTypeArray(Context context) throws Exception {
-		int offset = context.scanner.position;
-		context.scanner.scan();
+		int offset = context.position;
+		context.next();
 		int count = 0;
-		if (context.scanner.token == Token.INT) {
-			count = Integer.parseInt(context.scanner.literal);
+		if (context.token == Token.INT) {
+			count = Integer.parseInt(context.literal);
 			if (count < 1) {
-				context.addError(context.scanner.position, "array count must > 0");
+				context.addError(context.position, "array count must > 0");
 			}
-			context.scanner.scan();
+			context.next();
 		}
 		context.expect(Token.RightBracket);
 		TypeArray array = new TypeArray();
@@ -54,7 +54,7 @@ public class TypeParser {
 
 	static TypeName parseTypeName(Context context) throws Exception {
 		TypeName name = new TypeName();
-		name.setOffset(context.scanner.position);
+		name.setOffset(context.position);
 		String qualified = context.parseQualified();
 		if (qualified.contains(".")) {
 			name.qualified = qualified;
@@ -68,8 +68,8 @@ public class TypeParser {
 
 	static TypePointer parseTypePointer(Context context) throws Exception {
 		TypePointer pointer = new TypePointer();
-		if (context.scanner.token == Token.Less) {
-			context.scanner.scan();
+		if (context.token == Token.Less) {
+			context.next();
 			pointer.elementType = parseType(context);
 			context.expect(Token.Greater);
 		} else {
@@ -81,13 +81,13 @@ public class TypeParser {
 	static List<Parameter> parseParameters(Context context) throws Exception {
 		List<Parameter> parameters = new ArrayList<>();
 		context.expect(Token.LeftParen);
-		if (context.scanner.token == Token.RightParen) {
-			context.scanner.scan();
+		if (context.token == Token.RightParen) {
+			context.next();
 			return parameters;
 		}
 		parameters.add(parseParameter(context));
-		while (context.scanner.token == Token.Comma) {
-			context.scanner.scan();
+		while (context.token == Token.Comma) {
+			context.next();
 			parameters.add(parseParameter(context));
 		}
 		context.expect(Token.RightParen);
@@ -96,7 +96,7 @@ public class TypeParser {
 
 	static Parameter parseParameter(Context context) throws Exception {
 		Parameter parameter = new Parameter();
-		parameter.setOffset(context.scanner.position);
+		parameter.setOffset(context.position);
 		parameter.name = context.parseIdentifier().name;
 		parameter.type = parseType(context);
 		return parameter;
@@ -105,13 +105,13 @@ public class TypeParser {
 	static List<Expression> parseArguments(Context context) throws Exception {
 		List<Expression> expressions = new ArrayList<>();
 		context.expect(Token.LeftParen);
-		if (context.scanner.token == Token.RightParen) {
-			context.scanner.scan();
+		if (context.token == Token.RightParen) {
+			context.next();
 			return expressions;
 		}
 		expressions.add(ExpressionParser.parseExpression(context));
-		while (context.scanner.token == Token.Comma) {
-			context.scanner.scan();
+		while (context.token == Token.Comma) {
+			context.next();
 			expressions.add(ExpressionParser.parseExpression(context));
 		}
 		context.expect(Token.RightParen);
@@ -120,19 +120,19 @@ public class TypeParser {
 
 	static TypeFunction parseFunctionType(Context context) throws Exception {
 		TypeFunction function = new TypeFunction();
-		function.setOffset(context.scanner.position);
+		function.setOffset(context.position);
 		context.expect(Token.LeftParen);
-		if (context.scanner.token == Token.RightParen) {
-			context.scanner.scan();
+		if (context.token == Token.RightParen) {
+			context.next();
 			return function;
 		}
 		function.parameters.add(parseType(context));
-		while (context.scanner.token == Token.Comma) {
-			context.scanner.scan();
+		while (context.token == Token.Comma) {
+			context.next();
 			function.parameters.add(parseType(context));
 		}
 		context.expect(Token.RightParen);
-		if (context.scanner.token != Token.Semi && context.scanner.token != Token.Assign) {
+		if (context.token != Token.Semi && context.token != Token.Assign) {
 			function.returnType = parseType(context);
 		}
 		return function;

@@ -8,26 +8,26 @@ import com.github.panda_io.micro_panda.scanner.Token;
 public class StatementParser {
 
 	static Statement parseStatement(Context context) throws Exception {
-		switch (context.scanner.token) {
+		switch (context.token) {
 			case Break:
 				BreakStatement breakStmt = new BreakStatement();
-				breakStmt.setOffset(context.scanner.position);
-				context.scanner.scan();
+				breakStmt.setOffset(context.position);
+				context.next();
 				context.expect(Token.Semi);
 				return breakStmt;
 
 			case Continue:
 				ContinueStatement continueStmt = new ContinueStatement();
-				continueStmt.setOffset(context.scanner.position);
-				context.scanner.scan();
+				continueStmt.setOffset(context.position);
+				context.next();
 				context.expect(Token.Semi);
 				return continueStmt;
 
 			case Return:
 				ReturnStatement returnStmt = new ReturnStatement();
-				returnStmt.setOffset(context.scanner.position);
-				context.scanner.scan();
-				if (context.scanner.token != Token.Semi) {
+				returnStmt.setOffset(context.position);
+				context.next();
+				if (context.token != Token.Semi) {
 					returnStmt.expression = ExpressionParser.parseExpression(context);
 				}
 				context.expect(Token.Semi);
@@ -51,10 +51,10 @@ public class StatementParser {
 	}
 
 	static Statement parseSimpleStatement(Context context, boolean consumeSemi) throws Exception {
-		switch (context.scanner.token) {
+		switch (context.token) {
 			case Semi:
 				EmptyStatement empty = new EmptyStatement();
-				empty.setOffset(context.scanner.position);
+				empty.setOffset(context.position);
 				if (consumeSemi) {
 					context.expect(Token.Semi);
 				}
@@ -79,7 +79,7 @@ public class StatementParser {
 			case Not:
 			case BitXor:
 				ExpressionStatement expression = new ExpressionStatement();
-				expression.setOffset(context.scanner.position);
+				expression.setOffset(context.position);
 				expression.expression = ExpressionParser.parseExpression(context);
 				if (consumeSemi) {
 					context.expect(Token.Semi);
@@ -87,22 +87,22 @@ public class StatementParser {
 				return expression;
 
 			default:
-				context.expectedError(context.scanner.position, "statement");
+				context.expectedError(context.position, "statement");
 				return null;
 		}
 	}
 
 	static DeclarationStatement parseDeclarationStatement(Context context, boolean consumeSemi) throws Exception {
 		DeclarationStatement declaration = new DeclarationStatement();
-		declaration.setOffset(context.scanner.position);
-		context.scanner.scan();
+		declaration.setOffset(context.position);
+		context.next();
 		declaration.name = context.parseIdentifier();
-		if (context.scanner.token != Token.Assign && context.scanner.token != Token.Semi
-				&& context.scanner.token != Token.Colon) {
+		if (context.token != Token.Assign && context.token != Token.Semi
+				&& context.token != Token.Colon) {
 			declaration.type = TypeParser.parseType(context);
 		}
-		if (context.scanner.token == Token.Assign) {
-			context.scanner.scan();
+		if (context.token == Token.Assign) {
+			context.next();
 			declaration.value = ExpressionParser.parseExpression(context);
 		}
 		if (consumeSemi) {
@@ -113,25 +113,25 @@ public class StatementParser {
 
 	static BlockStatement parseBlockStatement(Context context) throws Exception {
 		BlockStatement block = new BlockStatement();
-		block.setOffset(context.scanner.position);
-		context.scanner.scan();
+		block.setOffset(context.position);
+		context.next();
 		block.statements = new ArrayList<>();
-		while (context.scanner.token != Token.RightBrace) {
+		while (context.token != Token.RightBrace) {
 			block.statements.add(parseStatement(context));
 		}
-		context.scanner.scan();
+		context.next();
 		return block;
 	}
 
 	static IfStatement parseIfStatement(Context context) throws Exception {
 		IfStatement ifStmt = new IfStatement();
-		ifStmt.setOffset(context.scanner.position);
-		context.scanner.scan();
+		ifStmt.setOffset(context.position);
+		context.next();
 		context.expect(Token.LeftParen);
 
 		Statement first = parseSimpleStatement(context, false);
-		if (context.scanner.token == Token.Semi) {
-			context.scanner.scan();
+		if (context.token == Token.Semi) {
+			context.next();
 			ifStmt.initialization = first;
 			Statement condiftion = parseSimpleStatement(context, false);
 			if (condiftion instanceof ExpressionStatement) {
@@ -146,9 +146,9 @@ public class StatementParser {
 		}
 		context.expect(Token.RightParen);
 		ifStmt.body = parseStatement(context);
-		if (context.scanner.token == Token.Else) {
-			context.scanner.scan();
-			if (context.scanner.token == Token.If) {
+		if (context.token == Token.Else) {
+			context.next();
+			if (context.token == Token.If) {
 				ifStmt.elseStatement = parseIfStatement(context);
 			} else {
 				ifStmt.elseStatement = parseStatement(context);
@@ -160,13 +160,13 @@ public class StatementParser {
 	static SwitchStatement parseSwitchStatement(Context context) throws Exception {
 		SwitchStatement switchStmt = new SwitchStatement();
 		switchStmt.cases = new ArrayList<>();
-		switchStmt.setOffset(context.scanner.position);
-		context.scanner.scan();
+		switchStmt.setOffset(context.position);
+		context.next();
 		context.expect(Token.LeftParen);
 		Statement first = parseSimpleStatement(context, false);
 		Statement operand;
-		if (context.scanner.token == Token.Semi) {
-			context.scanner.scan();
+		if (context.token == Token.Semi) {
+			context.next();
 			switchStmt.initialization = first;
 			operand = parseSimpleStatement(context, false);
 		} else {
@@ -179,10 +179,10 @@ public class StatementParser {
 		}
 		context.expect(Token.RightParen);
 		context.expect(Token.LeftBrace);
-		while (context.scanner.token == Token.Case) {
+		while (context.token == Token.Case) {
 			switchStmt.cases.add(parseCaseStatement(context));
 		}
-		if (context.scanner.token == Token.Default) {
+		if (context.token == Token.Default) {
 			switchStmt.defaultCase = parseCaseStatement(context);
 		}
 		if (switchStmt.cases.size() == 0) {
@@ -194,10 +194,10 @@ public class StatementParser {
 
 	static SwitchStatement.Case parseCaseStatement(Context context) throws Exception {
 		SwitchStatement.Case caseStmt = new SwitchStatement.Case();
-		caseStmt.setOffset(context.scanner.position);
-		caseStmt.token = context.scanner.token;
+		caseStmt.setOffset(context.position);
+		caseStmt.token = context.token;
 		if (caseStmt.token == Token.Case) {
-			context.scanner.scan();
+			context.next();
 			caseStmt.caseExpr = ExpressionParser.parseExpression(context);
 		} else {
 			context.expect(Token.Default);
@@ -212,13 +212,13 @@ public class StatementParser {
 	// for (init; condition; post) {}
 	static ForStatement parseForStatement(Context context) throws Exception {
 		ForStatement forStmt = new ForStatement();
-		forStmt.setOffset(context.scanner.position);
-		context.scanner.scan();
-		if (context.scanner.token == Token.LeftParen) {
-			context.scanner.scan();
+		forStmt.setOffset(context.position);
+		context.next();
+		if (context.token == Token.LeftParen) {
+			context.next();
 			Statement first = parseSimpleStatement(context, false);
-			if (context.scanner.token == Token.RightParen) {
-				context.scanner.scan();
+			if (context.token == Token.RightParen) {
+				context.next();
 				if (first instanceof ExpressionStatement) {
 					forStmt.condition = ((ExpressionStatement) first).expression;
 				} else {

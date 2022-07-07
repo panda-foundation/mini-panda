@@ -9,27 +9,38 @@ public class Context {
     Program program;
     Scanner scanner;
 
+    int position;
+	Token token;
+	String literal;
+
     public Context(Program program, Scanner scanner) {
         this.program = program;
         this.scanner = scanner;
     }
 
+    public void next() throws Exception {
+        Scanner.Result result = this.scanner.scan();
+        this.position = result.position;
+        this.token = result.token;
+        this.literal = result.literal;
+    }
+
     void expect(Token token) throws Exception {
-        if (this.scanner.token != token) {
-            this.expectedError(this.scanner.position, String.format("'%s'", token.toString()));
+        if (this.token != token) {
+            this.expectedError(this.position, String.format("'%s'", token.toString()));
         }
-        this.scanner.scan();
+        this.next();
     }
 
     void expectedError(int position, String expect) {
         expect = "expected " + expect;
-        if (position == this.scanner.position) {
-            if (this.scanner.token == Token.Semi && this.scanner.literal == "\n") {
+        if (position == this.position) {
+            if (this.token == Token.Semi && this.literal == "\n") {
                 expect += ", but found newline";
-            } else if (this.scanner.token.isLiteral()){
-                expect += ", but found " + this.scanner.literal;
+            } else if (this.token.isLiteral()){
+                expect += ", but found " + this.literal;
             } else {
-                expect += ", but found '" + this.scanner.token.toString() + "'";
+                expect += ", but found '" + this.token.toString() + "'";
             }
         }
         this.program.addError(position, expect);
@@ -41,10 +52,10 @@ public class Context {
 
     Identifier  parseIdentifier() throws Exception {
         Identifier identifier = new Identifier();
-        identifier.setOffset(this.scanner.position);
-        if (this.scanner.token == Token.IDENT) {
-            identifier.name = this.scanner.literal;
-            this.scanner.scan();
+        identifier.setOffset(this.position);
+        if (this.token == Token.IDENT) {
+            identifier.name = this.literal;
+            this.next();
         } else {
             this.expect(Token.IDENT);
         }
@@ -53,8 +64,8 @@ public class Context {
 
 	String parseQualified() throws Exception {
 		String qualified = this.parseIdentifier().name;
-		while(this.scanner.token == Token.Dot) {
-			this.scanner.scan();
+		while(this.token == Token.Dot) {
+			this.next();
 			qualified += "." + this.parseIdentifier().name;
 		}
 		return qualified;

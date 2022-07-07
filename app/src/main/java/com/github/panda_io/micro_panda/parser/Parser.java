@@ -92,7 +92,7 @@ public class Parser {
 
     void loadSource(File file, byte[] source) throws Exception {
         this.scanner.loadSource(file, source);
-        this.scanner.scan();
+        this.context.next();
     }
 
     void unloadSource() {

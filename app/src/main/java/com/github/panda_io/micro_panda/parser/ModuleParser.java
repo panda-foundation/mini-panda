@@ -18,10 +18,10 @@ public class ModuleParser {
 		module.namespace = parseNamespace(context);
 		module.imports = parseImports(context);
 
-		while (context.scanner.token != Token.EOF) {
+		while (context.token != Token.EOF) {
 			List<Declaration.Attribute> attributes = DeclarationParser.parseAttributes(context);
 			boolean isPublic = DeclarationParser.parseModifier(context);
-			switch (context.scanner.token) {
+			switch (context.token) {
 				case Const:
 				case Var:
 					Variable variable = DeclarationParser.parseVariable(context, isPublic, attributes);
@@ -48,7 +48,7 @@ public class ModuleParser {
 					context.program.addDeclaration(struct);
 
 				default:
-					context.expectedError(context.scanner.position, "declaration");
+					context.expectedError(context.position, "declaration");
 			}
 		}
 		return module;
@@ -56,8 +56,8 @@ public class ModuleParser {
 
 	static String parseNamespace(Context context) throws Exception {
 		context.expect(Token.Namespace);
-		if (context.scanner.token == Token.Semi) {
-			context.scanner.scan();
+		if (context.token == Token.Semi) {
+			context.next();
 			return Constant.global;
 		}
 		String namespace = context.parseQualified();
@@ -67,7 +67,7 @@ public class ModuleParser {
 
 	static List<Import> parseImports(Context context) throws Exception {
 		List<Import> imports = new ArrayList<>();
-		while (context.scanner.token == Token.Import) {
+		while (context.token == Token.Import) {
 			context.expect(Token.Import);
 			Import imp = new Import();
 			imp.namespace = context.parseQualified();
