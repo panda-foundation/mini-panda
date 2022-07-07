@@ -12,6 +12,10 @@ public abstract class Expression extends Node {
         return this.type;
     }
 
+    public void setType(Type type) {
+        this.type = type;
+    }
+
 	public boolean isConstant() {
         return this.constant;
     }

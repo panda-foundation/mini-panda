@@ -1,176 +1,197 @@
 package com.github.panda_io.micro_panda.parser;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.github.panda_io.micro_panda.ast.declaration.*;
+import com.github.panda_io.micro_panda.ast.expression.*;
+import com.github.panda_io.micro_panda.scanner.Token;
+
 public class DeclarationParser {
- /*
- 
-func (p *Parser) parseVariable(public bool, attributes []*declaration.Attribute) *declaration.Variable {
-	v := &declaration.Variable{}
-	v.Public = public
-	v.Attributes = attributes
-	if p.token == token.Const {
-		v.Const = true
-	}
-	p.next()
-	v.Name = p.parseIdentifier()
-	v.Typ = p.parseType()
-	if p.token == token.Assign {
-		p.next()
-		v.Value = p.parseExpression()
-	}
-	if v.Const && v.Value == nil {
-		p.error(v.Name.GetPosition(), "constant declaration must be initalized")
-	}
-	p.expect(token.Semi)
-	return v
-}
 
-func (p *Parser) parseFunction(public bool, attributes []*declaration.Attribute) *declaration.Function {
-	d := &declaration.Function{
-		Typ: &ast_types.TypeFunction{},
-	}
-	d.Public = public
-	d.Attributes = attributes
-	p.next()
-	d.Name = p.parseIdentifier()
-	d.Parameters = p.parseParameters()
-	if p.token != token.Semi && p.token != token.LeftBrace {
-		d.ReturnType = p.parseType()
-	}
-	if p.token == token.LeftBrace {
-		d.Body = p.parseBlockStatement()
-	} else if p.token == token.Semi {
-		p.next()
-	}
-	return d
-}
-
-func (p *Parser) parseEnum(public bool, attributes []*declaration.Attribute) *declaration.Enum {
-	e := &declaration.Enum{}
-	e.Public = public
-	e.Attributes = attributes
-	p.next()
-	e.Name = p.parseIdentifier()
-	p.expect(token.LeftBrace)
-	for p.token != token.RightBrace {
-		v := &declaration.Variable{}
-		v.Const = true
-		v.Name = p.parseIdentifier()
-		if p.token == token.Assign {
-			p.next()
-			v.Value = p.parseExpression()
+	static Variable parseVariable(Context context, boolean isPublic, List<Declaration.Attribute> attributes)
+			throws Exception {
+		Variable variable = new Variable();
+		variable.isPublic = isPublic;
+		variable.attributes = attributes;
+		if (context.scanner.token == Token.Const) {
+			variable.constant = true;
 		}
-		err := e.AddMember(v)
-		if err != nil {
-			p.error(v.GetPosition(), err.Error())
+		context.scanner.scan();
+		variable.name = context.parseIdentifier();
+		variable.type = TypeParser.parseType(context);
+		if (context.scanner.token == Token.Assign) {
+			context.scanner.scan();
+			variable.value = ExpressionParser.parseExpression(context);
 		}
-		if p.token != token.Comma {
-			break
+		if (variable.constant && variable.value == null) {
+			context.addError(variable.name.getOffset(), "constant declaration must be initalized");
 		}
-		p.next()
+		context.expect(Token.Semi);
+		return variable;
 	}
-	p.expect(token.RightBrace)
-	return e
-}
 
-func (p *Parser) parseStruct(public bool, attributes []*declaration.Attribute) *declaration.Struct {
-	s := &declaration.Struct{}
-	s.Public = public
-	s.Attributes = attributes
-	p.next()
-	s.Name = p.parseIdentifier()
+	static Function parseFunction(Context context, boolean isPublic, List<Declaration.Attribute> attributes)
+			throws Exception {
+		Function function = new Function();
+		function.isPublic = isPublic;
+		function.attributes = attributes;
+		context.scanner.scan();
+		function.name = context.parseIdentifier();
+		function.parameters = TypeParser.parseParameters(context);
+		if (context.scanner.token != Token.Semi && context.scanner.token != Token.LeftBrace) {
+			function.returnType = TypeParser.parseType(context);
+		}
+		if (context.scanner.token == Token.LeftBrace) {
+			function.body = StatementParser.parseBlockStatement(context);
+		} else if (context.scanner.token == Token.Semi) {
+			context.scanner.scan();
+		}
+		return function;
+	}
 
-	p.expect(token.LeftBrace)
-	for p.token != token.RightBrace {
-		attr := p.parseAttributes()
-		modifier := p.parseModifier()
-		switch p.token {
-		case token.Const, token.Var:
-			v := p.parseVariable(modifier, attr)
-			err := s.AddVariable(v)
-			if err != nil {
-				p.error(v.GetPosition(), err.Error())
+	static Enumeration parseEnum(Context context, boolean isPublic, List<Declaration.Attribute> attributes)
+			throws Exception {
+		Enumeration enumeration = new Enumeration();
+		enumeration.isPublic = isPublic;
+		enumeration.attributes = attributes;
+		context.scanner.scan();
+		enumeration.name = context.parseIdentifier();
+		context.expect(Token.LeftBrace);
+		while (context.scanner.token != Token.RightBrace) {
+			Variable variable = new Variable();
+			variable.constant = true;
+			variable.name = context.parseIdentifier();
+			if (context.scanner.token == Token.Assign) {
+				context.scanner.scan();
+				variable.value = ExpressionParser.parseExpression(context);
 			}
-
-		case token.Function:
-			f := p.parseFunction(modifier, attr)
-			err := s.AddFunction(f)
-			if err != nil {
-				p.error(f.GetPosition(), err.Error())
+			boolean success = enumeration.addMember(variable);
+			if (!success) {
+				context.addError(variable.getOffset(),
+						String.format("duplicated enum member '%s'", variable.name.name));
 			}
-
-		default:
-			p.expectedError(p.position, "member declaration")
+			if (context.scanner.token != Token.Comma) {
+				break;
+			}
+			context.scanner.scan();
 		}
+		context.expect(Token.RightBrace);
+		return enumeration;
 	}
-	p.expect(token.RightBrace)
-	return s
-}
 
-func (p *Parser) parseModifier() bool {
-	if p.token == token.Public {
-		p.next()
-		return true
-	}
-	return false
-}
+	static Struct parseStruct(Context context, boolean isPublic, List<Declaration.Attribute> attributes)
+			throws Exception {
+		Struct struct = new Struct();
+		struct.isPublic = isPublic;
+		struct.attributes = attributes;
+		context.scanner.scan();
+		struct.name = context.parseIdentifier();
+		context.expect(Token.LeftBrace);
+		while (context.scanner.token != Token.RightBrace) {
+			List<Declaration.Attribute> memberAttri = parseAttributes(context);
+			boolean isPublicMember = parseModifier(context);
+			switch (context.scanner.token) {
+				case Const:
+				case Var:
+					Variable variable = parseVariable(context, isPublicMember, memberAttri);
+					boolean success = struct.addVariable(variable);
+					if (!success) {
+						context.addError(variable.getOffset(),
+								String.format("duplicated member '%s'", variable.name.name));
+					}
+					break;
 
-func (p *Parser) parseAttributes() []*declaration.Attribute {
-	if p.token != token.META {
-		return nil
-	}
-	var attr []*declaration.Attribute
-	for p.token == token.META {
-		p.next()
-		if p.token != token.IDENT {
-			p.expect(token.IDENT)
+				case Function:
+					Function function = parseFunction(context, isPublicMember, memberAttri);
+					success = struct.addFunction(function);
+					if (!success) {
+						context.addError(function.getOffset(),
+								String.format("duplicated member '%s'", function.name.name));
+					}
+					break;
+
+				default:
+					context.expectedError(struct.getOffset(), "member declaration");
+			}
 		}
-		m := &declaration.Attribute{Position: p.position}
-		m.Name = p.literal
-		p.next()
+		context.expect(Token.RightBrace);
+		return struct;
+	}
 
-		if p.token == token.STRING {
-			m.Text = p.literal
-			p.next()
-		} else if p.token == token.LeftParen {
-			p.next()
-			if p.token == token.STRING {
-				m.Text = p.literal
-				p.next()
-			} else {
-				m.Values = make(map[string]*expression.Literal)
-				for {
-					if p.token == token.IDENT {
-						name := p.literal
-						p.next()
-						p.expect(token.Assign)
-						switch p.token {
-						case token.CHAR, token.INT, token.FLOAT, token.STRING, token.BOOL:
-							if _, ok := m.Values[name]; ok {
-								p.error(p.position, "duplicated attribute "+name)
+	static boolean parseModifier(Context context) throws Exception {
+		if (context.scanner.token == Token.Public) {
+			context.scanner.scan();
+			return true;
+		}
+		return false;
+	}
+
+	static List<Declaration.Attribute> parseAttributes(Context context) throws Exception {
+		List<Declaration.Attribute> attributes = new ArrayList<>();
+		if (context.scanner.token != Token.META) {
+			return attributes;
+		}
+		while (context.scanner.token == Token.META) {
+			context.scanner.scan();
+			if (context.scanner.token != Token.IDENT) {
+				context.expect(Token.IDENT);
+			}
+			Declaration.Attribute attribute = new Declaration.Attribute();
+			attribute.values = new HashMap<>();
+			attribute.setOffset(context.scanner.position);
+			attribute.name = context.scanner.literal;
+			context.scanner.scan();
+
+			if (context.scanner.token == Token.STRING) {
+				attribute.text = context.scanner.literal;
+				context.scanner.scan();
+			} else if (context.scanner.token == Token.LeftParen) {
+				context.scanner.scan();
+				if (context.scanner.token == Token.STRING) {
+					attribute.text = context.scanner.literal;
+					context.scanner.scan();
+				} else {
+					while (true) {
+						if (context.scanner.token != Token.IDENT) {
+							String name = context.scanner.literal;
+							context.scanner.scan();
+							context.expect(Token.Assign);
+							switch (context.scanner.token) {
+								case CHAR:
+								case INT:
+								case FLOAT:
+								case STRING:
+								case BOOL:
+									if (attribute.values.containsKey(name)) {
+										context.addError(context.scanner.position, "duplicated attribute " + name);
+									}
+									Literal literal = new Literal();
+									literal.setOffset(context.scanner.position);
+									literal.token = context.scanner.token;
+									literal.value = context.scanner.literal;
+									attribute.values.put(name, literal);
+									break;
+
+								default:
+									context.expectedError(context.scanner.position,
+											"basic literal (bool, char, int, float, string)");
 							}
-							m.Values[name] = &expression.Literal{
-								Token: p.token,
-								Value: p.literal,
+							context.scanner.scan();
+							if (context.scanner.token == Token.RightParen) {
+								break;
 							}
-							m.Values[name].SetPosition(p.position)
-						default:
-							p.expectedError(p.position, "basic literal (bool, char, int, float, string)")
+							context.expect(Token.Comma);
+						} else {
+							context.expect(Token.IDENT);
 						}
-						p.next()
-						if p.token == token.RightParen {
-							break
-						}
-						p.expect(token.Comma)
-					} else {
-						p.expect(token.IDENT)
 					}
 				}
+				context.expect(Token.RightParen);
 			}
-			p.expect(token.RightParen)
+			attributes.add(attribute);
 		}
-		attr = append(attr, m)
+		return attributes;
 	}
-	return attr
-}
-*/   
 }

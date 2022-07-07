@@ -29,12 +29,20 @@ public class Program {
         this.errors = new ArrayList<>();
     }
 
+    public void addModule(String filename, Module module) {
+        this.modules.put(filename, module);
+    }
+
     public void addDeclaration(Declaration declaration) {
         if (this.declarations.containsKey(declaration.qualified)) {
             this.addError(declaration.getOffset(), String.format("duplicated declaration with qualified name: %s", declaration.qualified));
         }
         this.declarations.put(declaration.qualified, declaration);
         this.namespace.addDeclaration(this, declaration);
+    }
+
+    public boolean hasDeclaration(String qualified) {
+        return this.declarations.containsKey(qualified);
     }
 
     public boolean isNamespace(String ns) {

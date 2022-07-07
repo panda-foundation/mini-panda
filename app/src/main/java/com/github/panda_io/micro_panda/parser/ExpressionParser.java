@@ -1,175 +1,184 @@
 package com.github.panda_io.micro_panda.parser;
 
-import com.github.panda_io.micro_panda.ast.expression.Identifier;
-import com.github.panda_io.micro_panda.ast.expression.Expression;
+import com.github.panda_io.micro_panda.ast.expression.*;
+import com.github.panda_io.micro_panda.scanner.Token;
 
 public class ExpressionParser {
 
-	static Expression parseExpression(Context context)  {
-		return null;
+	static Expression parseExpression(Context context) throws Exception {
+		return parseBinaryExpression(context, 0);
 	}
-    /*
 
-func (p *Parser) parseExpression() ast.Expression {
-	return p.parseBinaryExpression(0)
-}
+	static Expression parseOperand(Context context) throws Exception {
+		switch (context.scanner.token) {
+			case IDENT:
+				return context.parseIdentifier();
 
+			case Bool:
+			case Int8:
+			case Int16:
+			case Int32:
+			case Int64:
+			case Uint8:
+			case Uint16:
+			case Uint32:
+			case Uint64:
+			case Float16:
+			case Float32:
+			case Float64:
+			case Pointer:
+			case LeftBracket:
+				Conversion conversion = new Conversion();
+				conversion.setOffset(context.scanner.position);
+				conversion.setType(TypeParser.parseType(context));
+				context.expect(Token.LeftParen);
+				conversion.value = parseExpression(context);
+				context.expect(Token.RightParen);
+				return conversion;
 
-func (p *Parser) parseOperand() ast.Expression {
-	switch p.token {
-	case token.IDENT:
-		return p.parseIdentifier()
+			case CHAR:
+			case INT:
+			case FLOAT:
+			case STRING:
+			case BOOL:
+			case NULL:
+			case Void:
+				Literal literal = new Literal();
+				literal.setOffset(context.scanner.position);
+				literal.token = context.scanner.token;
+				literal.value = context.scanner.literal;
+				context.scanner.scan();
+				return literal;
 
-	case token.Bool, token.Int8, token.Int16, token.Int32, token.Int64,
-		token.Uint8, token.Uint16, token.Uint32, token.Uint64,
-		token.Float16, token.Float32, token.Float64, token.Pointer, token.LeftBracket:
-		e := &expression.Conversion{}
-		e.SetPosition(p.position)
-		e.Typ = p.parseType()
-		p.expect(token.LeftParen)
-		e.Value = p.parseExpression()
-		p.expect(token.RightParen)
-		return e
+			case LeftParen:
+				Parentheses parentheses = new Parentheses();
+				parentheses.setOffset(context.scanner.position);
+				context.scanner.scan();
+				parentheses.expression = parseExpression(context);
+				context.expect(Token.RightParen);
+				return parentheses;
 
-	case token.CHAR, token.INT, token.FLOAT, token.STRING, token.BOOL, token.NULL, token.Void:
-		e := &expression.Literal{}
-		e.SetPosition(p.position)
-		e.Token = p.token
-		e.Value = p.literal
-		p.next()
-		return e
+			case LeftBrace:
+				Initializer initializer = new Initializer();
+				initializer.setOffset(context.scanner.position);
+				context.scanner.scan();
+				while (true) {
+					initializer.expressions.add(parseExpression(context));
+					if (context.scanner.token == Token.Comma) {
+						context.scanner.scan();
+					} else if (context.scanner.token == Token.RightBrace) {
+						context.scanner.scan();
+						break;
+					} else {
+						context.addError(context.scanner.position, "unexpected " + context.scanner.token.toString());
+						return null;
+					}
+				}
+				return initializer;
 
-	case token.LeftParen:
-		e := &expression.Parentheses{}
-		e.SetPosition(p.position)
-		p.next()
-		e.Expression = p.parseExpression()
-		p.expect(token.RightParen)
-		return e
+			case This:
+				This thisExpr = new This();
+				thisExpr.setOffset(context.scanner.position);
+				context.scanner.scan();
+				return thisExpr;
 
-	case token.LeftBrace:
-		e := &expression.Initializer{}
-		e.SetPosition(p.position)
-		p.next()
-		for {
-			e.Expressions = append(e.Expressions, p.parseExpression())
-			if p.token == token.Comma {
-				p.next()
-			} else if p.token == token.RightBrace {
-				p.next()
-				break
-			} else {
-				p.error(p.position, "unexpected "+p.token.String())
-				return nil
+			default:
+				context.addError(context.scanner.position, "unexpected " + context.scanner.token.toString());
+				return null;
+		}
+	}
+
+	static Expression parsePrimaryExpression(Context context) throws Exception {
+		Expression x = parseOperand(context);
+		while (true) {
+			switch (context.scanner.token) {
+				case Dot:
+					MemberAccess memberAccess = new MemberAccess();
+					memberAccess.setOffset(context.scanner.position);
+					context.scanner.scan();
+					memberAccess.parent = x;
+					memberAccess.member = context.parseIdentifier();
+					x = memberAccess;
+					break;
+
+				case LeftBracket:
+					Subscripting subscripting = new Subscripting();
+					subscripting.setOffset(context.scanner.position);
+					subscripting.parent = x;
+					while (context.scanner.token == Token.LeftBracket) {
+						context.scanner.scan();
+						subscripting.indexes.add(parseExpression(context));
+						context.expect(Token.RightBracket);
+					}
+					x = subscripting;
+					break;
+
+				case LeftParen:
+					Invocation invocation = new Invocation();
+					invocation.setOffset(context.scanner.position);
+					invocation.function = x;
+					invocation.arguments = TypeParser.parseArguments(context);
+					x = invocation;
+					break;
+
+				case PlusPlus:
+					Increment increment = new Increment();
+					increment.setOffset(context.scanner.position);
+					increment.expression = x;
+					context.scanner.scan();
+					return increment;
+
+				case MinusMinus:
+					Decrement decrement = new Decrement();
+					decrement.setOffset(context.scanner.position);
+					decrement.expression = x;
+					context.scanner.scan();
+					return decrement;
+
+				default:
+					return x;
 			}
 		}
-		return e
-
-	case token.This:
-		e := &expression.This{}
-		e.SetPosition(p.position)
-		p.next()
-		return e
-
-	case token.Sizeof:
-		e := &expression.Sizeof{}
-		e.SetPosition(p.position)
-		p.next()
-		p.expect(token.LeftParen)
-		e.Target = p.parseType()
-		p.expect(token.RightParen)
-		return e
-
-	default:
-		p.error(p.position, "unexpected "+p.token.String())
-		return nil
 	}
-}
 
-func (p *Parser) parsePrimaryExpression() ast.Expression {
-	x := p.parseOperand()
-	for {
-		switch p.token {
-		case token.Dot:
-			e := &expression.MemberAccess{}
-			e.SetPosition(p.position)
-			p.next()
-			e.Parent = x
-			e.Member = p.parseIdentifier()
-			x = e
+	static Expression parseUnaryExpression(Context context) throws Exception {
+		switch (context.scanner.token) {
+			case Plus:
+			case Minus:
+			case Not:
+			case Complement:
+			case BitAnd:
+			case Mul:
+				Unary unary = new Unary();
+				unary.setOffset(context.scanner.position);
+				unary.operator = context.scanner.token;
+				context.scanner.scan();
+				unary.expression = parseUnaryExpression(context);
+				return unary;
 
-		case token.LeftBracket:
-			e := &expression.Subscripting{}
-			e.SetPosition(p.position)
-			e.Parent = x
-			for p.token == token.LeftBracket {
-				p.next()
-				e.Indexes = append(e.Indexes, p.parseExpression())
-				p.expect(token.RightBracket)
+			default:
+				return parsePrimaryExpression(context);
+		}
+	}
+
+	static Expression parseBinaryExpression(Context context, int precedence) throws Exception {
+		Expression x = parseUnaryExpression(context);
+		while (true) {
+			if (context.scanner.token == Token.Semi) {
+				return x;
 			}
-			x = e
-
-		case token.LeftParen:
-			e := &expression.Invocation{}
-			e.SetPosition(p.position)
-			e.Function = x
-			e.Arguments = p.parseArguments()
-			x = e
-
-		case token.PlusPlus:
-			e := &expression.Increment{}
-			e.SetPosition(p.position)
-			e.Expression = x
-			p.next()
-			return e
-
-		case token.MinusMinus:
-			e := &expression.Decrement{}
-			e.SetPosition(p.position)
-			e.Expression = x
-			p.next()
-			return e
-
-		default:
-			return x
+			Token operator = context.scanner.token;
+			int operatorPrecedenc = operator.precedence();
+			if (operatorPrecedenc <= precedence) {
+				return x;
+			}
+			context.scanner.scan();
+			Expression y = parseBinaryExpression(context, operatorPrecedenc);
+			Binary binary = new Binary();
+			binary.left = x;
+			binary.right = y;
+			binary.operator = operator;
+			x = binary;
 		}
 	}
-}
-
-func (p *Parser) parseUnaryExpression() ast.Expression {
-	switch p.token {
-	case token.Plus, token.Minus, token.Not, token.Complement, token.BitAnd, token.Mul:
-		e := &expression.Unary{}
-		e.SetPosition(p.position)
-		e.Operator = p.token
-		p.next()
-		e.Expression = p.parseUnaryExpression()
-		return e
-
-	default:
-		return p.parsePrimaryExpression()
-	}
-}
-
-func (p *Parser) parseBinaryExpression(precedence int) ast.Expression {
-	x := p.parseUnaryExpression()
-	for {
-		if p.token == token.Semi {
-			return x
-		}
-		op := p.token
-		opPrec := p.token.Precedence()
-		if opPrec <= precedence {
-			return x
-		}
-		p.next()
-		y := p.parseBinaryExpression(opPrec)
-		x = &expression.Binary{
-			Left:     x,
-			Operator: op,
-			Right:    y,
-		}
-	}
-}
-*/
 }

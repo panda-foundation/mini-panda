@@ -6,7 +6,7 @@ import com.github.panda_io.micro_panda.scanner.Scanner;
 import com.github.panda_io.micro_panda.scanner.Token;
 
 public class Context {
-    private Program program;
+    Program program;
     Scanner scanner;
 
     public Context(Program program, Scanner scanner) {

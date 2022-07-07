@@ -9,7 +9,7 @@ import com.github.panda_io.micro_panda.ast.Context;
 import com.github.panda_io.micro_panda.ast.Node;
 
 public abstract class Declaration extends Node {
-    public static class Attribute {
+    public static class Attribute extends Node {
         public int offset;
         public String name;
         public String text;

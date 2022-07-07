@@ -1,98 +1,79 @@
 package com.github.panda_io.micro_panda.parser;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import com.github.panda_io.micro_panda.ast.Module;
+import com.github.panda_io.micro_panda.ast.Module.Import;
+import com.github.panda_io.micro_panda.ast.declaration.*;
+import com.github.panda_io.micro_panda.ast.Constant;
+import com.github.panda_io.micro_panda.scanner.*;
+
 public class ModuleParser {
-    /*
 
-func (p *Parser) parseSourceFile(file *token.File) {
-	m := &ast.Module{
-		File: file,
-	}
-	m.Attributes = p.parseAttributes()
-	m.Namespace = p.parseNamespace()
-	m.Imports = p.parseImports()
+	static Module parseModule(Context context, File file) throws Exception {
+		Module module = new Module();
+		module.file = file;
+		module.attributes = DeclarationParser.parseAttributes(context);
+		module.namespace = parseNamespace(context);
+		module.imports = parseImports(context);
 
-	for p.token != token.EOF {
-		attr := p.parseAttributes()
-		public := p.parseModifier()
-		switch p.token {
-		case token.Const, token.Var:
-			v := p.parseVariable(public, attr)
-			v.Qualified = m.Namespace + "." + v.Name.Name
-			if p.program.Declarations[v.Qualified] != nil {
-				p.error(v.Name.GetPosition(), fmt.Sprintf("variable %s redeclared", v.Name.Name))
-			}
-			m.Variables = append(m.Variables, v)
-			err := p.program.AddDeclaration(v)
-			if err != nil {
-				p.error(v.Name.GetPosition(), err.Error())
-			}
+		while (context.scanner.token != Token.EOF) {
+			List<Declaration.Attribute> attributes = DeclarationParser.parseAttributes(context);
+			boolean isPublic = DeclarationParser.parseModifier(context);
+			switch (context.scanner.token) {
+				case Const:
+				case Var:
+					Variable variable = DeclarationParser.parseVariable(context, isPublic, attributes);
+					variable.qualified = String.format("%s.%s", module.namespace, variable.name.name);
+					module.variables.add(variable);
+					context.program.addDeclaration(variable);
 
-		case token.Function:
-			f := p.parseFunction(public, attr)
-			f.Qualified = m.Namespace + "." + f.Name.Name
-			if p.program.Declarations[f.Qualified] != nil {
-				p.error(f.Name.GetPosition(), fmt.Sprintf("function %s redeclared", f.Name.Name))
-			}
-			m.Functions = append(m.Functions, f)
-			err := p.program.AddDeclaration(f)
-			if err != nil {
-				p.error(f.Name.GetPosition(), err.Error())
-			}
+				case Function:
+					Function function = DeclarationParser.parseFunction(context, isPublic, attributes);
+					function.qualified = String.format("%s.%s", module.namespace, function.name.name);
+					module.functions.add(function);
+					context.program.addDeclaration(function);
 
-		case token.Enum:
-			e := p.parseEnum(public, attr)
-			e.Qualified = m.Namespace + "." + e.Name.Name
-			if p.program.Declarations[e.Qualified] != nil {
-				p.error(e.Name.GetPosition(), fmt.Sprintf("enum %s redeclared", e.Name.Name))
-			}
-			m.Enums = append(m.Enums, e)
-			err := p.program.AddDeclaration(e)
-			if err != nil {
-				p.error(e.Name.GetPosition(), err.Error())
-			}
+				case Enum:
+					Enumeration enumeration = DeclarationParser.parseEnum(context, isPublic, attributes);
+					enumeration.qualified = String.format("%s.%s", module.namespace, enumeration.name.name);
+					module.enumerations.add(enumeration);
+					context.program.addDeclaration(enumeration);
 
-		case token.Struct:
-			s := p.parseStruct(public, attr)
-			s.Qualified = m.Namespace + "." + s.Name.Name
-			if p.program.Declarations[s.Qualified] != nil {
-				p.error(s.Name.GetPosition(), fmt.Sprintf("class %s redeclared", s.Name.Name))
-			}
-			m.Structs = append(m.Structs, s)
-			err := p.program.AddDeclaration(s)
-			if err != nil {
-				p.error(s.Name.GetPosition(), err.Error())
-			}
+				case Struct:
+					Struct struct = DeclarationParser.parseStruct(context, isPublic, attributes);
+					struct.qualified = String.format("%s.%s", module.namespace, struct.name.name);
+					module.structs.add(struct);
+					context.program.addDeclaration(struct);
 
-		default:
-			p.expectedError(p.position, "declaration")
+				default:
+					context.expectedError(context.scanner.position, "declaration");
+			}
 		}
+		return module;
 	}
 
-	p.program.Modules[file.Name] = m
-}
-
-func (p *Parser) parseNamespace() string {
-	p.expect(token.Namespace)
-	if p.token == token.Semi {
-		p.next()
-		return core.Global
+	static String parseNamespace(Context context) throws Exception {
+		context.expect(Token.Namespace);
+		if (context.scanner.token == Token.Semi) {
+			context.scanner.scan();
+			return Constant.global;
+		}
+		String namespace = context.parseQualified();
+		context.expect(Token.Semi);
+		return namespace;
 	}
-	namespace := p.parseQualified()
-	p.expect(token.Semi)
-	return namespace
-}
 
-func (p *Parser) parseImports() []*ast.Import {
-	imports := []*ast.Import{}
-	for p.token == token.Import {
-		p.expect(token.Import)
-		u := &ast.Import{}
-		u.Namespace = p.parseQualified()
-		p.expect(token.Semi)
-		imports = append(imports, u)
+	static List<Import> parseImports(Context context) throws Exception {
+		List<Import> imports = new ArrayList<>();
+		while (context.scanner.token == Token.Import) {
+			context.expect(Token.Import);
+			Import imp = new Import();
+			imp.namespace = context.parseQualified();
+			context.expect(Token.Semi);
+			imports.add(imp);
+		}
+		return imports;
 	}
-	return imports
-}
-*/
-
 }

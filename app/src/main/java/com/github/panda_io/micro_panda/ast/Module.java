@@ -9,17 +9,17 @@ import com.github.panda_io.micro_panda.scanner.*;
 
 public class Module {
     public static class Import extends Node {
-        String namespace;
+        public String namespace;
     }
 
-    File file;
-    String namespace;
-    List<Import> imports;
-    List<Declaration.Attribute> attributes;
-    List<Variable> variables;
-    List<Function> functions;
-    List<Enumeration> enumerations;
-    List<Struct> structs;
+    public File file;
+    public String namespace;
+    public List<Import> imports;
+    public List<Declaration.Attribute> attributes;
+    public List<Variable> variables;
+    public List<Function> functions;
+    public List<Enumeration> enumerations;
+    public List<Struct> structs;
 
     public Module() {
         this.imports = new ArrayList<>();

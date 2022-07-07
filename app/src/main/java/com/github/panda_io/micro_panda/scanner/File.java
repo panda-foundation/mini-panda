@@ -25,6 +25,10 @@ public class File {
         this.lines.add(0);
     }
 
+    public String filename() {
+        return this.name;
+    }
+
     public void addLine(int offset) {
         this.lines.add(offset);
     }
