@@ -35,9 +35,9 @@ public class Parser {
             this.loadSource(file, source);
             Module module = ModuleParser.parseModule(context, file);
             this.program.addModule(path, module);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             System.out.printf("parse file \"%s\" failed:\n", path);
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         } finally {
             this.unloadSource();
         }
@@ -49,9 +49,9 @@ public class Parser {
             this.loadSource(file, source);
             Module module = ModuleParser.parseModule(context, file);
             return module;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             System.out.println("parse bytes failed:");
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         } finally {
             this.unloadSource();
         }
@@ -65,9 +65,9 @@ public class Parser {
             this.loadSource(file, bytes);
             Expression expression = ExpressionParser.parseExpression(this.context);
             return expression;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             System.out.println("parse expression failed:");
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         } finally {
             this.unloadSource();
         }
@@ -81,9 +81,9 @@ public class Parser {
             this.loadSource(file, bytes);
             Statement statement = StatementParser.parseStatement(this.context);
             return statement;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             System.out.println("parse statement failed:");
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         } finally {
             this.unloadSource();
         }
