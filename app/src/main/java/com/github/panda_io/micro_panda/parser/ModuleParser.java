@@ -48,7 +48,7 @@ public class ModuleParser {
 					context.program.addDeclaration(struct);
 
 				default:
-					context.expectedError(context.position, "declaration");
+					context.unexpected(context.position, "declaration");
 			}
 		}
 		return module;

@@ -113,7 +113,7 @@ public class DeclarationParser {
 					break;
 
 				default:
-					context.expectedError(struct.getOffset(), "member declaration");
+					context.unexpected(struct.getOffset(), "member declaration");
 			}
 		}
 		context.expect(Token.RightBrace);
@@ -175,7 +175,7 @@ public class DeclarationParser {
 									break;
 
 								default:
-									context.expectedError(context.position,
+									context.unexpected(context.position,
 											"basic literal (bool, char, int, float, string)");
 							}
 							context.next();

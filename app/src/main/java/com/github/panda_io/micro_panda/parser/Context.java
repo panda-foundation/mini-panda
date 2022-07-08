@@ -27,12 +27,12 @@ public class Context {
 
     void expect(Token token) throws Exception {
         if (this.token != token) {
-            this.expectedError(this.position, String.format("'%s'", token.toString()));
+            this.unexpected(this.position, String.format("'%s'", token.toString()));
         }
         this.next();
     }
 
-    void expectedError(int position, String expect) {
+    void unexpected(int position, String expect) {
         expect = "expected " + expect;
         if (position == this.position) {
             if (this.token == Token.Semi && this.literal == "\n") {

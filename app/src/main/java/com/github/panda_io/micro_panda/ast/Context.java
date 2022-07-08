@@ -56,7 +56,7 @@ public class Context {
         if (type instanceof TypeName) {
             Declaration declaration = this.findDeclaration(type);
             if (declaration == null) {
-                this.program.addError(type.getOffset(), "type not defined");
+                this.addError(type.getOffset(), "type not defined");
             } else {
                 if (declaration instanceof Function) {
                     return ((Function)declaration).type;
@@ -64,18 +64,18 @@ public class Context {
                 } else if (declaration instanceof Enumeration) {
                     ((TypeName)type).isEnum = true;
                 } else {
-                    this.program.addError(type.getOffset(), "type not defined");
+                    this.addError(type.getOffset(), "type not defined");
                 }
             }
         } else if (type instanceof TypeArray) {
             TypeArray array = (TypeArray)type;
             array.elementType = this.resolveType(array.elementType);
             if (array.dimensions.size() == 0 || array.dimensions.get(0) < 0) {
-                this.program.addError(type.getOffset(), "invalid array index");
+                this.addError(type.getOffset(), "invalid array index");
             }
             for (int dimension : array.dimensions) {
                 if (dimension < 1) {
-                    this.program.addError(type.getOffset(), "invalid array index");
+                    this.addError(type.getOffset(), "invalid array index");
                 }
             }
         } else if (type instanceof TypePointer) {
@@ -88,9 +88,9 @@ public class Context {
                 Type parameter = this.resolveType(function.parameters.get(i));
                 function.parameters.set(i, parameter);
                 if (parameter.isStruct()) {
-                    this.program.addError(parameter.getOffset(), "struct is not allowed as parameter, use pointer instead");
+                    this.addError(parameter.getOffset(), "struct is not allowed as parameter, use pointer instead");
                 } else if (parameter.isArray()) {
-                    this.program.addError(parameter.getOffset(), "array is not allowed as parameter, use pointer instead");
+                    this.addError(parameter.getOffset(), "array is not allowed as parameter, use pointer instead");
                 }
             }
         }

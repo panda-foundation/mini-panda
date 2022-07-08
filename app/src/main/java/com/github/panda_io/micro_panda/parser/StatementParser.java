@@ -87,7 +87,7 @@ public class StatementParser {
 				return expression;
 
 			default:
-				context.expectedError(context.position, "statement");
+				context.unexpected(context.position, "statement");
 				return null;
 		}
 	}
