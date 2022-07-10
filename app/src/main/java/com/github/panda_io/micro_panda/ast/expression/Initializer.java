@@ -13,22 +13,30 @@ public class Initializer extends Expression {
 	public List<Expression> expressions;
 
 	public void validate(Context context, Type expected) {
-		if (expected != null && expected instanceof TypeArray) {
-			TypeArray array = (TypeArray) expected;
-			this.type = array;
-			this.constant = true;
-			this.validateArray(context, array, this.expressions);
-		} else if (expected != null && expected instanceof TypeName) {
-			Declaration declaration = context.findDeclaration(expected);
-			this.type = expected;
-			this.constant = true;
-			if (declaration instanceof Struct) {
-				this.validateStruct(context, (Struct) declaration, this.expressions);
-			} else {
-				context.addError(this.getOffset(), "enum has no initializer {} expression");
-			}
+		if (expected == null) {
+			context.addError(this.getOffset(), "expect type for initializer");
 		} else {
-			context.addError(this.getOffset(), "unexpected initializer");
+			if (expected instanceof TypeArray) {
+				TypeArray array = (TypeArray) expected;
+				this.type = array;
+				this.constant = true;
+				this.validateArray(context, array, this.expressions);
+			} else if (expected instanceof TypeName) {
+				Declaration declaration = context.findDeclaration(expected);
+				if (declaration == null) {
+					context.addError(this.getOffset(), "undefined type: " + expected.string());
+				} else {
+					this.type = expected;
+					this.constant = true;
+					if (declaration instanceof Struct) {
+						this.validateStruct(context, (Struct) declaration, this.expressions);
+					} else {
+						context.addError(this.getOffset(), "enum has no initializer");
+					}
+				}
+			} else {
+				context.addError(this.getOffset(), "unexpected initializer");
+			}
 		}
 	}
 

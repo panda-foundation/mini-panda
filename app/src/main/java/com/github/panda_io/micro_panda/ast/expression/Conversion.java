@@ -10,8 +10,9 @@ public class Conversion extends Expression {
         this.type = context.resolveType(this.type);
         this.value.validate(context, this.type);
         this.constant = this.value.isConstant();
-        if (!((this.type.isNumber() && this.value.type.isNumber())
-                || (this.type.isPointer() && this.value.type.isPointer()))) {
+        boolean isNumber = this.type.isNumber() && this.value.type.isNumber();
+        boolean isPointer = this.type.isPointer() && this.value.type.isPointer();
+        if (!(isNumber || isPointer)) {
             context.addError(this.type.getOffset(), "invalid type conversion");
         }
     }

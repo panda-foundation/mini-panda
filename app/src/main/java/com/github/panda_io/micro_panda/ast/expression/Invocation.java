@@ -9,7 +9,6 @@ import com.github.panda_io.micro_panda.ast.Context;
 public class Invocation extends Expression {
 	public Expression function;
 	public List<Expression> arguments;
-
 	public TypeFunction define;
 
 	public void validate(Context context, Type expected) {

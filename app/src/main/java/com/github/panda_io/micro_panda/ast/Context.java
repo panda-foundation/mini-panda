@@ -89,7 +89,7 @@ public class Context {
                 function.parameters.set(i, parameter);
                 if (parameter.isStruct()) {
                     this.addError(parameter.getOffset(), "struct is not allowed as parameter, use pointer instead");
-                } else if (parameter.isArray()) {
+                } else if (parameter.isArrayWithSize()) {
                     this.addError(parameter.getOffset(), "array is not allowed as parameter, use pointer instead");
                 }
             }

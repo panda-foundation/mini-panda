@@ -11,6 +11,7 @@ public class Identifier extends Expression {
     public boolean isNamespace;
 
     public void validate(Context context, Type expected) {
+        //TO-DO validate expected type
         Type type = context.findObject(this.name);
         if (type == null) {
             Declaration declaration = context.findLocalDeclaration(this.name);

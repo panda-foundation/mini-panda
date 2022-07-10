@@ -56,7 +56,7 @@ public abstract class Type extends Node {
         return false;
     }
 
-    public boolean isArray() {
+    public boolean isArrayWithSize() {
         if (this instanceof TypeArray) {
             return ((TypeArray) this).dimensions.get(0) != 0;
         }
@@ -68,31 +68,24 @@ public abstract class Type extends Node {
     }
 
     public boolean isPointer() {
-        if (this instanceof TypePointer) {
-            return true;
-        } else if (this instanceof TypeArray) {
-            return ((TypeArray) this).dimensions.get(0) == 0;
-        }
-        return false;
+        return (this instanceof TypePointer) || (this instanceof TypeArray);
     }
 
     public Type elementType() {
         if (this instanceof TypePointer) {
-            return ((TypePointer)this).elementType;
+            return ((TypePointer) this).elementType;
         }
         if (this instanceof TypeArray) {
             TypeArray array = (TypeArray) this;
-            if (array.dimensions.get(0) == 0) {
-                if (array.dimensions.size() == 1) {
-                    return array.elementType;
-                } else {
-                    TypeArray type = new TypeArray();
-                    type.elementType = array.elementType;
-                    for (int i = 1; i < array.dimensions.size(); i++) {
-                        type.dimensions.add(array.dimensions.get(i));
-                    }
-                    return type;
+            if (array.dimensions.size() == 1) {
+                return array.elementType;
+            } else {
+                TypeArray type = new TypeArray();
+                type.elementType = array.elementType;
+                for (int i = 1; i < array.dimensions.size(); i++) {
+                    type.dimensions.add(array.dimensions.get(i));
                 }
+                return type;
             }
         }
         return null;

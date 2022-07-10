@@ -12,6 +12,9 @@ public class Binary extends Expression {
 	public void validate(Context context, Type expected) {
 		this.left.validate(context, expected);
 		this.right.validate(context, this.left.type);
+		if (!this.left.type.equal(this.right.type)) {
+			context.addError(this.left.getOffset(), "mismatch type for binary expression");
+		}
 
 		switch (this.operator) {
 			case LeftShift:
@@ -20,24 +23,21 @@ public class Binary extends Expression {
 			case BitOr:
 			case BitAnd:
 				this.constant = this.left.isConstant() && this.right.isConstant();
-				if (this.left.type.isInteger() && this.right.type.isInteger()) {
-					this.type = this.left.type;
-				} else if (!this.left.type.isInteger()) {
+				if (!this.left.type.isInteger()) {
 					context.addError(this.left.getOffset(), "expect integer for bit operation");
-				} else {
+				} else if (!this.right.type.isInteger()) {
 					context.addError(this.right.getOffset(), "expect integer for bit operation");
+				} else {
+					this.type = this.left.type;
 				}
 				break;
 
 			case Assign:
 				this.constant = false;
-				if (!this.left.type.equal(this.right.type)) {
-					context.addError(this.left.getOffset(), "mismatch type for binary expression");
-				}
 				if (this.left.isConstant()) {
 					context.addError(this.left.getOffset(), "expect variable");
 				}
-				if (this.left.type.isArray()) {
+				if (this.left.type.isArrayWithSize()) {
 					context.addError(this.left.getOffset(), "array type is not assignable");
 				}
 				break;
@@ -48,16 +48,11 @@ public class Binary extends Expression {
 			case PlusAssign:
 			case MinusAssign:
 				this.constant = false;
-				if (!this.left.type.equal(this.right.type)) {
-					context.addError(this.left.getOffset(), "mismatch type for binary expression");
-				}
 				if (this.left.isConstant()) {
 					context.addError(this.left.getOffset(), "expect variable");
 				}
 				if (!this.left.type.isNumber()) {
 					context.addError(this.left.getOffset(), "expect number for binary expression");
-				} else if (!this.right.type.isNumber()) {
-					context.addError(this.right.getOffset(), "expect number for binary expression");
 				}
 				break;
 
@@ -72,20 +67,14 @@ public class Binary extends Expression {
 				}
 				if (!this.left.type.isInteger()) {
 					context.addError(this.left.getOffset(), "expect integer for binary expression");
-				} else if (!this.right.type.isInteger()) {
-					context.addError(this.right.getOffset(), "expect integer for binary expression");
 				}
 				break;
 
 			case Or:
 			case And:
 				this.constant = this.left.isConstant() && this.right.isConstant();
-				if (this.left.type.isBool() && this.right.type.isBool()) {
-					this.type = this.left.type;
-				} else if (!this.left.type.isBool()) {
+				if (!this.left.type.isBool()) {
 					context.addError(this.left.getOffset(), "expect bool binary expression");
-				} else {
-					context.addError(this.right.getOffset(), "expect bool binary expression");
 				}
 				break;
 
@@ -93,12 +82,18 @@ public class Binary extends Expression {
 			case LessEqual:
 			case Greater:
 			case GreaterEqual:
+				this.constant = this.left.isConstant() && this.right.isConstant();
+				if (this.left.type.isNumber()) {
+					this.type = Type.bool;
+				} else {
+					context.addError(this.left.getOffset(), "expect number for comparison");
+				}
+				break;
+
 			case Equal:
 			case NotEqual:
 				this.constant = this.left.isConstant() && this.right.isConstant();
-				if (this.left.type.isNumber() && this.right.type.isNumber()) {
-					this.type = Type.bool;
-				} else if (this.left.type.isPointer() && this.right.type.isPointer()) {
+				if (this.left.type.isNumber() || this.left.type.isPointer()) {
 					this.type = Type.bool;
 				} else {
 					context.addError(this.left.getOffset(), "expect number or pointer for comparison");
@@ -111,10 +106,10 @@ public class Binary extends Expression {
 			case Div:
 			case Rem:
 				this.constant = this.left.isConstant() && this.right.isConstant();
-				if (this.left.type.isNumber() && this.left.type.equal(this.right.type)) {
+				if (this.left.type.isNumber()) {
 					this.type = this.left.type;
 				} else {
-					context.addError(this.left.getOffset(), "mismatch type for binary expression");
+					context.addError(this.left.getOffset(), "expect number for binary expression");
 				}
 				break;
 

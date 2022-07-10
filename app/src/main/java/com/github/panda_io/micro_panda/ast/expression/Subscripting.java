@@ -27,8 +27,7 @@ public class Subscripting extends Expression {
 			} else if (this.indexes.size() < array.dimensions.size()) {
 				TypeArray elementType = new TypeArray();
 				elementType.elementType = array.elementType;
-				elementType.dimensions.add(0);
-				for (int i = array.dimensions.size() - this.indexes.size() - 1; i > 0; i--) {
+				for (int i = array.dimensions.size() - this.indexes.size(); i > 0; i--) {
 					elementType.dimensions.add(array.dimensions.get(array.dimensions.size() - i));
 				}
 				this.type = elementType;

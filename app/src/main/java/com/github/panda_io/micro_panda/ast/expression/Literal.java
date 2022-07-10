@@ -13,7 +13,7 @@ public class Literal extends Expression {
 		this.constant = true;
 		switch (this.token) {
 		case STRING:
-			//TO-DO check & test unquote
+			//TO-DO check & test unquote // test c builder and llvm builder
 			TypeArray array = new TypeArray();
 			array.elementType = Type.u8;
 			array.dimensions.add(this.value.length() - 1);

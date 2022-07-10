@@ -35,7 +35,7 @@ public class Unary extends Expression {
                 break;
 
             case BitAnd:
-                if (this.type.isPointer() || this.type.isFunction() || this.type.isArray()) {
+                if (this.type.isPointer() || this.type.isFunction()) {
                     context.addError(this.getOffset(),
                             "pointer, function and array are not allowed to use '&' operator");
                     return;
@@ -45,7 +45,7 @@ public class Unary extends Expression {
                 this.type = pointer;
                 if (this.expression.isConstant()) {
                     context.addError(this.getOffset(),
-                            "expect variable, constant expression is not allowed to use '&' operator");
+                            "expect variable operand, constant expression is not allowed to use '&' operator");
                 }
                 break;
 
