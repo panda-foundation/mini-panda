@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.github.panda_io.micro_panda.ast.Module;
-import com.github.panda_io.micro_panda.ast.Module.Import;
+import com.github.panda_io.micro_panda.ast.Module.Using;
 import com.github.panda_io.micro_panda.ast.declaration.*;
 import com.github.panda_io.micro_panda.ast.Constant;
 import com.github.panda_io.micro_panda.scanner.*;
@@ -14,9 +14,11 @@ public class ModuleParser {
 	static Module parseModule(Context context, File file) throws Exception {
 		Module module = new Module();
 		module.file = file;
+		context.program.addModule(file.filename(), module);
+		context.program.setModule(module);
 		module.attributes = DeclarationParser.parseAttributes(context);
 		module.namespace = parseNamespace(context);
-		module.imports = parseImports(context);
+		module.usings = parseUsings(context);
 
 		while (context.token != Token.EOF) {
 			List<Declaration.Attribute> attributes = DeclarationParser.parseAttributes(context);
@@ -65,11 +67,11 @@ public class ModuleParser {
 		return namespace;
 	}
 
-	static List<Import> parseImports(Context context) throws Exception {
-		List<Import> imports = new ArrayList<>();
+	static List<Using> parseUsings(Context context) throws Exception {
+		List<Using> imports = new ArrayList<>();
 		while (context.token == Token.Import) {
 			context.expect(Token.Import);
-			Import imp = new Import();
+			Using imp = new Using();
 			imp.namespace = context.parseQualified();
 			context.expect(Token.Semi);
 			imports.add(imp);

@@ -33,6 +33,10 @@ public class Program {
         this.modules.put(filename, module);
     }
 
+    public void setModule(Module module) {
+        this.module = module;
+    }
+
     public void addDeclaration(Declaration declaration) {
         if (this.declarations.containsKey(declaration.qualified)) {
             this.addError(declaration.getOffset(), String.format("duplicated declaration with qualified name: %s", declaration.qualified));

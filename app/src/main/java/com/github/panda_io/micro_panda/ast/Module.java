@@ -8,13 +8,13 @@ import com.github.panda_io.micro_panda.ast.declaration.Enumeration;
 import com.github.panda_io.micro_panda.scanner.*;
 
 public class Module {
-    public static class Import extends Node {
+    public static class Using extends Node {
         public String namespace;
     }
 
     public File file;
     public String namespace;
-    public List<Import> imports;
+    public List<Using> usings;
     public List<Declaration.Attribute> attributes;
     public List<Variable> variables;
     public List<Function> functions;
@@ -22,7 +22,7 @@ public class Module {
     public List<Struct> structs;
 
     public Module() {
-        this.imports = new ArrayList<>();
+        this.usings = new ArrayList<>();
         this.attributes = new ArrayList<>();
         this.variables = new ArrayList<>();
         this.functions = new ArrayList<>();

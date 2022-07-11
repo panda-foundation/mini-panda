@@ -123,7 +123,7 @@ public class Context {
         if (this.program.declarations.containsKey(qualified)) {
             return this.program.declarations.get(qualified);
         }
-        for (Module.Import imported : this.program.module.imports) {
+        for (Module.Using imported : this.program.module.usings) {
             qualified = String.format("%s.%s", imported.namespace, name);
             if (this.program.declarations.containsKey(qualified)) {
                 return this.program.declarations.get(qualified);
