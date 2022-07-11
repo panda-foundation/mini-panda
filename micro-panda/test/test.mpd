@@ -1,9 +1,9 @@
 namespace test;
 
-public function test()
+public function test() int
 {
     expression();
-    statement();
-    structs();
-    functions();
+    //statement();
+    //structs();
+    //functions();
 }

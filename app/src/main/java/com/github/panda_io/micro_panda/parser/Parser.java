@@ -22,7 +22,8 @@ public class Parser {
         this.context = new Context(this.program, this.scanner);
     }
 
-    public void parseFile(String path) {
+    public boolean parseFile(String path) {
+        boolean success = true;
         try {
             java.io.File input = new java.io.File(path);
             FileInputStream fs = new FileInputStream(input);
@@ -38,9 +39,11 @@ public class Parser {
         } catch (Throwable e) {
             System.out.printf("parse file \"%s\" failed:\n", path);
             e.printStackTrace();
+            success = false;
         } finally {
             this.unloadSource();
         }
+        return success;
     }
 
     public Module parseBytes(byte[] source) {
@@ -88,6 +91,14 @@ public class Parser {
             this.unloadSource();
         }
         return null;
+    }
+
+    public boolean hasError() {
+        return this.program.hasError();
+    }
+
+    public void printErrors() {
+        this.program.printErrors();
     }
 
     void loadSource(File file, byte[] source) throws Exception {

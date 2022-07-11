@@ -3,9 +3,18 @@
  */
 package com.github.panda_io.micro_panda;
 
+import java.io.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class AppTest {
+import com.github.panda_io.micro_panda.parser.*;
 
+public class AppTest {
+    @Test
+    public void testCBuilder() {
+        Parser parser = new Parser(null);
+        boolean success = parser.parseFile("./src/test/resource/console/write.mpd");
+        assertTrue(success);
+        assertFalse(parser.hasError());      
+    }
 }

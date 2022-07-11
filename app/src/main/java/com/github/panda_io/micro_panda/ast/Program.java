@@ -59,11 +59,14 @@ public class Program {
         }
     }
 
-    public boolean printErrors() {
+    public boolean hasError() {
+        return this.errors.size() > 0;
+    }
+
+    public void printErrors() {
         for (Error error : this.errors) {
             System.out.printf("%s : %s \n", error.position.string());
         }
-        return this.errors.size() > 0;
     }
 
     public void addError(int offset, String message) {
