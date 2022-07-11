@@ -11,6 +11,8 @@ public class TypeArray extends Type {
     }
 
     public boolean equal(Type type) {
+        if (type == null)
+            return false;
         if (type instanceof TypeArray) {
             TypeArray array = (TypeArray) type;
             if (this.dimensions.size() == array.dimensions.size()) {

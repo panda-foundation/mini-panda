@@ -19,6 +19,8 @@ public class TypeFunction extends Type {
     }
 
     public boolean equal(Type type) {
+        if (type == null)
+            return false;
         if (type instanceof TypeFunction) {
             TypeFunction function = (TypeFunction) type;
             if (this.returnType != null && function.returnType != null) {

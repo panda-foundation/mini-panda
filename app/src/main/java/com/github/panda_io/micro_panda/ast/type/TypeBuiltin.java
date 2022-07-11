@@ -10,6 +10,8 @@ public class TypeBuiltin extends Type {
     }
 
     public boolean equal(Type type) {
+        if (type == null)
+            return false;
         if (type instanceof TypeBuiltin) {
             return this.token == ((TypeBuiltin) type).token;
         }

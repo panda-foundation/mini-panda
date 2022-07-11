@@ -12,6 +12,7 @@ public class ForStatement extends Statement {
 
     public void validate(Context context) {
         Context ctx = context.newContext();
+        ctx.loopLevel++;
         if (this.initialization != null) {
             this.initialization.validate(context);
         }
@@ -30,5 +31,6 @@ public class ForStatement extends Statement {
             Context bodyCtx = ctx.newContext();
             this.body.validate(bodyCtx);
         }
+        ctx.loopLevel--;
     }
 }

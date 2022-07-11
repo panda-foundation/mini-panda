@@ -12,14 +12,18 @@ public class Context {
 	Context parent;
 	Map<String, Type> objects;
 
+    public int loopLevel;
+
     public Context(Program program) {
         this.program = program;
         this.objects = new HashMap<>();
+        this.loopLevel = 0;
     }
 
     public Context newContext() {
         Context context = new Context(this.program);
         context.function = this.function;
+        context.loopLevel = this.loopLevel;
         context.parent = this;
         return context;
     }

@@ -12,11 +12,21 @@ public class Invocation extends Expression {
 	public TypeFunction define;
 
 	public void validate(Context context, Type expected) {
-		this.function.validate(context, expected);
+		this.function.validate(context, null);
 		this.constant = false;
 		Type functionType = this.function.type;
 		if (functionType instanceof TypeFunction) {
 			this.define = (TypeFunction) functionType;
+			this.type = this.define.returnType;
+			if (this.type != null) {
+				if (expected != null && !this.type.equal(expected)) {
+					context.addError(this.getOffset(), String.format("mismatch return type, expect %s got %s",
+							expected.string(), this.type.string()));
+				}
+			} else if (expected != null) {
+				context.addError(this.getOffset(),
+						String.format("mismatch return type, expect %s got null", expected.string()));
+			}
 			if (this.define.isMemberFunction) {
 				// implicit conversion
 				if (this.function instanceof MemberAccess) {
@@ -40,7 +50,7 @@ public class Invocation extends Expression {
 				context.addError(this.getOffset(), "mismatch arguments and parameters");
 			}
 		} else {
-			context.addError(this.getOffset(), "expect function type");
+			context.addError(this.getOffset(), "expect function");
 		}
 	}
 }

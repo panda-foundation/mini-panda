@@ -10,6 +10,8 @@ public class TypeName extends Type {
     }
 
     public boolean equal(Type type) {
+        if (type == null)
+            return false;
         if (type instanceof TypeName) {
             return this.qualified != null && this.qualified.equals(((TypeName) type).qualified);
         }

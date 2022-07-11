@@ -7,6 +7,8 @@ public class TypePointer extends Type {
     }
 
     public boolean equal(Type type) {
+        if (type == null)
+            return false;
         if (type instanceof TypePointer) {
             return this.elementType.equal(((TypePointer) type).elementType);
         } else if (type instanceof TypeArray) {
