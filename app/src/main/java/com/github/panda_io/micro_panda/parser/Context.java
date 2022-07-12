@@ -32,7 +32,7 @@ public class Context {
         this.next();
     }
 
-    void unexpected(int position, String expect) {
+    void unexpected(int position, String expect) throws Exception {
         expect = "expected " + expect;
         if (position == this.position) {
             if (this.token == Token.Semi && this.literal == "\n") {
@@ -43,7 +43,8 @@ public class Context {
                 expect += ", but found '" + this.token.toString() + "'";
             }
         }
-        this.program.addError(position, expect);
+        this.program.printLocation(position);
+        throw new RuntimeException(expect);
     }
 
 	void addError(int offset, String message) {

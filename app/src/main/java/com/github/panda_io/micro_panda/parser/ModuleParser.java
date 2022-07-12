@@ -30,24 +30,28 @@ public class ModuleParser {
 					variable.qualified = String.format("%s.%s", module.namespace, variable.name.name);
 					module.variables.add(variable);
 					context.program.addDeclaration(variable);
+					break;
 
 				case Function:
 					Function function = DeclarationParser.parseFunction(context, isPublic, attributes);
 					function.qualified = String.format("%s.%s", module.namespace, function.name.name);
 					module.functions.add(function);
 					context.program.addDeclaration(function);
+					break;
 
 				case Enum:
 					Enumeration enumeration = DeclarationParser.parseEnum(context, isPublic, attributes);
 					enumeration.qualified = String.format("%s.%s", module.namespace, enumeration.name.name);
 					module.enumerations.add(enumeration);
 					context.program.addDeclaration(enumeration);
+					break;
 
 				case Struct:
 					Struct struct = DeclarationParser.parseStruct(context, isPublic, attributes);
 					struct.qualified = String.format("%s.%s", module.namespace, struct.name.name);
 					module.structs.add(struct);
 					context.program.addDeclaration(struct);
+					break;
 
 				default:
 					context.unexpected(context.position, "declaration");

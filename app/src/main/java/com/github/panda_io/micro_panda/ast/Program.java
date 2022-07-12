@@ -63,6 +63,10 @@ public class Program {
         }
     }
 
+    public void addError(int offset, String message) {
+        this.errors.add(new Error(this.module.file.getPosition(offset), message));
+    }
+
     public boolean hasError() {
         return this.errors.size() > 0;
     }
@@ -73,7 +77,7 @@ public class Program {
         }
     }
 
-    public void addError(int offset, String message) {
-        this.errors.add(new Error(this.module.file.getPosition(offset), message));
+    public void printLocation(int offset) {
+        System.out.println(this.module.file.getPosition(offset).string());
     }
 }

@@ -154,7 +154,7 @@ public class DeclarationParser {
 					context.next();
 				} else {
 					while (true) {
-						if (context.token != Token.IDENT) {
+						if (context.token == Token.IDENT) {
 							String name = context.literal;
 							context.next();
 							context.expect(Token.Assign);

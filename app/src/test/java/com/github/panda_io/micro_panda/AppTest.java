@@ -3,7 +3,6 @@
  */
 package com.github.panda_io.micro_panda;
 
-import java.io.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
