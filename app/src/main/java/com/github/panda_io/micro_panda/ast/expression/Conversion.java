@@ -8,7 +8,10 @@ public class Conversion extends Expression {
 
     public void validate(Context context, Type expected) {
         this.type = context.resolveType(this.type);
-        this.value.validate(context, this.type);
+        this.value.validate(context, null);
+        if (this.value.type == null) {
+            return;
+        }
         this.constant = this.value.isConstant();
         boolean isNumber = this.type.isNumber() && this.value.type.isNumber();
         boolean isPointer = this.type.isPointer() && this.value.type.isPointer();

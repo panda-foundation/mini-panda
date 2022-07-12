@@ -13,6 +13,9 @@ public class Subscripting extends Expression {
 	public void validate(Context context, Type expected) {
 		this.constant = false;
 		this.parent.validate(context, null);
+		if (this.parent.type == null) {
+			return;
+		}
 		if (this.parent.type instanceof TypeArray) {
 			TypeArray array = (TypeArray) this.parent.type;
 			for (Expression index : this.indexes) {

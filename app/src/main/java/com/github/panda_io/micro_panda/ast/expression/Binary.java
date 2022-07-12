@@ -11,7 +11,13 @@ public class Binary extends Expression {
 
 	public void validate(Context context, Type expected) {
 		this.left.validate(context, expected);
+		if (this.left.type == null) {
+			return;
+		}
 		this.right.validate(context, this.left.type);
+		if (this.right.type == null) {
+			return;
+		}
 		if (!this.left.type.equal(this.right.type)) {
 			context.addError(this.left.getOffset(), "mismatch type for binary expression");
 		}

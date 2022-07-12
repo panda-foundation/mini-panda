@@ -85,7 +85,7 @@ public class Function extends Declaration {
 					}
 				}
 			}
-			this.body.validate(context);
+			this.body.validate(ctx);
 		}
 		// TO-DO check terminated
 		// c.Program.Error(f.Position, "missing return")

@@ -46,9 +46,7 @@ public class TypeParser {
 		TypeArray array = new TypeArray();
 		array.elementType = parseType(context);
 		array.setOffset(offset);
-		if (count > 0) {
-			array.dimensions.add(count);
-		}
+		array.dimensions.add(count);
 		return array;
 	}
 

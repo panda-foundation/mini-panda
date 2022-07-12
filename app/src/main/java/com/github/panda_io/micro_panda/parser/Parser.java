@@ -93,12 +93,8 @@ public class Parser {
         return null;
     }
 
-    public boolean hasError() {
-        return this.program.hasError();
-    }
-
-    public void printErrors() {
-        this.program.printErrors();
+    public Program getProgram() {
+        return this.program;
     }
 
     void loadSource(File file, byte[] source) throws Exception {

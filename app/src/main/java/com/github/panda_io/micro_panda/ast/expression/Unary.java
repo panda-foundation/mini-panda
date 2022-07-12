@@ -13,6 +13,9 @@ public class Unary extends Expression {
         this.expression.validate(context, expected);
         this.constant = this.expression.constant;
         this.type = this.expression.type;
+        if (this.type == null) {
+            return;
+        }
 
         switch (this.operator) {
             case Plus:

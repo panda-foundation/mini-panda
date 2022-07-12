@@ -1,5 +1,7 @@
 package com.github.panda_io.micro_panda.parser;
 
+import java.util.ArrayList;
+
 import com.github.panda_io.micro_panda.ast.expression.*;
 import com.github.panda_io.micro_panda.scanner.Token;
 
@@ -103,6 +105,7 @@ public class ExpressionParser {
 
 				case LeftBracket:
 					Subscripting subscripting = new Subscripting();
+					subscripting.indexes = new ArrayList<>();
 					subscripting.setOffset(context.position);
 					subscripting.parent = x;
 					while (context.token == Token.LeftBracket) {

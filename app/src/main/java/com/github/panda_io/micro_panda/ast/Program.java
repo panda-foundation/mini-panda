@@ -73,7 +73,7 @@ public class Program {
 
     public void printErrors() {
         for (Error error : this.errors) {
-            System.out.printf("%s : %s \n", error.position.string());
+            System.out.printf("%s : %s \n", error.position.string(), error.message);
         }
     }
 

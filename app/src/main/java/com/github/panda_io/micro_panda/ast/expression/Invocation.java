@@ -14,6 +14,9 @@ public class Invocation extends Expression {
 	public void validate(Context context, Type expected) {
 		this.function.validate(context, null);
 		this.constant = false;
+		if (this.function.type == null) {
+            return;
+        }
 		Type functionType = this.function.type;
 		if (functionType instanceof TypeFunction) {
 			this.define = (TypeFunction) functionType;

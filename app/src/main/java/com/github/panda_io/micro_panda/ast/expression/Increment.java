@@ -9,6 +9,9 @@ public class Increment extends Expression {
     public void validate(Context context, Type expected) {
         this.constant = false;
         this.expression.validate(context, expected);
+        if (this.expression.type == null) {
+            return;
+        }
         if (this.expression.isConstant()) {
             context.addError(this.expression.getOffset(), "expect variable");
         }
