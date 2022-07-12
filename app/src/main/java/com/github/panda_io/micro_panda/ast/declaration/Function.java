@@ -51,15 +51,14 @@ public class Function extends Declaration {
 
 	public void validate(Context context) {
 		if (this.body == null) {
-			if (this.parent == null) {
+			if (this.parent != null) {
 				context.addError(this.getOffset(), "function body is required for member function");
 			}
 			if (this.type.isExtern) {
 				Literal literal = this.getAttribute(Constant.attriExtern, "name");
 				if (literal != null && literal.token == Token.STRING) {
 					if (literal.token == Token.STRING) {
-						// this.type.externName = literal.value/string? TO-DO check regex name
-						// f.Typ.ExternName = n
+						this.type.externName = literal.value.substring(1, literal.value.length() - 1);
 					}
 				} else {
 					context.addError(this.getOffset(), "'name' of meta data is required for extern function");

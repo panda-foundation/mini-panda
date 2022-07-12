@@ -32,7 +32,7 @@ public class Identifier extends Expression {
         // type is null for enum (enum member has type u8)
         // type is null when identifier is namespacee (or part of namespace)
         if (this.type == null && this.qualified == null && !this.isNamespace) {
-            context.addError(this.getOffset(), String.format("undefined %s", this.name));
+            context.addError(this.getOffset(), String.format("undefined: %s", this.name));
         }
     }
 }

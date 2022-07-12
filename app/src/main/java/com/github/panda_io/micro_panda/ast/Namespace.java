@@ -18,7 +18,7 @@ public class Namespace {
     }
 
     public void addDeclaration(Program program, Declaration declaration) {
-        String[] names = declaration.qualified.split(".");
+        String[] names = declaration.qualified.split("\\.");
         Namespace namespace = this;
         for (int i = 0; i < names.length; i++) {
             String name = names[i];
@@ -38,8 +38,12 @@ public class Namespace {
                     return;
                 }
                 if (!namespace.children.containsKey(name)) {
+                    String qualified = name;
+                    if (namespace.qualified != null) {
+                        qualified = String.format("%s.%s", namespace.qualified, name);
+                    }
                     namespace.children.put(name,
-                            new Namespace(name, String.format("%s.%s", namespace.qualified, name)));
+                            new Namespace(name, qualified));
                 }
                 namespace = namespace.children.get(name);
             }
@@ -47,7 +51,7 @@ public class Namespace {
     }
 
     public boolean isNamespace(String ns) {
-        String[] names = ns.split(".");
+        String[] names = ns.split("\\.");
         Namespace namespace = this;
         for (int i = 0; i < names.length; i++) {
             String name = names[i];

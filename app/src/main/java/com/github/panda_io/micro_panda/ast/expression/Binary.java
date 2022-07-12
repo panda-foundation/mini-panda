@@ -10,7 +10,7 @@ public class Binary extends Expression {
 	public Token operator;
 
 	public void validate(Context context, Type expected) {
-		this.left.validate(context, expected);
+		this.left.validate(context, null);
 		if (this.left.type == null) {
 			return;
 		}

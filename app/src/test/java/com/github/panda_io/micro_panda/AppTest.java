@@ -19,9 +19,13 @@ public class AppTest {
         assertTrue(success);
         assertFalse(program.hasError());
 
-        //success = parser.parseFile("./src/test/resource/main.mpd");
-        //assertTrue(success);
-        //assertFalse(program.hasError());
+        success = parser.parseFile("./src/test/resource/test/expression.mpd");
+        assertTrue(success);
+        assertFalse(program.hasError());
+
+        success = parser.parseFile("./src/test/resource/main.mpd");
+        assertTrue(success);
+        assertFalse(program.hasError());
 
         program.validate();
         program.printErrors();

@@ -56,7 +56,7 @@ public class TypeParser {
 		String qualified = context.parseQualified();
 		if (qualified.contains(".")) {
 			name.qualified = qualified;
-			String[] names = qualified.split(".");
+			String[] names = qualified.split("\\.");
 			name.name = names[names.length - 1];
 		} else {
 			name.name = qualified;

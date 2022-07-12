@@ -25,7 +25,7 @@ public class Program {
     public Program() {
         this.modules = new HashMap<>();
         this.declarations = new HashMap<>();
-        this.namespace = new Namespace("", "");
+        this.namespace = new Namespace(null, null);
         this.errors = new ArrayList<>();
     }
 
