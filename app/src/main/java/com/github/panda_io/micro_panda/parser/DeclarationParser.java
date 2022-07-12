@@ -19,6 +19,7 @@ public class DeclarationParser {
 			variable.constant = true;
 		}
 		context.next();
+		variable.setOffset(context.position);
 		variable.name = context.parseIdentifier();
 		variable.type = TypeParser.parseType(context);
 		if (context.token == Token.Assign) {
@@ -38,6 +39,7 @@ public class DeclarationParser {
 		function.isPublic = isPublic;
 		function.attributes = attributes;
 		context.next();
+		function.setOffset(context.position);
 		function.name = context.parseIdentifier();
 		function.parameters = TypeParser.parseParameters(context);
 		if (context.token != Token.Semi && context.token != Token.LeftBrace) {
@@ -57,6 +59,7 @@ public class DeclarationParser {
 		enumeration.isPublic = isPublic;
 		enumeration.attributes = attributes;
 		context.next();
+		enumeration.setOffset(context.position);
 		enumeration.name = context.parseIdentifier();
 		context.expect(Token.LeftBrace);
 		while (context.token != Token.RightBrace) {
@@ -87,6 +90,7 @@ public class DeclarationParser {
 		struct.isPublic = isPublic;
 		struct.attributes = attributes;
 		context.next();
+		struct.setOffset(context.position);
 		struct.name = context.parseIdentifier();
 		context.expect(Token.LeftBrace);
 		while (context.token != Token.RightBrace) {

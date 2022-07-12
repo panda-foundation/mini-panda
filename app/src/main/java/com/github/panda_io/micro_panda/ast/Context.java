@@ -77,8 +77,8 @@ public class Context {
             if (array.dimensions.size() == 0 || array.dimensions.get(0) < 0) {
                 this.addError(type.getOffset(), "invalid array index");
             }
-            for (int dimension : array.dimensions) {
-                if (dimension < 1) {
+            for (int index = 1; index < array.dimensions.size(); index++) {
+                if (array.dimensions.get(index) < 1) {
                     this.addError(type.getOffset(), "invalid array index");
                 }
             }

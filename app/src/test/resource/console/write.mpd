@@ -1,6 +1,6 @@
 namespace console;
 
-const _max_float f64 = 1000000000;
+//const _max_float f64 = 1000000000;
 const _float_precision u8 = 6;
 
 @extern(name = "putchar")

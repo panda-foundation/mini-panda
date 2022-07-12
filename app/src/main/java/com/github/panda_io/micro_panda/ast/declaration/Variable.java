@@ -19,12 +19,12 @@ public class Variable extends Declaration {
     }
 
     public void resolveType(Context context) {
-        this.type = context.resolveType(this.value.getType());
+        this.type = context.resolveType(this.type);
     }
 
     public void validate(Context context) {
         if (this.value != null) {
-            this.value.validate(context, this.value.getType());
+            this.value.validate(context, this.type);
         }
         if (this.constant) {
             if (this.value == null) {
@@ -35,9 +35,9 @@ public class Variable extends Declaration {
         }
         if (this.value != null) {
             if (this.value.getType() == null) {
-                context.addError(this.getOffset(), "unknown type");
+                context.addError(this.value.getOffset(), "unknown type");
             } else if (!this.value.getType().equal(this.type)) {
-                context.addError(this.getOffset(), "init value type mismatch with define");
+                context.addError(this.value.getOffset(), "init value type mismatch with define");
             }
         }
     }
