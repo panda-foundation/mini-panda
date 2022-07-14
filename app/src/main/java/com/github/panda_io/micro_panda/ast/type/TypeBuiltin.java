@@ -22,6 +22,7 @@ public class TypeBuiltin extends Type {
         return this.token.toString();
     }
 
+    /*
     public int bits() {
         switch (this.token) {
             case Bool:
@@ -78,5 +79,5 @@ public class TypeBuiltin extends Type {
             default:
                 return 0;
         }
-    }
+    }*/
 }

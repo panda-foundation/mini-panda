@@ -6,7 +6,11 @@ package com.github.panda_io.micro_panda;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
 import com.github.panda_io.micro_panda.ast.Program;
+import com.github.panda_io.micro_panda.builder.c.Builder;
 import com.github.panda_io.micro_panda.parser.*;
 
 public class AppTest {
@@ -30,5 +34,21 @@ public class AppTest {
         program.validate();
         program.printErrors();
         assertFalse(program.hasError());
+
+        StringBuilder builder = Builder.build(program);
+
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter("./src/test/resource/main.c"));
+            writer.append(builder.toString());
+        } catch (Exception e) {
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (Exception e) {
+            }
+        }
     }
 }

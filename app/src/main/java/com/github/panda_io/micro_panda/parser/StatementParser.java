@@ -114,7 +114,7 @@ public class StatementParser {
 	static BlockStatement parseBlockStatement(Context context) throws Exception {
 		BlockStatement block = new BlockStatement();
 		block.setOffset(context.position);
-		context.next();
+		context.expect(Token.LeftBrace);;
 		block.statements = new ArrayList<>();
 		while (context.token != Token.RightBrace) {
 			block.statements.add(parseStatement(context));
@@ -126,32 +126,18 @@ public class StatementParser {
 	static IfStatement parseIfStatement(Context context) throws Exception {
 		IfStatement ifStmt = new IfStatement();
 		ifStmt.setOffset(context.position);
-		context.next();
+		context.expect(Token.If);
 		context.expect(Token.LeftParen);
 
-		Statement first = parseSimpleStatement(context, false);
-		if (context.token == Token.Semi) {
-			context.next();
-			ifStmt.initialization = first;
-			Statement condiftion = parseSimpleStatement(context, false);
-			if (condiftion instanceof ExpressionStatement) {
-				ifStmt.condition = ((ExpressionStatement) condiftion).expression;
-			} else {
-				context.addError(condiftion.getOffset(), "if condition must be an expression");
-			}
-		} else if (first instanceof ExpressionStatement) {
-			ifStmt.condition = ((ExpressionStatement) first).expression;
-		} else {
-			context.addError(first.getOffset(), "if condition must be an expression");
-		}
+		ifStmt.condition = ExpressionParser.parseExpression(context);
 		context.expect(Token.RightParen);
-		ifStmt.body = parseStatement(context);
+		ifStmt.body = parseBlockStatement(context);
 		if (context.token == Token.Else) {
 			context.next();
 			if (context.token == Token.If) {
 				ifStmt.elseStatement = parseIfStatement(context);
 			} else {
-				ifStmt.elseStatement = parseStatement(context);
+				ifStmt.elseStatement = parseBlockStatement(context);
 			}
 		}
 		return ifStmt;
@@ -163,20 +149,7 @@ public class StatementParser {
 		switchStmt.setOffset(context.position);
 		context.next();
 		context.expect(Token.LeftParen);
-		Statement first = parseSimpleStatement(context, false);
-		Statement operand;
-		if (context.token == Token.Semi) {
-			context.next();
-			switchStmt.initialization = first;
-			operand = parseSimpleStatement(context, false);
-		} else {
-			operand = first;
-		}
-		if (operand instanceof ExpressionStatement) {
-			switchStmt.operand = ((ExpressionStatement) operand).expression;
-		} else {
-			context.addError(operand.getOffset(), "expect expression");
-		}
+		switchStmt.operand = ExpressionParser.parseExpression(context);
 		context.expect(Token.RightParen);
 		context.expect(Token.LeftBrace);
 		while (context.token == Token.Case) {
@@ -224,8 +197,6 @@ public class StatementParser {
 				} else {
 					context.addError(first.getOffset(), "expect expression");
 				}
-				forStmt.body = parseStatement(context);
-				return forStmt;
 			} else {
 				context.expect(Token.Semi);
 				forStmt.initialization = first;
@@ -238,12 +209,9 @@ public class StatementParser {
 				context.expect(Token.Semi);
 				forStmt.post = parseSimpleStatement(context, false);
 				context.expect(Token.RightParen);
-				forStmt.body = parseStatement(context);
-				return forStmt;
 			}
-		} else {
-			forStmt.body = parseStatement(context);
-			return forStmt;
 		}
+		forStmt.body = parseBlockStatement(context);
+		return forStmt;
 	}
 }

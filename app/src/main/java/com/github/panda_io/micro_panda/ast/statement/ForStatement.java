@@ -8,13 +8,16 @@ public class ForStatement extends Statement {
     public Statement initialization;
     public Expression condition;
     public Statement post;
-    public Statement body;
+    public BlockStatement body;
 
     public void validate(Context context) {
         Context ctx = context.newContext();
         ctx.loopLevel++;
         if (this.initialization != null) {
             this.initialization.validate(context);
+            if (!this.initialization.isSimpleStatement()) {
+                context.addError(this.initialization.getOffset(), "invalid init statement, expect simple statment");
+            }
         }
         if (this.condition != null) {
             Context conditionCtx = ctx.newContext();

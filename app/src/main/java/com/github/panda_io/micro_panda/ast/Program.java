@@ -5,6 +5,10 @@ import java.util.*;
 import com.github.panda_io.micro_panda.ast.declaration.Declaration;
 import com.github.panda_io.micro_panda.scanner.Position;
 
+//TO-DO Ternary Operator
+//TO-DO int myNumbers[] = {25, 50, 75, 100};
+//TO-DO copy(assign) struct
+
 public class Program {
     static class Error {
         Position position;
@@ -17,10 +21,10 @@ public class Program {
     }
 
     Map<String, Module> modules;
-	Module  module;
-	Map<String, Declaration> declarations; // by qualified name
-	Namespace  namespace;
-	List<Error> errors;
+    Module module;
+    Map<String, Declaration> declarations; // by qualified name
+    Namespace namespace;
+    List<Error> errors;
 
     public Program() {
         this.modules = new HashMap<>();
@@ -37,9 +41,14 @@ public class Program {
         this.module = module;
     }
 
+    public Collection<Module> getModules() {
+        return this.modules.values();
+    }
+
     public void addDeclaration(Declaration declaration) {
         if (this.declarations.containsKey(declaration.qualified)) {
-            this.addError(declaration.getOffset(), String.format("duplicated declaration with qualified name: %s", declaration.qualified));
+            this.addError(declaration.getOffset(),
+                    String.format("duplicated declaration with qualified name: %s", declaration.qualified));
         }
         this.declarations.put(declaration.qualified, declaration);
         this.namespace.addDeclaration(this, declaration);
@@ -54,8 +63,11 @@ public class Program {
     }
 
     public void validate() {
+        //TO-DO check public modifer (member access)
+        //TO-DO check const (assign)
         for (Module module : this.modules.values()) {
-            // TO-DO check if import is valid // must be valid, cannot import self, cannot duplicated
+            // TO-DO check if import is valid // must be valid, cannot import self, cannot
+            // duplicated
             module.resolveType(this);
         }
         for (Module module : this.modules.values()) {

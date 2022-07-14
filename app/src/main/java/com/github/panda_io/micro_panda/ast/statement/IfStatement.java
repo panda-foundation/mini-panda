@@ -5,21 +5,16 @@ import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.ast.expression.Expression;
 
 public class IfStatement extends Statement {
-    public Statement initialization;
     public Expression condition;
-    public Statement body;
+    public BlockStatement body;
     public Statement elseStatement;
 
     public void validate(Context context) {
         Context ctx = context.newContext();
-        if (this.initialization != null) {
-            this.initialization.validate(context);
-        }
         if (this.condition == null) {
             context.addError(this.getOffset(), "expect condition expression");
         } else {
-            Context conditionCtx = ctx.newContext();
-            this.condition.validate(conditionCtx, Type.bool);
+            this.condition.validate(ctx, Type.bool);
             if (this.condition.getType() != null && !this.condition.getType().equal(Type.bool)) {
                 context.addError(this.condition.getOffset(), "expect bool type condition");
             }

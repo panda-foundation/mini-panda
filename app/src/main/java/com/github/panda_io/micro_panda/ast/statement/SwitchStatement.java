@@ -29,16 +29,12 @@ public class SwitchStatement extends Statement {
 		}
 	}
 
-	public Statement initialization;
 	public Expression operand;
 	public List<Case> cases;
 	public Case defaultCase;
 
 	public void validate(Context context) {
 		Context ctx = context.newContext();
-		if (this.initialization != null) {
-			this.initialization.validate(context);
-		}
 		Type operandType;
 		if (this.operand == null) {
 			context.addError(this.getOffset(), "expect switch operand");

@@ -17,6 +17,8 @@ public class DeclarationParser {
 		variable.attributes = attributes;
 		if (context.token == Token.Const) {
 			variable.constant = true;
+		} else {
+			variable.constant = false;
 		}
 		context.next();
 		variable.setOffset(context.position);

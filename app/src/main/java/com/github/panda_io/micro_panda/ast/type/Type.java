@@ -1,7 +1,5 @@
 package com.github.panda_io.micro_panda.ast.type;
 
-import java.util.ArrayList;
-
 import com.github.panda_io.micro_panda.ast.Node;
 import com.github.panda_io.micro_panda.scanner.Token;
 
