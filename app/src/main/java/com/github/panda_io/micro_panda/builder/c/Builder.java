@@ -41,7 +41,7 @@ public class Builder {
             for (Function function : module.functions) {
                 if (!function.type.isExtern) {
                     DeclarationBuiler.writeFunction(builder, function);
-                    builder.append("\n\n");
+                    builder.append("\n");
                 }
             }
         }

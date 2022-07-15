@@ -40,6 +40,7 @@ public class MemberAccess extends Expression {
 						if (enumeration.hasMember(this.member.name)) {
 							this.type = Type.u8;
 							this.constant = true;
+							this.qualified = String.format("%s.%s", identifier.qualified, this.member.name);
 						}
 					}
 					//TO-DO varialbe of struct //get its member
@@ -65,6 +66,7 @@ public class MemberAccess extends Expression {
 						if (enumeration.hasMember(this.member.name)) {
 							this.type = Type.u8;
 							this.constant = true;
+							this.qualified = String.format("%s.%s", memberAccess.qualified, this.member.name);
 						}
 					}
 				}

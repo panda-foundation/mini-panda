@@ -88,5 +88,12 @@ public class Function extends Declaration {
 		}
 		// TO-DO check terminated
 		// c.Program.Error(f.Position, "missing return")
+		if (this.qualified.equals(Constant.programEntry)) {
+			if (this.parameters.size() > 0) {
+				context.addError(this.parameters.get(0).getOffset(),
+								"program entry has no parameters");
+			}
+			//TO-DO check return type, should be null or void
+		}
 	}
 }

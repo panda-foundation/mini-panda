@@ -2,5 +2,5 @@ namespace test;
 
 public function expression()
 {
-    console.write_string("============ test expression ============");
+    console.write_string("============ test expression ============\n");
 }

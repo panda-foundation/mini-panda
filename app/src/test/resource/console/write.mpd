@@ -1,7 +1,7 @@
 namespace console;
 
 //const _max_float f64 = 1000000000;
-const _float_precision u8 = 6;
+//const _float_precision u8 = 6;
 
 @extern(name = "putchar")
 function putchar(char i32) i32;
@@ -79,7 +79,7 @@ public function write_u64(value u64)
     var index i8 = 0;
     for (value != 0)
     {
-        var digit u8 = u8(value / 10);
+        var digit u8 = u8(value / 10); //TO-DO check () and conversion
         buffer[index] = '0' + digit;
         index++;
         value = value / 10;

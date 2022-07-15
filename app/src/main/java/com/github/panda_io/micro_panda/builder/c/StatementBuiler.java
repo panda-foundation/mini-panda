@@ -1,6 +1,7 @@
 package com.github.panda_io.micro_panda.builder.c;
 
 import com.github.panda_io.micro_panda.ast.statement.*;
+import com.github.panda_io.micro_panda.ast.type.TypeArray;
 
 public class StatementBuiler {
 
@@ -97,6 +98,10 @@ public class StatementBuiler {
             DeclarationStatement declaration = (DeclarationStatement)statement;
             TypeBuiler.writeType(builder, declaration.type);
             builder.append(String.format(" %s", declaration.name.name));
+            if (declaration.type instanceof TypeArray) {
+                //TO-DO support initializer
+                TypeBuiler.writeArrayIndex(builder, (TypeArray)declaration.type);
+            }
             if (declaration.value == null) {
                 if (!declaration.type.isArrayWithSize() && !declaration.type.isStruct()) {
                     builder.append(" = 0");

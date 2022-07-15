@@ -56,12 +56,16 @@ public class TypeBuiler {
                     builder.append(")");
                 }
             }
-            if (array.dimensions.get(0) > 0) {
-                builder.append(String.format("[%d]", array.dimensions.get(0)));
-            }
-            for (int i = 1; i < array.dimensions.size(); i++) {
-                builder.append(String.format("[%d]", array.dimensions.get(i)));
-            }
+            //TO-DO check return pointer of multi dimension array
+        }
+    }
+
+    static void writeArrayIndex(StringBuilder builder, TypeArray array) {
+        if (array.dimensions.get(0) > 0) {
+            builder.append(String.format("[%d]", array.dimensions.get(0)));
+        }
+        for (int i = 1; i < array.dimensions.size(); i++) {
+            builder.append(String.format("[%d]", array.dimensions.get(i)));
         }
     }
 }

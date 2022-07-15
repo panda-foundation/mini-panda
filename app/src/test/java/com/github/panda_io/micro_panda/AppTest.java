@@ -19,7 +19,9 @@ public class AppTest {
         Parser parser = new Parser(null);
         Program program = parser.getProgram();
 
-        boolean success = parser.parseFile("./src/test/resource/console/write.mpd");
+        boolean success = true;
+
+        success = parser.parseFile("./src/test/resource/console/write.mpd");
         assertTrue(success);
         assertFalse(program.hasError());
 

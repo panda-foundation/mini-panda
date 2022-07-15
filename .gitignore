@@ -7,3 +7,5 @@ build
 app/bin
 
 *.class
+app/src/test/resource/a.out
+app/src/test/resource/main

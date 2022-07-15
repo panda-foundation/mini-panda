@@ -1,5 +1,6 @@
 package com.github.panda_io.micro_panda.builder.c;
 
+import com.github.panda_io.micro_panda.ast.Constant;
 import com.github.panda_io.micro_panda.ast.declaration.Function;
 import com.github.panda_io.micro_panda.ast.declaration.Struct;
 import com.github.panda_io.micro_panda.ast.declaration.Function.Parameter;
@@ -8,7 +9,11 @@ public class DeclarationBuiler {
     
     static void writeFunctionDefine(StringBuilder builder, Function function) {
         TypeBuiler.writeType(builder, function.returnType);
-        builder.append(String.format(" %s(", function.qualified.replaceAll("\\.", "_")));
+        if (function.qualified.equals(Constant.programEntry)) {
+            builder.append(" main(");
+        } else {
+            builder.append(String.format(" %s(", function.qualified.replaceAll("\\.", "_")));
+        }
         for (int i = 0; i < function.parameters.size(); i++) {
             Parameter parameter = function.parameters.get(i);
             if (i > 0) {

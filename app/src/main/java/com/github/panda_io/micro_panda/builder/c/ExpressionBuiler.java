@@ -28,19 +28,23 @@ public class ExpressionBuiler {
                 builder.append(((Identifier) expression).name);
             }
         } else if (expression instanceof Increment) {
-            writeExpression(builder, ((Decrement) expression).expression);
+            writeExpression(builder, ((Increment) expression).expression);
             builder.append("++");
         } else if (expression instanceof Initializer) {
             // TO-DO
         } else if (expression instanceof Invocation) {
             Invocation invocation = (Invocation) expression;
-            writeExpression(builder, invocation.function);
+            if (invocation.define.isExtern) {
+                builder.append(invocation.define.externName);
+            } else {
+                writeExpression(builder, invocation.function);
+            }
             builder.append("(");
             for (int i = 0; i < invocation.arguments.size(); i++) {
                 if (i != 0) {
                     builder.append(", ");
-                    writeExpression(builder, invocation.arguments.get(i));
                 }
+                writeExpression(builder, invocation.arguments.get(i));
             }
             builder.append(")");
         } else if (expression instanceof Literal) {
@@ -58,7 +62,12 @@ public class ExpressionBuiler {
                     builder.append(literal.value);
             }
         } else if (expression instanceof MemberAccess) {
-            // TO-DO
+            MemberAccess memberAccess = (MemberAccess) expression;
+            if (memberAccess.parent.getType() == null) {
+                builder.append(memberAccess.qualified.replaceAll("\\.", "_"));
+            } else {
+                //TO-DO struct or pointer of struct
+            }
         } else if (expression instanceof Parentheses) {
             builder.append("(");
             writeExpression(builder, ((Parentheses) expression).expression);
