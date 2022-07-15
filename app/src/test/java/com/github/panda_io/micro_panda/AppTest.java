@@ -25,6 +25,10 @@ public class AppTest {
         assertTrue(success);
         assertFalse(program.hasError());
 
+        success = parser.parseFile("./src/test/resource/assert.mpd");
+        assertTrue(success);
+        assertFalse(program.hasError());
+
         success = parser.parseFile("./src/test/resource/test/expression.mpd");
         assertTrue(success);
         assertFalse(program.hasError());
@@ -44,6 +48,7 @@ public class AppTest {
             writer = new BufferedWriter(new FileWriter("./src/test/resource/main.c"));
             writer.append(builder.toString());
         } catch (Exception e) {
+            System.out.println(e.getMessage());
         } finally {
             try {
                 if (writer != null) {

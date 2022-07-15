@@ -4,6 +4,10 @@ void main();
 
 void test_expression();
 
+void test_test_unary();
+
+void global_assert(uint8_t expression, uint8_t* message);
+
 void console_write_bool(uint8_t value);
 
 void console_write_i8(int8_t value);
@@ -30,6 +34,21 @@ void main(){
 
 void test_expression(){
     console_write_string("============ test expression ============\n");
+    test_test_unary();
+}
+
+void test_test_unary(){
+    int32_t v1 = +1;
+    global_assert(v1 == 1, "unary, v1 equal 1");
+}
+
+void global_assert(uint8_t expression, uint8_t* message){
+    if (!expression)
+    {
+        console_write_string("assert failed:\n");
+        console_write_string(message);
+        console_write_u8('\n');
+    }
 }
 
 void console_write_bool(uint8_t value){

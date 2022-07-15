@@ -8,6 +8,7 @@ import com.github.panda_io.micro_panda.scanner.Position;
 //TO-DO Ternary Operator
 //TO-DO int myNumbers[] = {25, 50, 75, 100};
 //TO-DO copy(assign) struct
+//TO-DO compile global offset when debug == true
 
 public class Program {
     static class Error {

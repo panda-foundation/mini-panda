@@ -1,1 +1,11 @@
 namespace;
+
+public function assert(expression bool, message []u8)
+{
+    if (!expression)
+    {
+        console.write_string("assert failed:\n");
+        console.write_string(message);
+        console.write_u8('\n');
+    }
+}
