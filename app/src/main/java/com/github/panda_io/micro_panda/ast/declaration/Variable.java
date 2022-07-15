@@ -39,6 +39,9 @@ public class Variable extends Declaration {
             } else if (!this.value.getType().equal(this.type)) {
                 context.addError(this.value.getOffset(), "init value type mismatch with define");
             }
+            if (!this.value.isConstant()) {
+                context.addError(this.value.getOffset(), "expect const expression");
+            }
         }
     }
 }

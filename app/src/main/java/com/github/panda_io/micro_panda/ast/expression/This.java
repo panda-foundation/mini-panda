@@ -5,6 +5,11 @@ import com.github.panda_io.micro_panda.ast.Constant;
 import com.github.panda_io.micro_panda.ast.type.Type;
 
 public class This extends Expression {
+        
+	public boolean isLvalue() {
+		return false;
+	}
+
     public void validate(Context context, Type expected) {
         this.constant = false;
         this.type = context.findObject(Constant.structThis);

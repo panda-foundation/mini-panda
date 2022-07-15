@@ -20,5 +20,7 @@ public abstract class Expression extends Node {
         return this.constant;
     }
 
+    public abstract boolean isLvalue();
+
 	public abstract void validate(Context context, Type expected);
 }

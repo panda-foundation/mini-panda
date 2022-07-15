@@ -5,6 +5,10 @@ import com.github.panda_io.micro_panda.ast.Context;
 
 public class Parentheses extends Expression {
     public Expression expression;
+    
+	public boolean isLvalue() {
+		return this.expression.isLvalue();
+	}
 
     public void validate(Context context, Type expected) {
         this.expression.validate(context, expected);

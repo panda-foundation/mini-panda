@@ -9,16 +9,19 @@ public function expression()
 
 public function test_unary()
 {
-    assert(true, "constant true\n");
-    assert(!false, "constant false\n");
+    assert(true, "constant true should equal true\n");
+    assert(!false, "constant !false should equal true\n");
     var v1 i32 = +1;
-    assert(v1 == 1, "unary (+), v1 should equal 1\n");
+    assert(v1 == 1, "unary (+), +1 should equal 1\n");
     var v2 i32 = -v1;
-    assert(v2 == -1, "unary (-), v2 should equal -1\n");
+    assert(v2 == -1, "unary (-), -1 should equal -1\n");
     var v3 u32 = ~1;
-    assert(v3 == 4294967294, "unary (~), v3 should equal 4294967294\n");
+    assert(v3 == 4294967294, "unary (~), u32 ~1 should equal 4294967294\n");
     var v4 i32 = ~1;
-    assert(v4 == -2, "unary (~), v4 should equal -2\n");
+    assert(v4 == -2, "unary (~), i32 ~1 should equal -2\n");
     var v5 bool = false;
-    assert(!v5, "unary (!), v5 should equal false\n");
+    assert(!v5, "unary (!), !false should equal true\n");
+    var v6 pointer<i32> = &v1;
+    var v7 i32 = *v6;
+    assert(v7 == 1, "unary (*), *variable should equal 1\n");
 }

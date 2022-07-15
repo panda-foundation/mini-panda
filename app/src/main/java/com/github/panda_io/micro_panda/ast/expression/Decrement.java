@@ -5,6 +5,10 @@ import com.github.panda_io.micro_panda.ast.Context;
 
 public class Decrement extends Expression {
     public Expression expression;
+    
+	public boolean isLvalue() {
+		return false;
+	}
 
     public void validate(Context context, Type expected) {
         this.constant = false;

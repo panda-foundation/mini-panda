@@ -38,18 +38,21 @@ void test_expression(){
 }
 
 void test_test_unary(){
-    global_assert(1, "constant true\n");
-    global_assert(!0, "constant false\n");
+    global_assert(1, "constant true should equal true\n");
+    global_assert(!0, "constant !false should equal true\n");
     int32_t v1 = +1;
-    global_assert(v1 == 1, "unary (+), v1 should equal 1\n");
+    global_assert(v1 == 1, "unary (+), +1 should equal 1\n");
     int32_t v2 = -v1;
-    global_assert(v2 == -1, "unary (-), v2 should equal -1\n");
+    global_assert(v2 == -1, "unary (-), -1 should equal -1\n");
     uint32_t v3 = ~1;
-    global_assert(v3 == 4294967294, "unary (~), v3 should equal 4294967294\n");
+    global_assert(v3 == 4294967294, "unary (~), u32 ~1 should equal 4294967294\n");
     int32_t v4 = ~1;
-    global_assert(v4 == -2, "unary (~), v4 should equal -2\n");
+    global_assert(v4 == -2, "unary (~), i32 ~1 should equal -2\n");
     uint8_t v5 = 0;
-    global_assert(!v5, "unary (!), v5 should equal false\n");
+    global_assert(!v5, "unary (!), !false should equal true\n");
+    int32_t* v6 = &v1;
+    int32_t v7 = *v6;
+    global_assert(v7 == 1, "unary (*), *variable should equal 1\n");
 }
 
 void global_assert(uint8_t expression, uint8_t* message){

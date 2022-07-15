@@ -5,6 +5,10 @@ import com.github.panda_io.micro_panda.ast.Context;
 
 public class Conversion extends Expression {
     public Expression value;
+    
+	public boolean isLvalue() {
+		return false;
+	}
 
     public void validate(Context context, Type expected) {
         this.type = context.resolveType(this.type);
@@ -18,5 +22,6 @@ public class Conversion extends Expression {
         if (!(isNumber || isPointer)) {
             context.addError(this.type.getOffset(), "invalid type conversion");
         }
+        //TO-DO check raw pointer conversion
     }
 }

@@ -9,6 +9,10 @@ import com.github.panda_io.micro_panda.ast.Context;
 public class Subscripting extends Expression {
 	public Expression parent;
 	public List<Expression> indexes;
+    
+	public boolean isLvalue() {
+		return true;
+	}
 
 	public void validate(Context context, Type expected) {
 		this.constant = false;

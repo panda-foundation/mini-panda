@@ -24,7 +24,6 @@ public class ModuleParser {
 			List<Declaration.Attribute> attributes = DeclarationParser.parseAttributes(context);
 			boolean isPublic = DeclarationParser.parseModifier(context);
 			switch (context.token) {
-				case Const:
 				case Var:
 					Variable variable = DeclarationParser.parseVariable(context, isPublic, attributes);
 					variable.qualified = String.format("%s.%s", module.namespace, variable.name.name);
@@ -73,8 +72,8 @@ public class ModuleParser {
 
 	static List<Using> parseUsings(Context context) throws Exception {
 		List<Using> imports = new ArrayList<>();
-		while (context.token == Token.Import) {
-			context.expect(Token.Import);
+		while (context.token == Token.Using) {
+			context.expect(Token.Using);
 			Using imp = new Using();
 			imp.namespace = context.parseQualified();
 			context.expect(Token.Semi);

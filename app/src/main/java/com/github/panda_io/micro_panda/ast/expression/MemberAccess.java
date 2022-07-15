@@ -10,6 +10,11 @@ public class MemberAccess extends Expression {
 	public Identifier member;
 	public String qualified;
 	public boolean isNamespace;
+    boolean lvalue;
+    
+	public boolean isLvalue() {
+        return this.lvalue;        
+	}
 
 	/*
 	 * parent expression could be: identifier$, member_access$, parentheses,
@@ -29,6 +34,7 @@ public class MemberAccess extends Expression {
 						this.type = declaration.getType();
 						this.constant = declaration.isConstant();
 						this.qualified = declaration.qualified;
+						this.lvalue = true;
 					} else if (context.isNamespace(qualified)) {
 						this.isNamespace = true;
 						this.qualified = qualified;
@@ -55,6 +61,7 @@ public class MemberAccess extends Expression {
 						this.type = declaration.getType();
 						this.constant = declaration.isConstant();
 						this.qualified = declaration.qualified;
+						this.lvalue = true;
 					} else if (context.isNamespace(qualified)) {
 						this.isNamespace = true;
 						this.qualified = qualified;
@@ -82,6 +89,7 @@ public class MemberAccess extends Expression {
 					Struct struct = (Struct) declaration;
 					this.type = struct.memberType(this.member.name);
 					this.constant = false;
+					this.lvalue = true;
 				}
 			}
 		}

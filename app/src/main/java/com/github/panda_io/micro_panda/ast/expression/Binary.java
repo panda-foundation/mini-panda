@@ -9,6 +9,10 @@ public class Binary extends Expression {
 	public Expression right;
 	public Token operator;
 
+	public boolean isLvalue() {
+		return false;
+	}
+
 	public void validate(Context context, Type expected) {
 		this.left.validate(context, null);
 		if (this.left.type == null) {
@@ -40,7 +44,7 @@ public class Binary extends Expression {
 
 			case Assign:
 				this.constant = false;
-				if (this.left.isConstant()) {
+				if (!this.left.isLvalue()) {
 					context.addError(this.left.getOffset(), "expect variable");
 				}
 				if (this.left.type.isArrayWithSize()) {
@@ -54,7 +58,7 @@ public class Binary extends Expression {
 			case PlusAssign:
 			case MinusAssign:
 				this.constant = false;
-				if (this.left.isConstant()) {
+				if (!this.left.isLvalue()) {
 					context.addError(this.left.getOffset(), "expect variable");
 				}
 				if (!this.left.type.isNumber()) {
@@ -68,7 +72,7 @@ public class Binary extends Expression {
 			case OrAssign:
 			case XorAssign:
 				this.constant = false;
-				if (this.left.isConstant()) {
+				if (!this.left.isLvalue()) {
 					context.addError(this.left.getOffset(), "expect variable");
 				}
 				if (!this.left.type.isInteger()) {

@@ -8,6 +8,10 @@ import com.github.panda_io.micro_panda.scanner.Token;
 public class Literal extends Expression {
 	public Token token;
 	public String value;
+	    
+	public boolean isLvalue() {
+		return false;
+	}
 	
     public void validate(Context context, Type expected) {
 		this.constant = true;

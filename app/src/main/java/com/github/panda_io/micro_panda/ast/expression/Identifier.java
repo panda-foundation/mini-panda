@@ -4,11 +4,17 @@ import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.ast.Context;
 import com.github.panda_io.micro_panda.ast.declaration.Declaration;
 import com.github.panda_io.micro_panda.ast.declaration.Struct;
+import com.github.panda_io.micro_panda.ast.declaration.Variable;
 
 public class Identifier extends Expression {
     public String name;
     public String qualified;
-    public boolean isNamespace; // part of namespace
+    boolean isNamespace; // part of namespace
+    boolean lvalue;
+    
+	public boolean isLvalue() {
+        return this.lvalue;        
+	}
 
     public void validate(Context context, Type expected) {
         Type type = context.findObject(this.name);
@@ -20,10 +26,14 @@ public class Identifier extends Expression {
                 this.constant = declaration.isConstant();
                 this.type = declaration.getType();
                 this.qualified = declaration.qualified;
+                if (declaration instanceof Variable) {
+                    this.lvalue = true;
+                }
             }
         } else {
             this.constant = false;
             this.type = type;
+            this.lvalue = true;
             if (expected != null && !this.type.equal(expected)) {
                 context.addError(this.getOffset(),
                         String.format("mismatch type, expect %s, got %s", expected.string(), this.type.string()));

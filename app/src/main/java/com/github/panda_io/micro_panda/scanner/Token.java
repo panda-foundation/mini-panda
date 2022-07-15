@@ -17,7 +17,6 @@ public enum Token {
 
     Break("break"),
     Case("case"),
-    Const("const"),
     Continue("continue"),
     Default("default"),
     Else("else"),
@@ -25,7 +24,6 @@ public enum Token {
     For("for"),
     Function("function"),
     If("if"),
-    Import("import"),
     Namespace("namespace"),
     Pointer("pointer"),
     Public("public"),
@@ -33,6 +31,7 @@ public enum Token {
     Struct("struct"),
     Switch("switch"),
     This("this"),
+    Using("using"),
     Var("var"),
 
     Bool("bool"),

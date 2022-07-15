@@ -9,10 +9,86 @@ public class Unary extends Expression {
     public Token operator;
     public Expression expression;
 
+    public boolean isLvalue() {
+        return false;
+    }
+
     public void validate(Context context, Type expected) {
-        this.expression.validate(context, expected);
+        switch (this.operator) {
+            case Plus:
+            case Minus:
+            case Not:
+            case Complement:
+                this.expression.validate(context, expected);
+                this.type = this.expression.type;
+                break;
+
+            case BitAnd:
+                if (expected == null) {
+                    this.expression.validate(context, null);
+                    if (this.expression.type == null) {
+                        return;
+                    }
+                    if (this.expression.type.isPointer() || this.expression.type.isFunction()) {
+                        context.addError(this.getOffset(),
+                                "pointer, function and array are not allowed to use '&' operator");
+                        return;
+                    }
+                    TypePointer pointer = new TypePointer();
+                    pointer.elementType = this.expression.type;
+                    this.type = pointer;
+                } else {
+                    if (expected.isPointer()) {
+                        this.expression.validate(context, expected.elementType());
+                        this.type = expected;
+                    } else {
+                        context.addError(this.getOffset(),
+                                String.format("type mismatch, expect '%s' got pointer", expected.string()));
+                        return;
+                    }
+                }
+                if (!this.expression.isLvalue()) {
+                    context.addError(this.getOffset(),
+                            "expect variable operand, rvalues is not allowed to use '&' operator");
+                    return;
+                }
+                break;
+
+            case Mul:
+                if (expected == null) {
+                    this.expression.validate(context, null);
+                    if (this.expression.type == null) {
+                        return;
+                    }
+                    if (this.expression.type.isPointer()) {
+                        this.type = this.expression.type.elementType();
+                    } else {
+                        context.addError(this.getOffset(), "only pointer type is allowed to use '*' operator");
+                    }
+                } else {
+                    if (!expected.isPointer()) {
+                        TypePointer pointer = new TypePointer();
+                        pointer.elementType = expected;
+                        this.expression.validate(context, pointer);
+                        this.type = expected;
+                    } else {
+                        context.addError(this.getOffset(), "type mismatch, expect non-pointer type");
+                        return;
+                    }
+                }
+                if (!this.expression.isLvalue()) {
+                    context.addError(this.getOffset(),
+                            "expect variable operand, rvalues is not allowed to use '*' operator");
+                    return;
+                }
+                break;
+
+            default:
+                context.addError(this.getOffset(), "invalid operator for unary expression");
+                return;
+        }
+
         this.constant = this.expression.constant;
-        this.type = this.expression.type;
         if (this.type == null) {
             return;
         }
@@ -37,31 +113,7 @@ public class Unary extends Expression {
                 }
                 break;
 
-            case BitAnd:
-                if (this.type.isPointer() || this.type.isFunction()) {
-                    context.addError(this.getOffset(),
-                            "pointer, function and array are not allowed to use '&' operator");
-                    return;
-                }
-                TypePointer pointer = new TypePointer();
-                pointer.elementType = this.type;
-                this.type = pointer;
-                if (this.expression.isConstant()) {
-                    context.addError(this.getOffset(),
-                            "expect variable operand, constant expression is not allowed to use '&' operator");
-                }
-                break;
-
-            case Mul:
-                if (this.type.isPointer()) {
-                    this.type = ((TypePointer) this.type).elementType();
-                } else {
-                    context.addError(this.getOffset(), "only pointer type is allowed to use '*' operator");
-                }
-                break;
-
             default:
-                context.addError(this.getOffset(), "invalid operator for unary expression");
         }
     }
 }

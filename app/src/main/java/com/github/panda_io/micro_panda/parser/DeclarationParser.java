@@ -15,11 +15,7 @@ public class DeclarationParser {
 		Variable variable = new Variable();
 		variable.isPublic = isPublic;
 		variable.attributes = attributes;
-		if (context.token == Token.Const) {
-			variable.constant = true;
-		} else {
-			variable.constant = false;
-		}
+		variable.constant = false;
 		context.next();
 		variable.setOffset(context.position);
 		variable.name = context.parseIdentifier();
@@ -99,7 +95,6 @@ public class DeclarationParser {
 			List<Declaration.Attribute> memberAttri = parseAttributes(context);
 			boolean isPublicMember = parseModifier(context);
 			switch (context.token) {
-				case Const:
 				case Var:
 					Variable variable = parseVariable(context, isPublicMember, memberAttri);
 					boolean success = struct.addVariable(variable);

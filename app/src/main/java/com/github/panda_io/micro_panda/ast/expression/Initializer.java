@@ -11,7 +11,11 @@ import com.github.panda_io.micro_panda.ast.Context;
 
 public class Initializer extends Expression {
 	public List<Expression> expressions;
-
+    
+	public boolean isLvalue() {
+		return false;
+	}
+	
 	public void validate(Context context, Type expected) {
 		if (expected == null) {
 			context.addError(this.getOffset(), "expect type for initializer");

@@ -10,7 +10,11 @@ public class Invocation extends Expression {
 	public Expression function;
 	public List<Expression> arguments;
 	public TypeFunction define;
-
+    
+	public boolean isLvalue() {
+		return false;
+	}
+	
 	public void validate(Context context, Type expected) {
 		this.function.validate(context, null);
 		this.constant = false;
