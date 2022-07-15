@@ -96,11 +96,6 @@ public class Scanner {
 					result.literal = this.scanString();
 					break;
 
-				case '`':
-					result.token = Token.STRING;
-					result.literal = this.scanRawString();
-					break;
-
 				case '/':
 					if (this.character == '/' || this.character == '*') {
 						this.scanComment();
@@ -302,22 +297,6 @@ public class Scanner {
 		}
 		this.next();
 		return new String(this.source, start, this.offset - start);
-	}
-
-	String scanRawString() throws Exception {
-		int start = this.offset - 1;
-		while (true) {
-			int character = this.character;
-			if (character < 0) {
-				throw new RuntimeException(String.format("raw string literal not terminated:\n%s",
-						this.file.getPosition(this.offset).string()));
-			}
-			this.next();
-			if (character == '`') {
-				break;
-			}
-		}
-		return new String(this.source, start, this.offset - start, StandardCharsets.UTF_8);
 	}
 
 	void scanEscape(int quote) throws Exception {
