@@ -35,7 +35,7 @@ public class Context {
     void unexpected(int position, String expect) throws Exception {
         expect = "expected " + expect;
         if (position == this.position) {
-            if (this.token == Token.Semi && this.literal == "\n") {
+            if (this.token == Token.Semi && this.literal.equals("\n")) {
                 expect += ", but found newline";
             } else if (this.token.isLiteral()){
                 expect += ", but found " + this.literal;

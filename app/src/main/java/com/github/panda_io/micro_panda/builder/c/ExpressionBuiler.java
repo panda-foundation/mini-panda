@@ -51,7 +51,7 @@ public class ExpressionBuiler {
             Literal literal = (Literal) expression;
             switch (literal.token) {
                 case BOOL:
-                    builder.append(literal.value == "true" ? "1" : "0");
+                    builder.append(literal.value.equals("true") ? "1" : "0");
                     break;
 
                 case NULL:
