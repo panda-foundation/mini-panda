@@ -171,6 +171,7 @@ public class ExpressionParser {
 				return x;
 			}
 			Token operator = context.token;
+			int offset = context.position;
 			int operatorPrecedenc = operator.precedence();
 			if (operatorPrecedenc <= precedence) {
 				return x;
@@ -178,6 +179,7 @@ public class ExpressionParser {
 			context.next();
 			Expression y = parseBinaryExpression(context, operatorPrecedenc);
 			Binary binary = new Binary();
+			binary.setOffset(offset);
 			binary.left = x;
 			binary.right = y;
 			binary.operator = operator;

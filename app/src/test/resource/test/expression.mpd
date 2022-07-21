@@ -5,6 +5,17 @@ public function expression()
     console.write_string("============ test expression ============\n");
 
     test_unary();
+    test_binary();
+    //test_conversion();
+    test_increment();
+    test_decrement();
+    //test_identifier();
+    //test_initializer();
+    //test_literal();
+    //test_member_access();
+    //test_parentheses();
+    //test_subscripting();
+    //test_this();
 }
 
 public function test_unary()
@@ -24,4 +35,82 @@ public function test_unary()
     var v6 pointer<i32> = &v1;
     var v7 i32 = *v6;
     assert(v7 == 1, "unary (*), *variable should equal 1\n");
+}
+
+public function test_increment()
+{
+    var v i32 = 0;
+    v++;
+    assert(v == 1, "increment 1++ should equal 2\n");
+}
+
+public function test_decrement()
+{
+    var v i32 = 0;
+    v--;
+    assert(v == -1, "increment 1++ should equal 2\n");
+}
+
+
+public function test_binary()
+{
+    var v i32;
+    v = 5;
+    assert(v == 5, "assign v to 5\n");
+    v += 5;
+    assert(v == 10, "v plus assign 5 should equal 10\n");
+    v -= 2;
+    assert(v == 8, "v minus assign 2 should equal 8\n");
+    v *= 2;
+    assert(v == 16, "v multi assign 2 should equal 16\n");
+    v /= 4;
+    assert(v == 4, "v divide assign 4 should equal 4\n");
+    v %= 3;
+    assert(v == 1, "v rem assign 4 should equal 1\n");
+    
+    v <<= 2;
+    assert(v == 4, "v left shift assign 2 should equal 4\n");
+    v >>= 1;
+    assert(v == 2, "v right shift assign 1 should equal 2\n");
+    v |= 1;
+    assert(v == 3, "v or assign 1 should equal 3\n");
+    v ^= 8;
+    assert(v == 11, "v xor assign 8 should equal 11\n");
+    v &= 6;
+    assert(v == 2, "v and assign 6 should equal 2\n");
+
+    assert((11 | 6) == 15, "11 | 6 should equal 15\n");
+    assert((11 ^ 6) == 13, "11 ^ 6 should equal 13\n");
+    assert((11 & 6) == 2, "11 & 6 should equal 2\n");
+/*
+	// equal
+    libc.printf("x: %d \n", (10 == 10));
+    // not_equal
+    libc.printf("x: %d \n", (10 != 10));
+    // less
+    libc.printf("x: %d \n", (10 < 10));
+    // less_equal
+    libc.printf("x: %d \n", (10 <= 10));
+    // greater
+    libc.printf("x: %d \n", (10 > 10));
+    // greater_equal
+    libc.printf("x: %d \n", (10 >= 10));
+	// left_shift
+    libc.printf("x: %d \n", (10 << 3));
+	// right_shift
+    libc.printf("x: %d \n", (10 >> 1));
+	// plus
+    libc.printf("x: %d \n", (5 + 3));
+	// minus
+    libc.printf("x: %d \n", (5 - 3));
+	// mul
+    libc.printf("x: %d \n", (5 * 3));
+	// div
+    libc.printf("x: %d \n", (5 / 3));
+	// rem
+    libc.printf("x: %d \n", (5 % 3));
+    // or
+    libc.printf("bool: %d \n", (true || false));
+    // and
+    libc.printf("bool: %d \n", (true && false));*/
 }

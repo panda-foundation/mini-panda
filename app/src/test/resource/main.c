@@ -6,6 +6,12 @@ void test_expression();
 
 void test_test_unary();
 
+void test_test_increment();
+
+void test_test_decrement();
+
+void test_test_binary();
+
 void global_assert(uint8_t expression, uint8_t* message);
 
 void console_write_bool(uint8_t value);
@@ -35,6 +41,9 @@ void main(){
 void test_expression(){
     console_write_string("============ test expression ============\n");
     test_test_unary();
+    test_test_binary();
+    test_test_increment();
+    test_test_decrement();
 }
 
 void test_test_unary(){
@@ -53,6 +62,47 @@ void test_test_unary(){
     int32_t* v6 = &v1;
     int32_t v7 = *v6;
     global_assert(v7 == 1, "unary (*), *variable should equal 1\n");
+}
+
+void test_test_increment(){
+    int32_t v = 0;
+    v++;
+    global_assert(v == 1, "increment 1++ should equal 2\n");
+}
+
+void test_test_decrement(){
+    int32_t v = 0;
+    v--;
+    global_assert(v == -1, "increment 1++ should equal 2\n");
+}
+
+void test_test_binary(){
+    int32_t v = 0;
+    v = 5;
+    global_assert(v == 5, "assign v to 5\n");
+    v += 5;
+    global_assert(v == 10, "v plus assign 5 should equal 10\n");
+    v -= 2;
+    global_assert(v == 8, "v minus assign 2 should equal 8\n");
+    v *= 2;
+    global_assert(v == 16, "v multi assign 2 should equal 16\n");
+    v /= 4;
+    global_assert(v == 4, "v divide assign 4 should equal 4\n");
+    v %= 3;
+    global_assert(v == 1, "v rem assign 4 should equal 1\n");
+    v <<= 2;
+    global_assert(v == 4, "v left shift assign 2 should equal 4\n");
+    v >>= 1;
+    global_assert(v == 2, "v right shift assign 1 should equal 2\n");
+    v |= 1;
+    global_assert(v == 3, "v or assign 1 should equal 3\n");
+    v ^= 8;
+    global_assert(v == 11, "v xor assign 8 should equal 11\n");
+    v &= 6;
+    global_assert(v == 2, "v and assign 6 should equal 2\n");
+    global_assert((11 | 6) == 15, "11 | 6 should equal 15\n");
+    global_assert((11 ^ 6) == 13, "11 ^ 6 should equal 13\n");
+    global_assert((11 & 6) == 2, "11 & 6 should equal 2\n");
 }
 
 void global_assert(uint8_t expression, uint8_t* message){
