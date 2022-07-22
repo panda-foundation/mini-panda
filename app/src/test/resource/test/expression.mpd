@@ -82,35 +82,19 @@ public function test_binary()
     assert((11 | 6) == 15, "11 | 6 should equal 15\n");
     assert((11 ^ 6) == 13, "11 ^ 6 should equal 13\n");
     assert((11 & 6) == 2, "11 & 6 should equal 2\n");
-/*
-	// equal
-    libc.printf("x: %d \n", (10 == 10));
-    // not_equal
-    libc.printf("x: %d \n", (10 != 10));
-    // less
-    libc.printf("x: %d \n", (10 < 10));
-    // less_equal
-    libc.printf("x: %d \n", (10 <= 10));
-    // greater
-    libc.printf("x: %d \n", (10 > 10));
-    // greater_equal
-    libc.printf("x: %d \n", (10 >= 10));
-	// left_shift
-    libc.printf("x: %d \n", (10 << 3));
-	// right_shift
-    libc.printf("x: %d \n", (10 >> 1));
-	// plus
-    libc.printf("x: %d \n", (5 + 3));
-	// minus
-    libc.printf("x: %d \n", (5 - 3));
-	// mul
-    libc.printf("x: %d \n", (5 * 3));
-	// div
-    libc.printf("x: %d \n", (5 / 3));
-	// rem
-    libc.printf("x: %d \n", (5 % 3));
-    // or
-    libc.printf("bool: %d \n", (true || false));
-    // and
-    libc.printf("bool: %d \n", (true && false));*/
+    assert(9 == 9, "9 == 9 should be true\n");
+    assert(9 != 6, "9 != 6 should be true\n");
+    assert(6 < 9, "6 < 9 should be true\n");
+    assert(9 <= 9, "9 <= 9 should be true\n");
+    assert(9 > 6, "9 > 6 should be true\n");
+    assert(9 >= 9, "9 >= 9 should be true\n");
+    assert((1 << 2) == 4, "1 << 2 should equal 4\n");
+    assert((4 >> 1) == 2, "4 >> 1 should equal 2\n");
+    assert(9 + 9 == 18, "9 + 9 should equal 18\n");
+    assert(9 - 6 == 3, "9 - 6 should equal 3\n");
+    assert(9 * 9 == 81, "9 * 9 should equal 81\n");
+    assert(9 / 3 == 3, "9 / 3 should equal 3\n");
+    assert(9 % 6 == 3, "9 % 6 should equal 3\n");
+    assert((true || false) == true, "true || false should be true\n");
+    assert((true && false) == false, "true && false should be false\n");
 }

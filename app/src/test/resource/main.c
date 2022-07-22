@@ -103,6 +103,21 @@ void test_test_binary(){
     global_assert((11 | 6) == 15, "11 | 6 should equal 15\n");
     global_assert((11 ^ 6) == 13, "11 ^ 6 should equal 13\n");
     global_assert((11 & 6) == 2, "11 & 6 should equal 2\n");
+    global_assert(9 == 9, "9 == 9 should be true\n");
+    global_assert(9 != 6, "9 != 6 should be true\n");
+    global_assert(6 < 9, "6 < 9 should be true\n");
+    global_assert(9 <= 9, "9 <= 9 should be true\n");
+    global_assert(9 > 6, "9 > 6 should be true\n");
+    global_assert(9 >= 9, "9 >= 9 should be true\n");
+    global_assert((1 << 2) == 4, "1 << 2 should equal 4\n");
+    global_assert((4 >> 1) == 2, "4 >> 1 should equal 2\n");
+    global_assert(9 + 9 == 18, "9 + 9 should equal 18\n");
+    global_assert(9 - 6 == 3, "9 - 6 should equal 3\n");
+    global_assert(9 * 9 == 81, "9 * 9 should equal 81\n");
+    global_assert(9 / 3 == 3, "9 / 3 should equal 3\n");
+    global_assert(9 % 6 == 3, "9 % 6 should equal 3\n");
+    global_assert((1 || 0) == 1, "true || false should be true\n");
+    global_assert((1 && 0) == 0, "true && false should be false\n");
 }
 
 void global_assert(uint8_t expression, uint8_t* message){
