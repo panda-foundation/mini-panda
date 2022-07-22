@@ -14,9 +14,9 @@ public class ExpressionBuiler {
             Conversion conversion = (Conversion) expression;
             builder.append("((");
             TypeBuiler.writeType(builder, conversion.getType());
-            builder.append(")");
+            builder.append(")(");
             writeExpression(builder, conversion.value);
-            builder.append(")");
+            builder.append("))");
         } else if (expression instanceof Decrement) {
             writeExpression(builder, ((Decrement) expression).expression);
             builder.append("--");

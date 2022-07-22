@@ -11,11 +11,9 @@ public function expression()
     test_decrement();
     //test_identifier();
     //test_initializer();
-    //test_literal();
     //test_member_access();
-    //test_parentheses();
     //test_subscripting();
-    //test_this();
+    test_others();
 }
 
 public function test_unary()
@@ -97,4 +95,10 @@ public function test_binary()
     assert(9 % 6 == 3, "9 % 6 should equal 3\n");
     assert((true || false) == true, "true || false should be true\n");
     assert((true && false) == false, "true && false should be false\n");
+}
+
+public function test_others()
+{
+    assert((8 - 3) * 5 == 25, "(8 - 3) * 5 should equal 25\n");
+    assert('a' == 97, "'a' should equal 97\n");
 }
