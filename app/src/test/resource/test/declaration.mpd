@@ -1,0 +1,20 @@
+namespace test;
+
+public enum Level
+{
+    low,
+    high
+}
+
+public enum Timer
+{
+    timer1 = 1,
+    timer2,
+    timer3,
+    timer4
+}
+
+public struct Cpu
+{
+    public var osc u32;
+}

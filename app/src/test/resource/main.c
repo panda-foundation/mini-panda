@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+struct test_Cpu;
+
 void main();
 
 void test_expression();
@@ -13,6 +15,8 @@ void test_test_decrement();
 void test_test_binary();
 
 void test_test_others();
+
+void test_test_initializer();
 
 void global_assert(uint8_t expression, uint8_t* message);
 
@@ -36,6 +40,19 @@ void console_write_u64(uint64_t value);
 
 void console_write_string(uint8_t* string);
 
+uint8_t test_Level_low = 0;
+uint8_t test_Level_high = 1;
+
+uint8_t test_Timer_timer1 = 1;
+uint8_t test_Timer_timer2 = 2;
+uint8_t test_Timer_timer3 = 3;
+uint8_t test_Timer_timer4 = 4;
+
+struct test_Cpu
+{
+    uint32_t osc;
+};
+
 void main(){
     test_expression();
 }
@@ -46,6 +63,7 @@ void test_expression(){
     test_test_binary();
     test_test_increment();
     test_test_decrement();
+    test_test_initializer();
     test_test_others();
 }
 
@@ -126,6 +144,9 @@ void test_test_binary(){
 void test_test_others(){
     global_assert((8 - 3) * 5 == 25, "(8 - 3) * 5 should equal 25\n");
     global_assert('a' == 97, "'a' should equal 97\n");
+}
+
+void test_test_initializer(){
 }
 
 void global_assert(uint8_t expression, uint8_t* message){

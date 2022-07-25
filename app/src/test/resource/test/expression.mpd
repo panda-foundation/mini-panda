@@ -10,7 +10,7 @@ public function expression()
     test_increment();
     test_decrement();
     //test_identifier();
-    //test_initializer();
+    test_initializer();
     //test_member_access();
     //test_subscripting();
     test_others();
@@ -101,4 +101,11 @@ public function test_others()
 {
     assert((8 - 3) * 5 == 25, "(8 - 3) * 5 should equal 25\n");
     assert('a' == 97, "'a' should equal 97\n");
+}
+
+////TO-DO int myNumbers[] = {25, 50, 75, 100};
+//TO-DO add struct
+public function test_initializer()
+{
+
 }

@@ -11,6 +11,11 @@ public class Struct extends Declaration {
 	public List<Variable> variables;
 	public List<Function> functions;
 
+	public Struct() {
+		this.variables = new ArrayList<>();
+		this.functions = new ArrayList<>();
+	}
+
 	public boolean isConstant() {
 		return false;
 	}

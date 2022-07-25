@@ -9,7 +9,10 @@ import com.github.panda_io.micro_panda.scanner.Token;
 
 public class Enumeration extends Declaration {
 	public List<Variable> members;
-	public List<Integer> values;
+
+	public Enumeration() {
+		this.members = new ArrayList<>();
+	}
 
 	public boolean isConstant() {
 		return false;
@@ -20,6 +23,10 @@ public class Enumeration extends Declaration {
 	}
 
 	public void resolveType(Context context) {
+		for (Variable member : this.members) {
+			member.type = Type.u8;
+			member.qualified = String.format("%s.%s", this.qualified, member.name.name);
+		}
 	}
 
 	public void validate(Context context) {
@@ -28,15 +35,19 @@ public class Enumeration extends Declaration {
 			if (index > 255) {
 				context.addError(member.getOffset(), "enum value shoud be less than 256");
 			}
+			Literal literal = new Literal();
+			literal.token = Token.INT;
 			if (member.value == null) {
-				this.values.add(index);
+				literal.value = Integer.toString(index);
+				member.value = literal;
 				index++;
 			} else {
 				if ((member.value instanceof Literal) && ((Literal) member.value).token == Token.INT) {
 					int i = Integer.parseInt(((Literal) member.value).value);
 					if (i >= index) {
 						index = i;
-						this.values.add(index);
+						literal.value = Integer.toString(index);
+						member.value = literal;
 						index++;
 					} else {
 						context.addError(member.getOffset(),

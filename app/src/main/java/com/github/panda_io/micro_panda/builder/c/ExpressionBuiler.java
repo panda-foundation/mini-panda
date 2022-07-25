@@ -31,7 +31,15 @@ public class ExpressionBuiler {
             writeExpression(builder, ((Increment) expression).expression);
             builder.append("++");
         } else if (expression instanceof Initializer) {
-            // TO-DO
+            Initializer initializer = (Initializer)expression;
+            builder.append("{");
+            for (int i = 0; i < initializer.expressions.size(); i++) {
+                if (i != 0) {
+                    builder.append(", ");
+                }
+                writeExpression(builder, initializer.expressions.get(i));
+            }
+            
         } else if (expression instanceof Invocation) {
             Invocation invocation = (Invocation) expression;
             if (invocation.define.isExtern) {

@@ -10,6 +10,11 @@ public class DeclarationStatement extends Statement {
     public Expression value;
 
     public void validate(Context context) {
+        if (this.type instanceof TypeArray) {
+            if (this.value != null && this.value instanceof Initializer) {
+                ((TypeArray)this.type).dimensions.set(0, ((Initializer)this.value).expressions.size());
+            }
+        }
         this.type = context.resolveType(this.type);
         if (this.value != null) {
             this.value.validate(context, this.type);
