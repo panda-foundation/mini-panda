@@ -147,6 +147,7 @@ void test_test_others(){
 }
 
 void test_test_initializer(){
+    uint8_t numbers[5] = {1, 2, 3, 4, 5};
 }
 
 void global_assert(uint8_t expression, uint8_t* message){
@@ -238,5 +239,9 @@ void console_write_string(uint8_t* string){
     {
         putchar(((int32_t)(string[i])));
     }
+}
+
+void test_Cpu_frequency(){
+    console_write_u32(123);
 }
 

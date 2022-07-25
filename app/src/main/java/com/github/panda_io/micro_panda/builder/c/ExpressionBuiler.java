@@ -10,6 +10,7 @@ public class ExpressionBuiler {
             writeExpression(builder, binary.left);
             builder.append(String.format(" %s ", binary.operator.toString()));
             writeExpression(builder, binary.right);
+
         } else if (expression instanceof Conversion) {
             Conversion conversion = (Conversion) expression;
             builder.append("((");
@@ -17,9 +18,11 @@ public class ExpressionBuiler {
             builder.append(")(");
             writeExpression(builder, conversion.value);
             builder.append("))");
+
         } else if (expression instanceof Decrement) {
             writeExpression(builder, ((Decrement) expression).expression);
             builder.append("--");
+
         } else if (expression instanceof Identifier) {
             Identifier identifier = (Identifier) expression;
             if (identifier.qualified != null) {
@@ -27,9 +30,11 @@ public class ExpressionBuiler {
             } else {
                 builder.append(((Identifier) expression).name);
             }
+
         } else if (expression instanceof Increment) {
             writeExpression(builder, ((Increment) expression).expression);
             builder.append("++");
+
         } else if (expression instanceof Initializer) {
             Initializer initializer = (Initializer)expression;
             builder.append("{");
@@ -39,6 +44,7 @@ public class ExpressionBuiler {
                 }
                 writeExpression(builder, initializer.expressions.get(i));
             }
+            builder.append("}");
             
         } else if (expression instanceof Invocation) {
             Invocation invocation = (Invocation) expression;
@@ -55,6 +61,7 @@ public class ExpressionBuiler {
                 writeExpression(builder, invocation.arguments.get(i));
             }
             builder.append(")");
+
         } else if (expression instanceof Literal) {
             Literal literal = (Literal) expression;
             switch (literal.token) {
@@ -69,6 +76,7 @@ public class ExpressionBuiler {
                 default:
                     builder.append(literal.value);
             }
+
         } else if (expression instanceof MemberAccess) {
             MemberAccess memberAccess = (MemberAccess) expression;
             if (memberAccess.parent.getType() == null) {
@@ -76,10 +84,12 @@ public class ExpressionBuiler {
             } else {
                 //TO-DO struct or pointer of struct
             }
+
         } else if (expression instanceof Parentheses) {
             builder.append("(");
             writeExpression(builder, ((Parentheses) expression).expression);
             builder.append(")");
+
         } else if (expression instanceof Subscripting) {
             Subscripting subscripting = (Subscripting) expression;
             writeExpression(builder, subscripting.parent);
@@ -88,8 +98,10 @@ public class ExpressionBuiler {
                 writeExpression(builder, index);
                 builder.append("]");
             }
+
         } else if (expression instanceof This) {
             builder.append("this");
+            
         } else if (expression instanceof Unary) {
             Unary unary = (Unary) expression;
             builder.append(unary.operator.toString());

@@ -107,5 +107,5 @@ public function test_others()
 //TO-DO add struct
 public function test_initializer()
 {
-
+    var numbers [5]u8 = {1, 2, 3, 4, 5};
 }

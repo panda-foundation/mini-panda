@@ -62,6 +62,7 @@ public class ExpressionParser {
 
 			case LeftBrace:
 				Initializer initializer = new Initializer();
+				initializer.expressions = new ArrayList<>();
 				initializer.setOffset(context.position);
 				context.next();
 				while (true) {

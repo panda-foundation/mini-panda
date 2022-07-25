@@ -17,4 +17,10 @@ public enum Timer
 public struct Cpu
 {
     public var osc u32;
+
+    public function frequency()
+    {
+        console.write_u32(123);
+        //console.write_u32(this.osc);
+    }
 }
