@@ -103,9 +103,9 @@ public function test_others()
     assert('a' == 97, "'a' should equal 97\n");
 }
 
-////TO-DO int myNumbers[] = {25, 50, 75, 100};
-//TO-DO add struct
 public function test_initializer()
 {
-    var numbers [5]u8 = {1, 2, 3, 4, 5};
+    var numbers []u8 = {1, 2, 3, 4, 5};
+    var cpu Cpu = {123};
+    //TO-DO test nested initializer
 }

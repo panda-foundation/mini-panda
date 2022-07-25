@@ -2,36 +2,46 @@ package com.github.panda_io.micro_panda.builder.c;
 
 import com.github.panda_io.micro_panda.ast.statement.*;
 import com.github.panda_io.micro_panda.ast.type.TypeArray;
+import com.github.panda_io.micro_panda.ast.type.TypeName;
 
 public class StatementBuiler {
 
     static void writeStatement(StringBuilder builder, Statement statement, int indent) {
         if (statement instanceof BlockStatement) {
             writeBlockStatement(builder, (BlockStatement)statement, indent);
+
         } else if (statement instanceof BreakStatement) {
             writeIndent(builder, indent);
             builder.append("break;\n");
+
         } else if (statement instanceof ContinueStatement) {
             writeIndent(builder, indent);
             builder.append("continue;\n");
+
         } else if (statement instanceof DeclarationStatement) {
             writeIndent(builder, indent);
             writeSimpleStatement(builder, statement);
             builder.append(";\n");  
+
         } else if (statement instanceof EmptyStatement) {
             writeIndent(builder, indent);
             builder.append(";\n");
+
         } else if (statement instanceof ExpressionStatement) {
             writeIndent(builder, indent);
             writeSimpleStatement(builder, statement);
             builder.append(";\n");     
+
         } else if (statement instanceof ForStatement) {
             writeForStatement(builder, (ForStatement)statement, indent);
+
         } else if (statement instanceof IfStatement) {
             writeIndent(builder, indent);
             writeIfStatement(builder, (IfStatement)statement, indent);
+
         } else if (statement instanceof ReturnStatement) {
             writeReturnStatement(builder, (ReturnStatement)statement, indent);
+
         } else if (statement instanceof SwitchStatement) {
             writeSwitchStatement(builder, (SwitchStatement)statement, indent);
         }
@@ -94,12 +104,15 @@ public class StatementBuiler {
 	static void writeSimpleStatement(StringBuilder builder, Statement statement) {
         if (statement instanceof ExpressionStatement) {
             ExpressionBuiler.writeExpression(builder, ((ExpressionStatement)statement).expression);
+
         } else if (statement instanceof DeclarationStatement) {
             DeclarationStatement declaration = (DeclarationStatement)statement;
+            if (declaration.type instanceof TypeName && !((TypeName)declaration.type).isEnum) {
+                builder.append("struct ");
+            }
             TypeBuiler.writeType(builder, declaration.type);
             builder.append(String.format(" %s", declaration.name.name));
             if (declaration.type instanceof TypeArray) {
-                //TO-DO support initializer
                 TypeBuiler.writeArrayIndex(builder, (TypeArray)declaration.type);
             }
             if (declaration.value == null) {

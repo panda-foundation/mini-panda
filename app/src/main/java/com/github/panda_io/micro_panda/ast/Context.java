@@ -7,10 +7,10 @@ import com.github.panda_io.micro_panda.ast.declaration.*;
 import com.github.panda_io.micro_panda.ast.declaration.Enumeration;
 
 public class Context {
-    Program  program;
+    Program program;
     Function function;
-	Context parent;
-	Map<String, Type> objects;
+    Context parent;
+    Map<String, Type> objects;
 
     public int loopLevel;
 
@@ -28,11 +28,11 @@ public class Context {
         return context;
     }
 
-	public void addError(int offset, String message) {
+    public void addError(int offset, String message) {
         this.program.addError(offset, message);
     }
 
-	public boolean insertObject(String name, Type type) {
+    public boolean insertObject(String name, Type type) {
         if (this.objects.containsKey(name)) {
             return false;
         }
@@ -58,21 +58,25 @@ public class Context {
 
     public Type resolveType(Type type) {
         if (type instanceof TypeName) {
+            TypeName typeName = (TypeName) type;
             Declaration declaration = this.findDeclaration(type);
             if (declaration == null) {
                 this.addError(type.getOffset(), "type not defined");
             } else {
                 if (declaration instanceof Function) {
-                    return ((Function)declaration).type;
+                    return ((Function) declaration).type;
                 } else if (declaration instanceof Struct) {
+                    typeName.qualified = declaration.qualified;
                 } else if (declaration instanceof Enumeration) {
-                    ((TypeName)type).isEnum = true;
+                    typeName.qualified = declaration.qualified;
+                    typeName.isEnum = true;
                 } else {
                     this.addError(type.getOffset(), "type not defined");
                 }
             }
+
         } else if (type instanceof TypeArray) {
-            TypeArray array = (TypeArray)type;
+            TypeArray array = (TypeArray) type;
             array.elementType = this.resolveType(array.elementType);
             if (array.dimensions.size() == 0 || array.dimensions.get(0) < 0) {
                 this.addError(type.getOffset(), "invalid array index");
@@ -82,11 +86,13 @@ public class Context {
                     this.addError(type.getOffset(), "invalid array index");
                 }
             }
+
         } else if (type instanceof TypePointer) {
-            TypePointer pointer = (TypePointer)type;
+            TypePointer pointer = (TypePointer) type;
             pointer.elementType = this.resolveType(pointer.elementType);
+
         } else if (type instanceof TypeFunction) {
-            TypeFunction function = (TypeFunction)type;
+            TypeFunction function = (TypeFunction) type;
             function.returnType = this.resolveType(function.returnType);
             for (int i = 0; i < function.parameters.size(); i++) {
                 Type parameter = this.resolveType(function.parameters.get(i));
@@ -101,8 +107,8 @@ public class Context {
         return type;
     }
 
-	public Declaration findDeclaration(Type type) {
-        TypeName name = (TypeName)type;
+    public Declaration findDeclaration(Type type) {
+        TypeName name = (TypeName) type;
         if (name.qualified == null) {
             return this.findLocalDeclaration(name.name);
         }
@@ -114,7 +120,7 @@ public class Context {
         return declaration;
     }
 
-	public Declaration findLocalDeclaration(String name) {
+    public Declaration findLocalDeclaration(String name) {
         String qualified = String.format("%s.%s", this.program.module.namespace, name);
         if (this.program.declarations.containsKey(qualified)) {
             return this.program.declarations.get(qualified);
@@ -132,11 +138,11 @@ public class Context {
         return null;
     }
 
-	public Declaration findQualifiedDeclaration(String qualified) {
-    	return this.program.declarations.get(qualified);
+    public Declaration findQualifiedDeclaration(String qualified) {
+        return this.program.declarations.get(qualified);
     }
 
-	public boolean isNamespace(String ns) {
+    public boolean isNamespace(String ns) {
         return this.program.isNamespace(ns);
     }
 

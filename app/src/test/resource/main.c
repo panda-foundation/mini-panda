@@ -148,6 +148,7 @@ void test_test_others(){
 
 void test_test_initializer(){
     uint8_t numbers[5] = {1, 2, 3, 4, 5};
+    struct test_Cpu cpu = {123};
 }
 
 void global_assert(uint8_t expression, uint8_t* message){
