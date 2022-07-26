@@ -20,6 +20,8 @@ void test_test_others();
 
 void test_test_initializer();
 
+void test_test_subscripting();
+
 void global_assert(uint8_t expression, uint8_t* message);
 
 void console_write_bool(uint8_t value);
@@ -72,6 +74,7 @@ void test_expression(){
     test_test_increment();
     test_test_decrement();
     test_test_initializer();
+    test_test_subscripting();
     test_test_others();
 }
 
@@ -158,6 +161,19 @@ void test_test_initializer(){
     uint8_t numbers[5] = {1, 2, 3, 4, 5};
     struct test_Cpu cpu = {123, {456}};
     struct test_Cpu cpus[2] = {{123, {456}}, {456, {789}}};
+}
+
+void test_test_subscripting(){
+    uint8_t numbers[5] = {1, 2, 3, 4, 5};
+    global_assert(numbers[2] == 3, "numbers[2] should equal 3\n");
+    numbers[2] = 9;
+    global_assert(numbers[2] == 9, "numbers[2] should equal 9\n");
+    uint8_t* array = numbers;
+    array[2] = 8;
+    global_assert(array[2] == 8, "array[2] should equal 9\n");
+    uint8_t* array2 = array;
+    array2[3] = 9;
+    global_assert(array[3] == 9, "array2[3] should equal 9\n");
 }
 
 void global_assert(uint8_t expression, uint8_t* message){

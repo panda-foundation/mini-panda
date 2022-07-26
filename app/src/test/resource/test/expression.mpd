@@ -12,7 +12,7 @@ public function expression()
     //test_identifier();
     test_initializer();
     //test_member_access();
-    //test_subscripting();
+    test_subscripting();
     test_others();
 }
 
@@ -108,4 +108,18 @@ public function test_initializer()
     var numbers []u8 = {1, 2, 3, 4, 5};
     var cpu Cpu = {123, {456}};
     var cpus []Cpu = {{123, {456}}, {456, {789}}};
+}
+
+public function test_subscripting()
+{
+    var numbers []u8 = {1, 2, 3, 4, 5};
+    assert(numbers[2] == 3, "numbers[2] should equal 3\n");
+    numbers[2] = 9;
+    assert(numbers[2] == 9, "numbers[2] should equal 9\n");
+    var array []u8 = numbers;
+    array[2] = 8;
+    assert(array[2] == 8, "array[2] should equal 9\n");
+    var array2 []u8 = array;
+    array2[3] = 9;
+    assert(array[3] == 9, "array2[3] should equal 9\n");
 }
