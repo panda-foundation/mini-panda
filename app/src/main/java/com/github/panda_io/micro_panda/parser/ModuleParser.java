@@ -65,8 +65,12 @@ public class ModuleParser {
 			context.next();
 			return Constant.global;
 		}
+		int position = context.position;
 		String namespace = context.parseQualified();
 		context.expect(Token.Semi);
+		if (namespace.equals(Constant.global)) {
+			context.addError(position, "'global' is reserved namespace");
+		}
 		return namespace;
 	}
 

@@ -6,6 +6,5 @@ public function assert(expression bool, message []u8)
     {
         console.write_string("assert failed:\n");
         console.write_string(message);
-        console.write_u8('\n');
     }
 }

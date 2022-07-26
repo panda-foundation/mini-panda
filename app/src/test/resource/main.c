@@ -22,6 +22,10 @@ void test_test_initializer();
 
 void test_test_subscripting();
 
+void test_test_scope();
+
+void test_test_conversion();
+
 void global_assert(uint8_t expression, uint8_t* message);
 
 void console_write_bool(uint8_t value);
@@ -63,6 +67,8 @@ struct test_Cpu
     struct test_Pwm pwm;
 };
 
+uint8_t test_u8_data = 123;
+
 void main(){
     test_expression();
 }
@@ -71,8 +77,10 @@ void test_expression(){
     console_write_string("============ test expression ============\n");
     test_test_unary();
     test_test_binary();
+    test_test_conversion();
     test_test_increment();
     test_test_decrement();
+    test_test_scope();
     test_test_initializer();
     test_test_subscripting();
     test_test_others();
@@ -176,12 +184,38 @@ void test_test_subscripting(){
     global_assert(array[3] == 9, "array2[3] should equal 9\n");
 }
 
+void test_test_scope(){
+    global_assert(test_u8_data == 123, "package var u8_data should equal 123\n");
+    {
+        global_assert(test_u8_data == 123, "package var u8_data should equal 123\n");
+        uint8_t test_u8_data = 99;
+        global_assert(test_u8_data == 99, "local var u8_data should equal 99\n");
+        test_u8_data = 100;
+    }
+    global_assert(test_u8_data == 123, "package var u8_data should equal 123\n");
+}
+
+void test_test_conversion(){
+    int32_t a0 = 65856;
+    int16_t a1 = ((int16_t)(a0));
+    global_assert(a1 == 320, "convert i32 to i16, should equal 320\n");
+    int8_t a2 = ((int8_t)(a1));
+    global_assert(a2 == 64, "convert i16 to i8, should equal 64\n");
+    float a3 = -3.14;
+    int8_t a4 = ((int8_t)(a3));
+    global_assert(a4 == -3, "convert f32 to i8, should equal -3\n");
+    uint8_t a5 = ((uint8_t)(a3));
+    global_assert(a5 == 253, "convert f32 to u8, should equal 253\n");
+    float a6 = ((float)(a0));
+    double a7 = ((double)(a0));
+    float a8 = ((float)(a0));
+}
+
 void global_assert(uint8_t expression, uint8_t* message){
     if (!expression)
     {
         console_write_string("assert failed:\n");
         console_write_string(message);
-        console_write_u8('\n');
     }
 }
 

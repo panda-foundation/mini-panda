@@ -1,15 +1,17 @@
 namespace test;
 
+var u8_data u8 = 123;
+
 public function expression()
 {
     console.write_string("============ test expression ============\n");
 
     test_unary();
     test_binary();
-    //test_conversion();
+    test_conversion();
     test_increment();
     test_decrement();
-    //test_identifier();
+    test_scope();
     test_initializer();
     //test_member_access();
     test_subscripting();
@@ -122,4 +124,65 @@ public function test_subscripting()
     var array2 []u8 = array;
     array2[3] = 9;
     assert(array[3] == 9, "array2[3] should equal 9\n");
+}
+
+public function test_scope()
+{
+    assert(u8_data == 123, "package var u8_data should equal 123\n");
+    {
+        assert(u8_data == 123, "package var u8_data should equal 123\n");
+        var test_u8_data u8 = 99;
+        assert(test_u8_data == 99, "local var u8_data should equal 99\n");
+        test_u8_data = 100;
+    }
+    assert(u8_data == 123, "package var u8_data should equal 123\n");
+}
+/*
+public function member_access()
+{
+    libc.printf("global_array[2]: %d \n", global_array[2]);
+    
+    var sub SubData;
+    libc.printf("sub.integer: %d \n", sub.integer);
+    sub.integer = 5;
+    libc.printf("sub.integer: %d \n", sub.integer);
+    sub.float = 3.14;
+    libc.printf("sub.float: %f \n", sub.float);
+    sub.array[3] = 3;
+    libc.printf("sub.array[3]: %d \n", sub.array[3]);
+
+    var data Data;
+    data.type = 5;
+    libc.printf("data.value: %d \n", data.type);
+    data.sub.integer = 8;
+    libc.printf("data.sub.integer: %d \n", data.sub.integer);
+    data.sub.array[3] = 9;
+    libc.printf("data.sub.array[3]: %d \n", data.sub.array[3]);
+}*/
+
+public function test_conversion()
+{
+    var a0 i32 = 65856;
+    var a1 i16 = i16(a0);
+    assert(a1 == 320, "convert i32 to i16, should equal 320\n");
+    var a2 i8 = i8(a1);
+    assert(a2 == 64, "convert i16 to i8, should equal 64\n");
+    var a3 f32 = -3.14;
+    var a4 i8 = i8(a3);
+    assert(a4 == -3, "convert f32 to i8, should equal -3\n");
+    var a5 u8 = u8(a3);
+    assert(a5 == 253, "convert f32 to u8, should equal 253\n");
+    var a6 f16 = f16(a0);
+    var a7 f64 = f64(a0);
+    var a8 f32 = f32(a0);
+    
+    /*
+    var a10 pointer<f32> = &a3;
+    libc.printf("address to f32: %d \n", a10);
+    var a11 pointer<i32> = pointer<i32>(a10);
+    libc.printf("address to i32: %d \n", a11);
+    var a12 []i32 = a11;
+    libc.printf("bits of f32: %d \n", a12[0]);
+    var a13 []i32 = []i32(a10);
+    libc.printf("bits of f32: %d \n", a13[0]);*/
 }
