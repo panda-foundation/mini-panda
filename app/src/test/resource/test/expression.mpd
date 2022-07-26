@@ -106,6 +106,6 @@ public function test_others()
 public function test_initializer()
 {
     var numbers []u8 = {1, 2, 3, 4, 5};
-    var cpu Cpu = {123};
-    //TO-DO test nested initializer
+    var cpu Cpu = {123, {456}};
+    var cpus []Cpu = {{123, {456}}, {456, {789}}};
 }

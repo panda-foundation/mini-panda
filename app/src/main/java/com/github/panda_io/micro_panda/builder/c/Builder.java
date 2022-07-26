@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.github.panda_io.micro_panda.ast.Module;
 import com.github.panda_io.micro_panda.ast.Program;
+import com.github.panda_io.micro_panda.ast.type.TypeName;
 import com.github.panda_io.micro_panda.ast.declaration.Enumeration;
 import com.github.panda_io.micro_panda.ast.declaration.Function;
 import com.github.panda_io.micro_panda.ast.declaration.Struct;
@@ -54,6 +55,9 @@ public class Builder {
                 builder.append("\n{\n");
                 for (Variable variable : struct.variables) {
                     StatementBuiler.writeIndent(builder, 1);
+                    if (variable.type instanceof TypeName && !((TypeName)variable.type).isEnum) {
+                        builder.append("struct ");
+                    }
                     TypeBuiler.writeType(builder, variable.type);
                     builder.append(" ");
                     builder.append(variable.name.name);

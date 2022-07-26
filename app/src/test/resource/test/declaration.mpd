@@ -14,9 +14,15 @@ public enum Timer
     timer4
 }
 
+public struct Pwm
+{
+    public var freq u32;
+}
+
 public struct Cpu
 {
     public var osc u32;
+    public var pwm Pwm;
 
     public function frequency()
     {

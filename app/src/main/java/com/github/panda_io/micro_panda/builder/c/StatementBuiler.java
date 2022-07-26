@@ -110,6 +110,12 @@ public class StatementBuiler {
             if (declaration.type instanceof TypeName && !((TypeName)declaration.type).isEnum) {
                 builder.append("struct ");
             }
+            if (declaration.type instanceof TypeArray) {
+                TypeArray array = (TypeArray)declaration.type;
+                if (array.elementType instanceof TypeName && !((TypeName)array.elementType).isEnum) {
+                    builder.append("struct ");
+                }
+            }
             TypeBuiler.writeType(builder, declaration.type);
             builder.append(String.format(" %s", declaration.name.name));
             if (declaration.type instanceof TypeArray) {

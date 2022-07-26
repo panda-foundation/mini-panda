@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+struct test_Pwm;
+
 struct test_Cpu;
 
 void main();
@@ -48,9 +50,15 @@ uint8_t test_Timer_timer2 = 2;
 uint8_t test_Timer_timer3 = 3;
 uint8_t test_Timer_timer4 = 4;
 
+struct test_Pwm
+{
+    uint32_t freq;
+};
+
 struct test_Cpu
 {
     uint32_t osc;
+    struct test_Pwm pwm;
 };
 
 void main(){
@@ -148,7 +156,8 @@ void test_test_others(){
 
 void test_test_initializer(){
     uint8_t numbers[5] = {1, 2, 3, 4, 5};
-    struct test_Cpu cpu = {123};
+    struct test_Cpu cpu = {123, {456}};
+    struct test_Cpu cpus[2] = {{123, {456}}, {456, {789}}};
 }
 
 void global_assert(uint8_t expression, uint8_t* message){
