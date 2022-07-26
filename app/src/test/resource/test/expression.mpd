@@ -137,6 +137,7 @@ public function test_scope()
     }
     assert(u8_data == 123, "package var u8_data should equal 123\n");
 }
+
 /*
 public function member_access()
 {

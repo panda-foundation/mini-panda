@@ -75,7 +75,6 @@ void main(){
 
 void test_expression(){
     console_write_string("============ test expression ============\n");
-    
     test_test_unary();
     test_test_binary();
     test_test_conversion();

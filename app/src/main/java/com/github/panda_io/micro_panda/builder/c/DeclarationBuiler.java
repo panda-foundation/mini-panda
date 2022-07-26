@@ -1,8 +1,8 @@
 package com.github.panda_io.micro_panda.builder.c;
 
 import com.github.panda_io.micro_panda.ast.Constant;
-import com.github.panda_io.micro_panda.ast.declaration.Function;
-import com.github.panda_io.micro_panda.ast.declaration.Struct;
+import com.github.panda_io.micro_panda.ast.type.TypeName;
+import com.github.panda_io.micro_panda.ast.declaration.*;
 import com.github.panda_io.micro_panda.ast.declaration.Function.Parameter;
 
 public class DeclarationBuiler {
@@ -25,8 +25,48 @@ public class DeclarationBuiler {
         builder.append(")");
     }
         
-    static void writeStructDefine(StringBuilder builder, Struct struct) {
+    static void writeEnumDefine(StringBuilder builder, Enumeration enumeration) {
+        for (Variable member : enumeration.members) {
+            TypeBuiler.writeType(builder, member.type);
+            builder.append(" ");
+            builder.append(member.qualified.replaceAll("\\.", "_"));
+            builder.append(" = ");
+            ExpressionBuiler.writeExpression(builder, member.value);
+            builder.append(";\n");
+        }
+        builder.append("\n");
+    }
 
+    static void writeStructDefine(StringBuilder builder, Struct struct) {
+        builder.append("struct ");
+        builder.append(struct.qualified.replaceAll("\\.", "_"));
+        builder.append("\n{\n");
+        for (Variable variable : struct.variables) {
+            StatementBuiler.writeIndent(builder, 1);
+            if (variable.type instanceof TypeName && !((TypeName)variable.type).isEnum) {
+                builder.append("struct ");
+            }
+            TypeBuiler.writeType(builder, variable.type);
+            builder.append(" ");
+            builder.append(variable.name.name);
+            if (variable.value != null) {
+                builder.append(" = ");
+                ExpressionBuiler.writeExpression(builder, variable.value);
+            }
+            builder.append(";\n");
+        }
+        builder.append("};\n\n");
+    }
+
+    static void writeVariable(StringBuilder builder, Variable variable) {
+        TypeBuiler.writeType(builder, variable.type);
+        builder.append(" ");
+        builder.append(variable.qualified.replaceAll("\\.", "_"));
+        if (variable.value != null) {
+            builder.append(" = ");
+            ExpressionBuiler.writeExpression(builder, variable.value);
+        }
+        builder.append(";\n\n");
     }
 
     static void writeFunction(StringBuilder builder, Function function) {
