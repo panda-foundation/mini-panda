@@ -140,6 +140,15 @@ public function test_scope()
 /*
 public function member_access()
 {
+    var cpu Cpu = {123, {456}};
+    var cpu1 pointer<Cpu> = &cpu;
+    var cpu_array [2]pointer<Cpu>;
+    cpu_array[0] = &cpu;
+    cpu_array[1] = cpu1;
+
+    //test global or package variable
+    //test qualified enum
+
     libc.printf("global_array[2]: %d \n", global_array[2]);
     
     var sub SubData;
@@ -175,14 +184,8 @@ public function test_conversion()
     var a6 f16 = f16(a0);
     var a7 f64 = f64(a0);
     var a8 f32 = f32(a0);
-    
-    /*
-    var a10 pointer<f32> = &a3;
-    libc.printf("address to f32: %d \n", a10);
-    var a11 pointer<i32> = pointer<i32>(a10);
-    libc.printf("address to i32: %d \n", a11);
-    var a12 []i32 = a11;
-    libc.printf("bits of f32: %d \n", a12[0]);
-    var a13 []i32 = []i32(a10);
-    libc.printf("bits of f32: %d \n", a13[0]);*/
+
+    var raw pointer = &a3;
+    var a9 pointer<i32> = raw;
+    var a10 i32 = *a9;
 }

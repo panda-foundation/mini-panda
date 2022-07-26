@@ -3,6 +3,7 @@ package com.github.panda_io.micro_panda.builder.c;
 import com.github.panda_io.micro_panda.ast.statement.*;
 import com.github.panda_io.micro_panda.ast.type.TypeArray;
 import com.github.panda_io.micro_panda.ast.type.TypeName;
+import com.github.panda_io.micro_panda.ast.type.TypePointer;
 
 public class StatementBuiler {
 
@@ -113,6 +114,18 @@ public class StatementBuiler {
             if (declaration.type instanceof TypeArray) {
                 TypeArray array = (TypeArray)declaration.type;
                 if (array.elementType instanceof TypeName && !((TypeName)array.elementType).isEnum) {
+                    builder.append("struct ");
+                }
+                if (array.elementType instanceof TypePointer) {
+                    TypePointer pointer = (TypePointer)array.elementType;
+                    if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
+                        builder.append("struct ");
+                    }
+                }
+            }
+            if (declaration.type instanceof TypePointer) {
+                TypePointer pointer = (TypePointer)declaration.type;
+                if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
                     builder.append("struct ");
                 }
             }

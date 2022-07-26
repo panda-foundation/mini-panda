@@ -22,6 +22,5 @@ public class Conversion extends Expression {
         if (!(isNumber || isPointer)) {
             context.addError(this.type.getOffset(), "invalid type conversion");
         }
-        //TO-DO check raw pointer conversion
     }
 }

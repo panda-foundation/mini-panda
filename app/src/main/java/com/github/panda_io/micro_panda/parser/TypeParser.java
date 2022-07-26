@@ -69,9 +69,10 @@ public class TypeParser {
 		if (context.token == Token.Less) {
 			context.next();
 			pointer.elementType = parseType(context);
+			pointer.isRaw = false;
 			context.expect(Token.Greater);
 		} else {
-			pointer.elementType = Type.u8;
+			pointer.isRaw = true;
 		}
 		return pointer;
 	}

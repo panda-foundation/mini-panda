@@ -75,6 +75,7 @@ void main(){
 
 void test_expression(){
     console_write_string("============ test expression ============\n");
+    
     test_test_unary();
     test_test_binary();
     test_test_conversion();
@@ -209,6 +210,9 @@ void test_test_conversion(){
     float a6 = ((float)(a0));
     double a7 = ((double)(a0));
     float a8 = ((float)(a0));
+    void* raw = &a3;
+    int32_t* a9 = raw;
+    int32_t a10 = *a9;
 }
 
 void global_assert(uint8_t expression, uint8_t* message){
