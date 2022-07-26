@@ -1,5 +1,6 @@
 package com.github.panda_io.micro_panda.builder.c;
 
+import com.github.panda_io.micro_panda.ast.type.*;
 import com.github.panda_io.micro_panda.ast.expression.*;
 
 public class ExpressionBuiler {
@@ -81,8 +82,18 @@ public class ExpressionBuiler {
             MemberAccess memberAccess = (MemberAccess) expression;
             if (memberAccess.parent.getType() == null) {
                 builder.append(memberAccess.qualified.replaceAll("\\.", "_"));
+                //TO-DO continue
             } else {
-                //TO-DO struct or pointer of struct
+                Type type = memberAccess.parent.getType();
+                if (type.isStruct()) {
+                    writeExpression(builder, memberAccess.parent);
+                    builder.append(".");
+                    builder.append(memberAccess.member.name);
+                } else if (type.isPointer()) {
+                    writeExpression(builder, memberAccess.parent);
+                    builder.append("->");
+                    builder.append(memberAccess.member.name);
+                }
             }
 
         } else if (expression instanceof Parentheses) {

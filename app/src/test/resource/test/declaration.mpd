@@ -30,3 +30,8 @@ public struct Cpu
         //console.write_u32(this.osc);
     }
 }
+
+public struct Gpu
+{
+    public var pwm pointer<Pwm>;
+}

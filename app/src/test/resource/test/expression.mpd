@@ -13,7 +13,7 @@ public function expression()
     test_decrement();
     test_scope();
     test_initializer();
-    //test_member_access();
+    test_member_access();
     test_subscripting();
     test_others();
 }
@@ -138,18 +138,34 @@ public function test_scope()
     assert(u8_data == 123, "package var u8_data should equal 123\n");
 }
 
-/*
-public function member_access()
+public function test_member_access()
 {
     var cpu Cpu = {123, {456}};
     var cpu1 pointer<Cpu> = &cpu;
     var cpu_array [2]pointer<Cpu>;
     cpu_array[0] = &cpu;
     cpu_array[1] = cpu1;
+    assert(cpu.osc == 123, "cpu.osc should equal 123\n");
+    assert(cpu1.osc == 123, "cpu1.osc should equal 123\n");
+    assert(cpu_array[0].osc == 123, "cpu_array[0].osc should equal 123\n");
+    assert(cpu.pwm.freq == 456, "cpu.pwm.freq should equal 456\n");
+    assert(cpu1.pwm.freq == 456, "cpu1.pwm.freq should equal 456\n");
+    assert(cpu_array[0].pwm.freq == 456, "cpu_array[0].pwm.freq should equal 456\n");
+    var pwm Pwm = {456};
+    var gpu Gpu;
+    gpu.pwm = &pwm;
+    assert(gpu.pwm.freq == 456, "gpu.pwm.freq should equal 456\n");
+    var gpu1 pointer<Gpu> = &gpu;
+    assert(gpu1.pwm.freq == 456, "gpu1.pwm.freq should equal 456\n");
+    var gpu_array [1]pointer<Gpu>;
+    gpu_array[0] = &gpu;
+    assert(gpu_array[0].pwm.freq == 456, "gpu_array[0].pwm.freq should equal 456\n");
 
+    //assert(Timer.timer1 == 1, "enum Timer.timer1 should equal 1\n");
     //test global or package variable
     //test qualified enum
 
+    /*
     libc.printf("global_array[2]: %d \n", global_array[2]);
     
     var sub SubData;
@@ -168,7 +184,8 @@ public function member_access()
     libc.printf("data.sub.integer: %d \n", data.sub.integer);
     data.sub.array[3] = 9;
     libc.printf("data.sub.array[3]: %d \n", data.sub.array[3]);
-}*/
+    */
+}
 
 public function test_conversion()
 {

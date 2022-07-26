@@ -4,6 +4,8 @@ struct test_Pwm;
 
 struct test_Cpu;
 
+struct test_Gpu;
+
 void main();
 
 void test_expression();
@@ -23,6 +25,8 @@ void test_test_initializer();
 void test_test_subscripting();
 
 void test_test_scope();
+
+void test_test_member_access();
 
 void test_test_conversion();
 
@@ -67,6 +71,11 @@ struct test_Cpu
     struct test_Pwm pwm;
 };
 
+struct test_Gpu
+{
+    struct test_Pwm* pwm;
+};
+
 uint8_t test_u8_data = 123;
 
 void main(){
@@ -82,6 +91,7 @@ void test_expression(){
     test_test_decrement();
     test_test_scope();
     test_test_initializer();
+    test_test_member_access();
     test_test_subscripting();
     test_test_others();
 }
@@ -193,6 +203,29 @@ void test_test_scope(){
         test_u8_data = 100;
     }
     global_assert(test_u8_data == 123, "package var u8_data should equal 123\n");
+}
+
+void test_test_member_access(){
+    struct test_Cpu cpu = {123, {456}};
+    struct test_Cpu* cpu1 = &cpu;
+    struct test_Cpu* cpu_array[2];
+    cpu_array[0] = &cpu;
+    cpu_array[1] = cpu1;
+    global_assert(cpu.osc == 123, "cpu.osc should equal 123\n");
+    global_assert(cpu1->osc == 123, "cpu1.osc should equal 123\n");
+    global_assert(cpu_array[0]->osc == 123, "cpu_array[0].osc should equal 123\n");
+    global_assert(cpu.pwm.freq == 456, "cpu.pwm.freq should equal 456\n");
+    global_assert(cpu1->pwm.freq == 456, "cpu1.pwm.freq should equal 456\n");
+    global_assert(cpu_array[0]->pwm.freq == 456, "cpu_array[0].pwm.freq should equal 456\n");
+    struct test_Pwm pwm = {456};
+    struct test_Gpu gpu;
+    gpu.pwm = &pwm;
+    global_assert(gpu.pwm->freq == 456, "gpu.pwm.freq should equal 456\n");
+    struct test_Gpu* gpu1 = &gpu;
+    global_assert(gpu1->pwm->freq == 456, "gpu1.pwm.freq should equal 456\n");
+    struct test_Gpu* gpu_array[1];
+    gpu_array[0] = &gpu;
+    global_assert(gpu_array[0]->pwm->freq == 456, "gpu_array[0].pwm.freq should equal 456\n");
 }
 
 void test_test_conversion(){

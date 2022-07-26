@@ -1,7 +1,7 @@
 package com.github.panda_io.micro_panda.builder.c;
 
 import com.github.panda_io.micro_panda.ast.Constant;
-import com.github.panda_io.micro_panda.ast.type.TypeName;
+import com.github.panda_io.micro_panda.ast.type.*;
 import com.github.panda_io.micro_panda.ast.declaration.*;
 import com.github.panda_io.micro_panda.ast.declaration.Function.Parameter;
 
@@ -45,6 +45,24 @@ public class DeclarationBuiler {
             StatementBuiler.writeIndent(builder, 1);
             if (variable.type instanceof TypeName && !((TypeName)variable.type).isEnum) {
                 builder.append("struct ");
+            }
+            if (variable.type instanceof TypeArray) {
+                TypeArray array = (TypeArray)variable.type;
+                if (array.elementType instanceof TypeName && !((TypeName)array.elementType).isEnum) {
+                    builder.append("struct ");
+                }
+                if (array.elementType instanceof TypePointer) {
+                    TypePointer pointer = (TypePointer)array.elementType;
+                    if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
+                        builder.append("struct ");
+                    }
+                }
+            }
+            if (variable.type instanceof TypePointer) {
+                TypePointer pointer = (TypePointer)variable.type;
+                if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
+                    builder.append("struct ");
+                }
             }
             TypeBuiler.writeType(builder, variable.type);
             builder.append(" ");
