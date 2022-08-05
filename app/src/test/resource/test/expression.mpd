@@ -161,7 +161,7 @@ public function test_member_access()
     gpu_array[0] = &gpu;
     assert(gpu_array[0].pwm.freq == 456, "gpu_array[0].pwm.freq should equal 456\n");
 
-    //assert(Timer.timer1 == 1, "enum Timer.timer1 should equal 1\n");
+    assert(Timer.timer1 == 1, "enum Timer.timer1 should equal 1\n");
     //test global or package variable
     //test qualified enum
 
