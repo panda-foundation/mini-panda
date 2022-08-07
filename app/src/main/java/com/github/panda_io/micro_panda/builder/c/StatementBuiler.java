@@ -2,8 +2,6 @@ package com.github.panda_io.micro_panda.builder.c;
 
 import com.github.panda_io.micro_panda.ast.statement.*;
 import com.github.panda_io.micro_panda.ast.type.TypeArray;
-import com.github.panda_io.micro_panda.ast.type.TypeName;
-import com.github.panda_io.micro_panda.ast.type.TypePointer;
 
 public class StatementBuiler {
 

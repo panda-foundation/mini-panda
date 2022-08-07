@@ -1,7 +1,6 @@
 package com.github.panda_io.micro_panda.builder.c;
 
 import com.github.panda_io.micro_panda.ast.Constant;
-import com.github.panda_io.micro_panda.ast.type.*;
 import com.github.panda_io.micro_panda.ast.declaration.*;
 import com.github.panda_io.micro_panda.ast.declaration.Function.Parameter;
 
