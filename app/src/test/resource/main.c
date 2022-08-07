@@ -78,6 +78,8 @@ struct test_Gpu
 
 uint8_t test_u8_data = 123;
 
+test_Cpu test_cpu3 = {123, {456}};
+
 void main(){
     test_expression();
 }
@@ -217,6 +219,9 @@ void test_test_member_access(){
     global_assert(cpu.pwm.freq == 456, "cpu.pwm.freq should equal 456\n");
     global_assert(cpu1->pwm.freq == 456, "cpu1.pwm.freq should equal 456\n");
     global_assert(cpu_array[0]->pwm.freq == 456, "cpu_array[0].pwm.freq should equal 456\n");
+    global_assert(test_cpu3.osc == 123, "cpu3.osc should equal 123\n");
+    global_assert(test_cpu3.osc == 123, "test.cpu3.osc should equal 123\n");
+    global_assert(test_cpu3.pwm.freq == 456, "test.cpu3.pwm.freq should equal 456\n");
     struct test_Pwm pwm = {456};
     struct test_Gpu gpu;
     gpu.pwm = &pwm;
@@ -226,6 +231,8 @@ void test_test_member_access(){
     struct test_Gpu* gpu_array[1];
     gpu_array[0] = &gpu;
     global_assert(gpu_array[0]->pwm->freq == 456, "gpu_array[0].pwm.freq should equal 456\n");
+    global_assert(test_Timer_timer1 == 1, "enum Timer.timer1 should equal 1\n");
+    global_assert(test_Timer_timer2 == 2, "enum Timer.timer2 should equal 2\n");
 }
 
 void test_test_conversion(){

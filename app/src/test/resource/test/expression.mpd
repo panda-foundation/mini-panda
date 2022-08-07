@@ -151,6 +151,9 @@ public function test_member_access()
     assert(cpu.pwm.freq == 456, "cpu.pwm.freq should equal 456\n");
     assert(cpu1.pwm.freq == 456, "cpu1.pwm.freq should equal 456\n");
     assert(cpu_array[0].pwm.freq == 456, "cpu_array[0].pwm.freq should equal 456\n");
+    assert(cpu3.osc == 123, "cpu3.osc should equal 123\n");
+    assert(test.cpu3.osc == 123, "test.cpu3.osc should equal 123\n");
+    assert(test.cpu3.pwm.freq == 456, "test.cpu3.pwm.freq should equal 456\n");
     var pwm Pwm = {456};
     var gpu Gpu;
     gpu.pwm = &pwm;
@@ -162,29 +165,7 @@ public function test_member_access()
     assert(gpu_array[0].pwm.freq == 456, "gpu_array[0].pwm.freq should equal 456\n");
 
     assert(Timer.timer1 == 1, "enum Timer.timer1 should equal 1\n");
-    //test global or package variable
-    //test qualified enum
-
-    /*
-    libc.printf("global_array[2]: %d \n", global_array[2]);
-    
-    var sub SubData;
-    libc.printf("sub.integer: %d \n", sub.integer);
-    sub.integer = 5;
-    libc.printf("sub.integer: %d \n", sub.integer);
-    sub.float = 3.14;
-    libc.printf("sub.float: %f \n", sub.float);
-    sub.array[3] = 3;
-    libc.printf("sub.array[3]: %d \n", sub.array[3]);
-
-    var data Data;
-    data.type = 5;
-    libc.printf("data.value: %d \n", data.type);
-    data.sub.integer = 8;
-    libc.printf("data.sub.integer: %d \n", data.sub.integer);
-    data.sub.array[3] = 9;
-    libc.printf("data.sub.array[3]: %d \n", data.sub.array[3]);
-    */
+    assert(test.Timer.timer2 == 2, "enum Timer.timer2 should equal 2\n");
 }
 
 public function test_conversion()

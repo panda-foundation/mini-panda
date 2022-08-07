@@ -49,7 +49,6 @@ public class MemberAccess extends Expression {
 							this.qualified = String.format("%s.%s", identifier.qualified, this.member.name);
 						}
 					}
-					//TO-DO varialbe of struct //get its member
 				}
 			} else if (this.parent instanceof MemberAccess) {
 				MemberAccess memberAccess = (MemberAccess) this.parent;
@@ -94,7 +93,7 @@ public class MemberAccess extends Expression {
 			}
 		}
 		// * type would be nil for enum (its member has type u8)
-		if (this.type == null && this.qualified == null) {
+  		if (this.type == null && this.qualified == null) {
 			context.addError(this.getOffset(), String.format("undefined: %s", this.member.name));
 		}
 	}

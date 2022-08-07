@@ -70,7 +70,7 @@ public class Enumeration extends Declaration {
 
 	public boolean hasMember(String memberName) {
 		for (Variable variable : this.members) {
-			if (variable.name.name == memberName) {
+			if (variable.name.name.equals(memberName)) {
 				return true;
 			}
 		}

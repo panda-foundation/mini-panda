@@ -1,5 +1,7 @@
 namespace test;
 
+public var cpu3 Cpu = {123, {456}};
+
 public enum Level
 {
     low,
