@@ -43,27 +43,7 @@ public class DeclarationBuiler {
         builder.append("\n{\n");
         for (Variable variable : struct.variables) {
             StatementBuiler.writeIndent(builder, 1);
-            if (variable.type instanceof TypeName && !((TypeName)variable.type).isEnum) {
-                builder.append("struct ");
-            }
-            if (variable.type instanceof TypeArray) {
-                TypeArray array = (TypeArray)variable.type;
-                if (array.elementType instanceof TypeName && !((TypeName)array.elementType).isEnum) {
-                    builder.append("struct ");
-                }
-                if (array.elementType instanceof TypePointer) {
-                    TypePointer pointer = (TypePointer)array.elementType;
-                    if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
-                        builder.append("struct ");
-                    }
-                }
-            }
-            if (variable.type instanceof TypePointer) {
-                TypePointer pointer = (TypePointer)variable.type;
-                if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
-                    builder.append("struct ");
-                }
-            }
+            TypeBuiler.writeStructPrefix(builder, variable.type);
             TypeBuiler.writeType(builder, variable.type);
             builder.append(" ");
             builder.append(variable.name.name);
@@ -77,6 +57,7 @@ public class DeclarationBuiler {
     }
 
     static void writeVariable(StringBuilder builder, Variable variable) {
+        TypeBuiler.writeStructPrefix(builder, variable.type);
         TypeBuiler.writeType(builder, variable.type);
         builder.append(" ");
         builder.append(variable.qualified.replaceAll("\\.", "_"));

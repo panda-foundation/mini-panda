@@ -78,7 +78,7 @@ struct test_Gpu
 
 uint8_t test_u8_data = 123;
 
-test_Cpu test_cpu3 = {123, {456}};
+struct test_Cpu test_cpu3 = {123, {456}};
 
 void main(){
     test_expression();

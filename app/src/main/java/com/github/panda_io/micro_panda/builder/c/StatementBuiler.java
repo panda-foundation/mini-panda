@@ -108,27 +108,7 @@ public class StatementBuiler {
 
         } else if (statement instanceof DeclarationStatement) {
             DeclarationStatement declaration = (DeclarationStatement)statement;
-            if (declaration.type instanceof TypeName && !((TypeName)declaration.type).isEnum) {
-                builder.append("struct ");
-            }
-            if (declaration.type instanceof TypeArray) {
-                TypeArray array = (TypeArray)declaration.type;
-                if (array.elementType instanceof TypeName && !((TypeName)array.elementType).isEnum) {
-                    builder.append("struct ");
-                }
-                if (array.elementType instanceof TypePointer) {
-                    TypePointer pointer = (TypePointer)array.elementType;
-                    if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
-                        builder.append("struct ");
-                    }
-                }
-            }
-            if (declaration.type instanceof TypePointer) {
-                TypePointer pointer = (TypePointer)declaration.type;
-                if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
-                    builder.append("struct ");
-                }
-            }
+            TypeBuiler.writeStructPrefix(builder, declaration.type);
             TypeBuiler.writeType(builder, declaration.type);
             builder.append(String.format(" %s", declaration.name.name));
             if (declaration.type instanceof TypeArray) {

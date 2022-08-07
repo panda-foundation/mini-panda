@@ -5,7 +5,6 @@ import com.github.panda_io.micro_panda.ast.declaration.*;
 import com.github.panda_io.micro_panda.ast.Context;
 
 public class MemberAccess extends Expression {
-	//TO-DO check more with code
 	public Expression parent;
 	public Identifier member;
 	public String qualified;

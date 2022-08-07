@@ -68,4 +68,28 @@ public class TypeBuiler {
             builder.append(String.format("[%d]", array.dimensions.get(i)));
         }
     }
+
+    static void writeStructPrefix(StringBuilder builder, Type type) {
+        if (type instanceof TypeName && !((TypeName)type).isEnum) {
+            builder.append("struct ");
+        }
+        if (type instanceof TypeArray) {
+            TypeArray array = (TypeArray)type;
+            if (array.elementType instanceof TypeName && !((TypeName)array.elementType).isEnum) {
+                builder.append("struct ");
+            }
+            if (array.elementType instanceof TypePointer) {
+                TypePointer pointer = (TypePointer)array.elementType;
+                if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
+                    builder.append("struct ");
+                }
+            }
+        }
+        if (type instanceof TypePointer) {
+            TypePointer pointer = (TypePointer)type;
+            if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
+                builder.append("struct ");
+            }
+        }
+    }
 }
