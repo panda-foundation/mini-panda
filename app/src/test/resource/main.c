@@ -80,6 +80,8 @@ struct test_Gpu
 
 uint8_t test_u8_data = 123;
 
+uint8_t test_my_timer = test_Timer_timer1;
+
 struct test_Cpu test_cpu3 = {123, {456}};
 
 void main(){
@@ -274,11 +276,11 @@ void test_statement(){
     }
     if (a < 10)
     {
-        global_assert(0, "a < 10 should be false\n");
+        global_assert(0, "a < 10 shouldn't go here\n");
     }
     if (a > 100)
     {
-        global_assert(0, "a > 100 should be false\n");
+        global_assert(0, "a > 100 shouldn't go here\n");
     }
     else 
     {
@@ -308,6 +310,9 @@ void test_statement(){
         count++;
     }
     global_assert(count == 10, "count should equal 10\n");
+    uint8_t timer = test_Timer_timer1;
+    timer = test_Timer_timer4;
+    switch (timer)
 }
 
 void console_write_bool(uint8_t value){
