@@ -32,6 +32,8 @@ void test_test_conversion();
 
 void global_assert(uint8_t expression, uint8_t* message);
 
+void test_statement();
+
 void console_write_bool(uint8_t value);
 
 void console_write_i8(int8_t value);
@@ -82,6 +84,7 @@ struct test_Cpu test_cpu3 = {123, {456}};
 
 void main(){
     test_expression();
+    test_statement();
 }
 
 void test_expression(){
@@ -260,6 +263,51 @@ void global_assert(uint8_t expression, uint8_t* message){
         console_write_string("assert failed:\n");
         console_write_string(message);
     }
+}
+
+void test_statement(){
+    console_write_string("============ test  statement ============\n");
+    uint8_t a = 10;
+    if (a >= 10)
+    {
+        global_assert(1, "a >= 10 should be true\n");
+    }
+    if (a < 10)
+    {
+        global_assert(0, "a < 10 should be false\n");
+    }
+    if (a > 100)
+    {
+        global_assert(0, "a > 100 should be false\n");
+    }
+    else 
+    {
+        global_assert(1, "(a > 100) else should be true\n");
+    }
+    uint8_t count = 0;
+    for (;;)
+    {
+        count++;
+        if (count == 3)
+        {
+            break;
+        }
+    }
+    global_assert(count == 3, "count should equal 3\n");
+    for (; count < 9;)
+    {
+        count++;
+    }
+    global_assert(count == 9, "count should equal 9\n");
+    for (uint8_t i = 0; i < 10; i++)
+    {
+        if (i < 9)
+        {
+            continue;
+        }
+        count++;
+    }
+    global_assert(count == 10, "count should equal 10\n");
 }
 
 void console_write_bool(uint8_t value){

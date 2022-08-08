@@ -3,4 +3,5 @@ namespace;
 public function main()
 {
     test.expression();
+    test.statement();
 }

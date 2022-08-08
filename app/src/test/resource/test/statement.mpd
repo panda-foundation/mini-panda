@@ -1,0 +1,67 @@
+namespace test;
+
+public function statement()
+{
+    console.write_string("============ test  statement ============\n");
+    // if
+    var a u8 = 10;
+    if (a >= 10)
+    {
+        assert(true, "a >= 10 should be true\n");
+    }
+    if (a < 10)
+    {
+        assert(false, "a < 10 should be false\n");
+    }
+    if (a > 100)
+    {
+        assert(false, "a > 100 should be false\n");
+    }
+    else
+    {
+        assert(true, "(a > 100) else should be true\n");
+    }
+
+    // for
+    var count u8 = 0;
+    for 
+    {
+        count++;
+        if (count == 3)
+        {
+            break;
+        }
+    }
+    assert(count == 3, "count should equal 3\n");
+    for (count < 9)
+    {
+        count++;
+    }
+    assert(count == 9, "count should equal 9\n");
+    for (var i u8 = 0; i < 10; i++)
+    {
+        if (i < 9)
+        {
+            continue;
+        }
+        count++;
+    }
+    assert(count == 10, "count should equal 10\n");
+    // switch
+    /*
+    a = 3;
+    switch (a)
+    {
+        case 0:
+        {
+            libc.puts("switch case 0");
+            break;
+        }
+
+        case 3:
+        {
+            libc.puts("switch case 3");
+            break;
+        }
+    }*/
+}

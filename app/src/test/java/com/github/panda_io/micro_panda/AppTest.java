@@ -33,6 +33,10 @@ public class AppTest {
         assertTrue(success);
         assertFalse(program.hasError());
 
+        success = parser.parseFile("./src/test/resource/test/statement.mpd");
+        assertTrue(success);
+        assertFalse(program.hasError());
+
         success = parser.parseFile("./src/test/resource/test/declaration.mpd");
         assertTrue(success);
         assertFalse(program.hasError());
