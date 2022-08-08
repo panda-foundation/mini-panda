@@ -11,16 +11,18 @@ import com.github.panda_io.micro_panda.ast.expression.Expression;
 public class SwitchStatement extends Statement {
 	public static class Case extends Node {
 		public Token token;
-		public Expression caseExpr;
+		public List<Expression> casesExpr;
 		public Statement body;
 
 		public void validate(Context context, Type operandType) {
-			if (this.caseExpr == null) {
+			if (this.casesExpr == null || this.casesExpr.isEmpty()) {
 				context.addError(this.getOffset(), "expect case expression");
 			} else {
-				this.caseExpr.validate(context, operandType);
-				if (!this.caseExpr.getType().equal(operandType)) {
-					context.addError(this.getOffset(), "case operand type mismatch with switch operand");
+				for (Expression expr : this.casesExpr) {
+					expr.validate(context, operandType);
+					if (!expr.getType().equal(operandType)) {
+						context.addError(expr.getOffset(), "case operand type mismatch with switch operand");
+					}
 				}
 			}
 			if (this.body != null) {

@@ -11,11 +11,11 @@ public function statement()
     }
     if (a < 10)
     {
-        assert(false, "a < 10 should be false\n");
+        assert(false, "a < 10 shouldn't go here\n");
     }
     if (a > 100)
     {
-        assert(false, "a > 100 should be false\n");
+        assert(false, "a > 100 shouldn't go here\n");
     }
     else
     {
@@ -47,21 +47,17 @@ public function statement()
         count++;
     }
     assert(count == 10, "count should equal 10\n");
-    // switch
-    /*
-    a = 3;
-    switch (a)
-    {
-        case 0:
-        {
-            libc.puts("switch case 0");
-            break;
-        }
 
-        case 3:
-        {
-            libc.puts("switch case 3");
-            break;
-        }
-    }*/
+    // switch
+    var timer Timer = Timer.timer4;
+    switch (timer)
+    {
+        case Timer.timer1, Timer.timer2:
+            assert(false, "case timer1 or timer2, shouldn't go here");
+
+        case Timer.timer3:
+        
+        default:
+            assert(true, "case timer4, should go here");
+    }
 }

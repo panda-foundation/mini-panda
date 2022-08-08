@@ -82,7 +82,6 @@ public class ExpressionBuiler {
             MemberAccess memberAccess = (MemberAccess) expression;
             if (memberAccess.parent.getType() == null) {
                 builder.append(memberAccess.qualified.replaceAll("\\.", "_"));
-                //TO-DO continue
             } else {
                 Type type = memberAccess.parent.getType();
                 if (type.isStruct()) {

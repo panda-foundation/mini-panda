@@ -114,7 +114,7 @@ public class StatementParser {
 	static BlockStatement parseBlockStatement(Context context) throws Exception {
 		BlockStatement block = new BlockStatement();
 		block.setOffset(context.position);
-		context.expect(Token.LeftBrace);;
+		context.expect(Token.LeftBrace);
 		block.statements = new ArrayList<>();
 		while (context.token != Token.RightBrace) {
 			block.statements.add(parseStatement(context));
@@ -171,12 +171,23 @@ public class StatementParser {
 		caseStmt.token = context.token;
 		if (caseStmt.token == Token.Case) {
 			context.next();
-			caseStmt.caseExpr = ExpressionParser.parseExpression(context);
+			caseStmt.casesExpr = new ArrayList<>();
+			caseStmt.casesExpr.add(ExpressionParser.parseExpression(context));
+			while (context.token == Token.Comma) {
+				context.expect(Token.Comma);
+				caseStmt.casesExpr.add(ExpressionParser.parseExpression(context));
+			}
 		} else {
 			context.expect(Token.Default);
 		}
 		context.expect(Token.Colon);
-		caseStmt.body = parseStatement(context);
+		BlockStatement block = new BlockStatement();
+		block.setOffset(context.position);
+		block.statements = new ArrayList<>();
+		while (!(context.token == Token.Case || context.token == Token.Default || context.token == Token.RightBrace)) {
+			block.statements.add(parseStatement(context));
+		}
+		caseStmt.body = block;
 		return caseStmt;
 	}
 
