@@ -26,6 +26,7 @@ public class DeclarationBuiler {
         
     static void writeEnumDefine(StringBuilder builder, Enumeration enumeration) {
         for (Variable member : enumeration.members) {
+            builder.append("const ");
             TypeBuiler.writeType(builder, member.type);
             builder.append(" ");
             builder.append(member.qualified.replaceAll("\\.", "_"));

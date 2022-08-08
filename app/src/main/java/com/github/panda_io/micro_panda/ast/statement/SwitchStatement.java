@@ -21,6 +21,10 @@ public class SwitchStatement extends Statement {
 					if (!expr.getType().equal(operandType)) {
 						context.addError(expr.getOffset(), "case operand type mismatch with switch operand");
 					}
+					if (!expr.isConstant()) {
+						//TO-DO should be literal integer or enum
+						context.addError(expr.getOffset(), "case label expect constant expression");
+					}
 				}
 			}
 			if (this.body != null) {

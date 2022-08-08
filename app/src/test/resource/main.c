@@ -54,13 +54,13 @@ void console_write_u64(uint64_t value);
 
 void console_write_string(uint8_t* string);
 
-uint8_t test_Level_low = 0;
-uint8_t test_Level_high = 1;
+const uint8_t test_Level_low = 0;
+const uint8_t test_Level_high = 1;
 
-uint8_t test_Timer_timer1 = 1;
-uint8_t test_Timer_timer2 = 2;
-uint8_t test_Timer_timer3 = 3;
-uint8_t test_Timer_timer4 = 4;
+const uint8_t test_Timer_timer1 = 1;
+const uint8_t test_Timer_timer2 = 2;
+const uint8_t test_Timer_timer3 = 3;
+const uint8_t test_Timer_timer4 = 4;
 
 struct test_Pwm
 {
