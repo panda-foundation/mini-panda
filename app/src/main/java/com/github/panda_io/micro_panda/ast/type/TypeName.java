@@ -3,11 +3,6 @@ package com.github.panda_io.micro_panda.ast.type;
 public class TypeName extends Type {
     public String name;
     public String qualified;
-    public boolean isEnum;
-
-    public TypeName() {
-        this.isEnum = false;
-    }
 
     public boolean equal(Type type) {
         if (type == null)

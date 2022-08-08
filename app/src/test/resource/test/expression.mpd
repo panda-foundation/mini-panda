@@ -1,6 +1,7 @@
 namespace test;
 
 var u8_data u8 = 123;
+var my_timer Timer = Timer.timer1;
 
 public function expression()
 {

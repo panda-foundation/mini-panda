@@ -68,8 +68,7 @@ public class Context {
                 } else if (declaration instanceof Struct) {
                     typeName.qualified = declaration.qualified;
                 } else if (declaration instanceof Enumeration) {
-                    typeName.qualified = declaration.qualified;
-                    typeName.isEnum = true;
+                    return Type.u8;
                 } else {
                     this.addError(type.getOffset(), "type not defined");
                 }
@@ -113,9 +112,6 @@ public class Context {
             return this.findLocalDeclaration(name.name);
         }
         Declaration declaration = this.findQualifiedDeclaration(name.qualified);
-        if (declaration instanceof Enumeration) {
-            name.isEnum = true;
-        }
         name.qualified = declaration.qualified;
         return declaration;
     }

@@ -24,7 +24,6 @@ public class Struct extends Declaration {
 		TypeName name = new TypeName();
 		name.name = this.name.name;
 		name.qualified = this.qualified;
-		name.isEnum = false;
 		return name;
 	}
 

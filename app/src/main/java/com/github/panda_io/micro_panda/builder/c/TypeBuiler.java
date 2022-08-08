@@ -70,24 +70,24 @@ public class TypeBuiler {
     }
 
     static void writeStructPrefix(StringBuilder builder, Type type) {
-        if (type instanceof TypeName && !((TypeName)type).isEnum) {
+        if (type instanceof TypeName) {
             builder.append("struct ");
         }
         if (type instanceof TypeArray) {
             TypeArray array = (TypeArray)type;
-            if (array.elementType instanceof TypeName && !((TypeName)array.elementType).isEnum) {
+            if (array.elementType instanceof TypeName) {
                 builder.append("struct ");
             }
             if (array.elementType instanceof TypePointer) {
                 TypePointer pointer = (TypePointer)array.elementType;
-                if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
+                if (pointer.elementType instanceof TypeName) {
                     builder.append("struct ");
                 }
             }
         }
         if (type instanceof TypePointer) {
             TypePointer pointer = (TypePointer)type;
-            if (pointer.elementType instanceof TypeName && !((TypeName)pointer.elementType).isEnum) {
+            if (pointer.elementType instanceof TypeName) {
                 builder.append("struct ");
             }
         }

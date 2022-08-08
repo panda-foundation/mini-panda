@@ -50,10 +50,7 @@ public abstract class Type extends Node {
     }
 
     public boolean isStruct() {
-        if (this instanceof TypeName) {
-            return !((TypeName) this).isEnum;
-        }
-        return false;
+        return (this instanceof TypeName);
     }
 
     public boolean isArrayWithSize() {

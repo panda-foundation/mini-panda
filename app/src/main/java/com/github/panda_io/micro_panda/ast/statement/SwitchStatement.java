@@ -15,14 +15,10 @@ public class SwitchStatement extends Statement {
 		public Statement body;
 
 		public void validate(Context context, Type operandType) {
-			if (this.casesExpr == null || this.casesExpr.isEmpty()) {
-				context.addError(this.getOffset(), "expect case expression");
-			} else {
-				for (Expression expr : this.casesExpr) {
-					expr.validate(context, operandType);
-					if (!expr.getType().equal(operandType)) {
-						context.addError(expr.getOffset(), "case operand type mismatch with switch operand");
-					}
+			for (Expression expr : this.casesExpr) {
+				expr.validate(context, operandType);
+				if (!expr.getType().equal(operandType)) {
+					context.addError(expr.getOffset(), "case operand type mismatch with switch operand");
 				}
 			}
 			if (this.body != null) {

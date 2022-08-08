@@ -49,14 +49,15 @@ public function statement()
     assert(count == 10, "count should equal 10\n");
 
     // switch
-    var timer Timer = Timer.timer4;
+    var timer Timer = Timer.timer1;
+    timer = Timer.timer4;
     switch (timer)
     {
         case Timer.timer1, Timer.timer2:
             assert(false, "case timer1 or timer2, shouldn't go here");
 
         case Timer.timer3:
-        
+
         default:
             assert(true, "case timer4, should go here");
     }

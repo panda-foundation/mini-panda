@@ -37,7 +37,8 @@ public class Variable extends Declaration {
             if (this.value.getType() == null) {
                 context.addError(this.value.getOffset(), "unknown type");
             } else if (!this.value.getType().equal(this.type)) {
-                context.addError(this.value.getOffset(), "init value type mismatch with define");
+                context.addError(this.value.getOffset(), String.format("init value type mismatch with define, expect '%s', got '%s'", this.type.string(),
+                this.value.getType().string()));
             }
             if (!this.value.isConstant()) {
                 context.addError(this.value.getOffset(), "expect const expression");
