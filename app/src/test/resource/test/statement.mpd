@@ -57,8 +57,11 @@ public function statement()
             assert(false, "case timer1 or timer2, shouldn't go here");
 
         case Timer.timer3:
+            assert(false, "case timer3, shouldn't go here");
 
         default:
             assert(true, "case timer4, should go here");
+            count = 8;
     }
+    assert(count == 8, "count should equal 8\n");
 }

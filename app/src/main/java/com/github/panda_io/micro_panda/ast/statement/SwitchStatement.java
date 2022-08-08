@@ -12,7 +12,7 @@ public class SwitchStatement extends Statement {
 	public static class Case extends Node {
 		public Token token;
 		public List<Expression> casesExpr;
-		public Statement body;
+		public BlockStatement body;
 
 		public void validate(Context context, Type operandType) {
 			if (this.casesExpr != null) {

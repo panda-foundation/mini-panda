@@ -84,12 +84,14 @@ uint8_t test_my_timer = test_Timer_timer1;
 
 struct test_Cpu test_cpu3 = {123, {456}};
 
-void main(){
+void main()
+{
     test_expression();
     test_statement();
 }
 
-void test_expression(){
+void test_expression()
+{
     console_write_string("============ test expression ============\n");
     test_test_unary();
     test_test_binary();
@@ -103,7 +105,8 @@ void test_expression(){
     test_test_others();
 }
 
-void test_test_unary(){
+void test_test_unary()
+{
     global_assert(1, "constant true should equal true\n");
     global_assert(!0, "constant !false should equal true\n");
     int32_t v1 = +1;
@@ -121,19 +124,22 @@ void test_test_unary(){
     global_assert(v7 == 1, "unary (*), *variable should equal 1\n");
 }
 
-void test_test_increment(){
+void test_test_increment()
+{
     int32_t v = 0;
     v++;
     global_assert(v == 1, "increment 1++ should equal 2\n");
 }
 
-void test_test_decrement(){
+void test_test_decrement()
+{
     int32_t v = 0;
     v--;
     global_assert(v == -1, "increment 1++ should equal 2\n");
 }
 
-void test_test_binary(){
+void test_test_binary()
+{
     int32_t v = 0;
     v = 5;
     global_assert(v == 5, "assign v to 5\n");
@@ -177,18 +183,21 @@ void test_test_binary(){
     global_assert((1 && 0) == 0, "true && false should be false\n");
 }
 
-void test_test_others(){
+void test_test_others()
+{
     global_assert((8 - 3) * 5 == 25, "(8 - 3) * 5 should equal 25\n");
     global_assert('a' == 97, "'a' should equal 97\n");
 }
 
-void test_test_initializer(){
+void test_test_initializer()
+{
     uint8_t numbers[5] = {1, 2, 3, 4, 5};
     struct test_Cpu cpu = {123, {456}};
     struct test_Cpu cpus[2] = {{123, {456}}, {456, {789}}};
 }
 
-void test_test_subscripting(){
+void test_test_subscripting()
+{
     uint8_t numbers[5] = {1, 2, 3, 4, 5};
     global_assert(numbers[2] == 3, "numbers[2] should equal 3\n");
     numbers[2] = 9;
@@ -201,7 +210,8 @@ void test_test_subscripting(){
     global_assert(array[3] == 9, "array2[3] should equal 9\n");
 }
 
-void test_test_scope(){
+void test_test_scope()
+{
     global_assert(test_u8_data == 123, "package var u8_data should equal 123\n");
     {
         global_assert(test_u8_data == 123, "package var u8_data should equal 123\n");
@@ -212,7 +222,8 @@ void test_test_scope(){
     global_assert(test_u8_data == 123, "package var u8_data should equal 123\n");
 }
 
-void test_test_member_access(){
+void test_test_member_access()
+{
     struct test_Cpu cpu = {123, {456}};
     struct test_Cpu* cpu1 = &cpu;
     struct test_Cpu* cpu_array[2];
@@ -240,7 +251,8 @@ void test_test_member_access(){
     global_assert(test_Timer_timer2 == 2, "enum Timer.timer2 should equal 2\n");
 }
 
-void test_test_conversion(){
+void test_test_conversion()
+{
     int32_t a0 = 65856;
     int16_t a1 = ((int16_t)(a0));
     global_assert(a1 == 320, "convert i32 to i16, should equal 320\n");
@@ -259,7 +271,8 @@ void test_test_conversion(){
     int32_t a10 = *a9;
 }
 
-void global_assert(uint8_t expression, uint8_t* message){
+void global_assert(uint8_t expression, uint8_t* message)
+{
     if (!expression)
     {
         console_write_string("assert failed:\n");
@@ -267,7 +280,8 @@ void global_assert(uint8_t expression, uint8_t* message){
     }
 }
 
-void test_statement(){
+void test_statement()
+{
     console_write_string("============ test  statement ============\n");
     uint8_t a = 10;
     if (a >= 10)
@@ -313,9 +327,23 @@ void test_statement(){
     uint8_t timer = test_Timer_timer1;
     timer = test_Timer_timer4;
     switch (timer)
+    {
+        case test_Timer_timer1:
+        case test_Timer_timer2:
+            global_assert(0, "case timer1 or timer2, shouldn't go here");
+            break;
+        case test_Timer_timer3:
+            global_assert(0, "case timer3, shouldn't go here");
+            break;
+        default:
+            global_assert(1, "case timer4, should go here");
+            count = 8;
+    }
+    global_assert(count == 8, "count should equal 8\n");
 }
 
-void console_write_bool(uint8_t value){
+void console_write_bool(uint8_t value)
+{
     if (value)
     {
         console_write_string("true");
@@ -326,7 +354,8 @@ void console_write_bool(uint8_t value){
     }
 }
 
-void console_write_i8(int8_t value){
+void console_write_i8(int8_t value)
+{
     if (value < 0)
     {
         putchar(((int32_t)('-')));
@@ -335,7 +364,8 @@ void console_write_i8(int8_t value){
     console_write_u64(((uint64_t)(value)));
 }
 
-void console_write_i16(int16_t value){
+void console_write_i16(int16_t value)
+{
     if (value < 0)
     {
         putchar(((int32_t)('-')));
@@ -344,7 +374,8 @@ void console_write_i16(int16_t value){
     console_write_u64(((uint64_t)(value)));
 }
 
-void console_write_i32(int32_t value){
+void console_write_i32(int32_t value)
+{
     if (value < 0)
     {
         putchar(((int32_t)('-')));
@@ -353,7 +384,8 @@ void console_write_i32(int32_t value){
     console_write_u64(((uint64_t)(value)));
 }
 
-void console_write_i64(int64_t value){
+void console_write_i64(int64_t value)
+{
     if (value < 0)
     {
         putchar(((int32_t)('-')));
@@ -362,19 +394,23 @@ void console_write_i64(int64_t value){
     console_write_u64(((uint64_t)(value)));
 }
 
-void console_write_u8(uint8_t value){
+void console_write_u8(uint8_t value)
+{
     console_write_u64(((uint64_t)(value)));
 }
 
-void console_write_u16(uint16_t value){
+void console_write_u16(uint16_t value)
+{
     console_write_u64(((uint64_t)(value)));
 }
 
-void console_write_u32(uint32_t value){
+void console_write_u32(uint32_t value)
+{
     console_write_u64(((uint64_t)(value)));
 }
 
-void console_write_u64(uint64_t value){
+void console_write_u64(uint64_t value)
+{
     uint8_t buffer[20];
     int8_t index = 0;
     for (; value != 0;)
@@ -390,14 +426,16 @@ void console_write_u64(uint64_t value){
     }
 }
 
-void console_write_string(uint8_t* string){
+void console_write_string(uint8_t* string)
+{
     for (uint32_t i = 0; string[i] != 0; i++)
     {
         putchar(((int32_t)(string[i])));
     }
 }
 
-void test_Cpu_frequency(){
+void test_Cpu_frequency()
+{
     console_write_u32(123);
 }
 

@@ -1,5 +1,6 @@
 package com.github.panda_io.micro_panda.builder.c;
 
+import com.github.panda_io.micro_panda.ast.expression.Expression;
 import com.github.panda_io.micro_panda.ast.statement.*;
 import com.github.panda_io.micro_panda.ast.type.TypeArray;
 
@@ -7,7 +8,7 @@ public class StatementBuiler {
 
     static void writeStatement(StringBuilder builder, Statement statement, int indent) {
         if (statement instanceof BlockStatement) {
-            writeBlockStatement(builder, (BlockStatement)statement, indent);
+            writeBlockStatement(builder, (BlockStatement) statement, indent);
 
         } else if (statement instanceof BreakStatement) {
             writeIndent(builder, indent);
@@ -20,7 +21,7 @@ public class StatementBuiler {
         } else if (statement instanceof DeclarationStatement) {
             writeIndent(builder, indent);
             writeSimpleStatement(builder, statement);
-            builder.append(";\n");  
+            builder.append(";\n");
 
         } else if (statement instanceof EmptyStatement) {
             writeIndent(builder, indent);
@@ -29,22 +30,22 @@ public class StatementBuiler {
         } else if (statement instanceof ExpressionStatement) {
             writeIndent(builder, indent);
             writeSimpleStatement(builder, statement);
-            builder.append(";\n");     
+            builder.append(";\n");
 
         } else if (statement instanceof ForStatement) {
-            writeForStatement(builder, (ForStatement)statement, indent);
+            writeForStatement(builder, (ForStatement) statement, indent);
 
         } else if (statement instanceof IfStatement) {
             writeIndent(builder, indent);
-            writeIfStatement(builder, (IfStatement)statement, indent);
+            writeIfStatement(builder, (IfStatement) statement, indent);
 
         } else if (statement instanceof ReturnStatement) {
-            writeReturnStatement(builder, (ReturnStatement)statement, indent);
+            writeReturnStatement(builder, (ReturnStatement) statement, indent);
 
         } else if (statement instanceof SwitchStatement) {
-            writeSwitchStatement(builder, (SwitchStatement)statement, indent);
+            writeSwitchStatement(builder, (SwitchStatement) statement, indent);
         }
-    }   
+    }
 
     static void writeIfStatement(StringBuilder builder, IfStatement statement, int indent) {
         builder.append("if (");
@@ -55,10 +56,10 @@ public class StatementBuiler {
             writeIndent(builder, indent);
             builder.append("else ");
             if (statement.elseStatement instanceof IfStatement) {
-                writeIfStatement(builder, (IfStatement)statement.elseStatement, indent);
+                writeIfStatement(builder, (IfStatement) statement.elseStatement, indent);
             } else if (statement.elseStatement instanceof BlockStatement) {
                 builder.append("\n");
-                writeBlockStatement(builder, (BlockStatement)statement.elseStatement, indent);
+                writeBlockStatement(builder, (BlockStatement) statement.elseStatement, indent);
             }
         }
     }
@@ -88,7 +89,40 @@ public class StatementBuiler {
         builder.append("switch (");
         ExpressionBuiler.writeExpression(builder, statement.operand);
         builder.append(")\n");
-        //TO-DO continue, add multi case token support
+        writeIndent(builder, indent);
+        builder.append("{\n");
+        indent++;
+        for (SwitchStatement.Case caseStmt : statement.cases) {
+            for (Expression expr : caseStmt.casesExpr) {
+                writeIndent(builder, indent);
+                builder.append("case ");
+                ExpressionBuiler.writeExpression(builder, expr);
+                builder.append(":\n");
+            }
+            indent++;
+            if (caseStmt.body != null) {
+                for (Statement stmt : caseStmt.body.statements) {
+                    writeStatement(builder, stmt, indent);
+                }
+            }
+            writeIndent(builder, indent);
+            builder.append("break;\n");
+            indent--;
+        }
+        if (statement.defaultCase != null) {
+            writeIndent(builder, indent);
+            builder.append("default:\n");
+            if (statement.defaultCase.body != null) {
+                indent++;
+                for (Statement stmt : statement.defaultCase.body.statements) {
+                    writeStatement(builder, stmt, indent);
+                }
+                indent--;
+            }
+        }
+        indent--;
+        writeIndent(builder, indent);
+        builder.append("}\n");
     }
 
     static void writeReturnStatement(StringBuilder builder, ReturnStatement statement, int indent) {
@@ -100,17 +134,17 @@ public class StatementBuiler {
         builder.append(";");
     }
 
-	static void writeSimpleStatement(StringBuilder builder, Statement statement) {
+    static void writeSimpleStatement(StringBuilder builder, Statement statement) {
         if (statement instanceof ExpressionStatement) {
-            ExpressionBuiler.writeExpression(builder, ((ExpressionStatement)statement).expression);
+            ExpressionBuiler.writeExpression(builder, ((ExpressionStatement) statement).expression);
 
         } else if (statement instanceof DeclarationStatement) {
-            DeclarationStatement declaration = (DeclarationStatement)statement;
+            DeclarationStatement declaration = (DeclarationStatement) statement;
             TypeBuiler.writeStructPrefix(builder, declaration.type);
             TypeBuiler.writeType(builder, declaration.type);
             builder.append(String.format(" %s", declaration.name.name));
             if (declaration.type instanceof TypeArray) {
-                TypeBuiler.writeArrayIndex(builder, (TypeArray)declaration.type);
+                TypeBuiler.writeArrayIndex(builder, (TypeArray) declaration.type);
             }
             if (declaration.value == null) {
                 if (!declaration.type.isArrayWithSize() && !declaration.type.isStruct()) {
@@ -121,20 +155,20 @@ public class StatementBuiler {
                 ExpressionBuiler.writeExpression(builder, declaration.value);
             }
         }
-	}
+    }
 
     static void writeBlockStatement(StringBuilder builder, BlockStatement block, int indent) {
         writeIndent(builder, indent);
         builder.append("{\n");
         indent++;
-        for (Statement statement:block.statements) {
+        for (Statement statement : block.statements) {
             writeStatement(builder, statement, indent);
         }
         indent--;
         writeIndent(builder, indent);
         builder.append("}\n");
     }
-    
+
     static void writeIndent(StringBuilder builder, int indent) {
         for (int i = 0; i < indent; i++) {
             builder.append("    ");

@@ -69,6 +69,7 @@ public class DeclarationBuiler {
 
     static void writeFunction(StringBuilder builder, Function function) {
         writeFunctionDefine(builder, function);
+        builder.append("\n");
         StatementBuiler.writeBlockStatement(builder, function.body, 0);
     }
 }
