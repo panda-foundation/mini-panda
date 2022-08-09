@@ -95,5 +95,6 @@ public class Function extends Declaration {
 			}
 			//TO-DO check return type, should be null or void
 		}
+		//TO-DO cannot return struct or array
 	}
 }

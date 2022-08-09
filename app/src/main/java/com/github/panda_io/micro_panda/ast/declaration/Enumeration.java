@@ -27,9 +27,7 @@ public class Enumeration extends Declaration {
 			member.type = Type.u8;
 			member.qualified = String.format("%s.%s", this.qualified, member.name.name);
 		}
-	}
 
-	public void validate(Context context) {
 		int index = 0;
 		for (Variable member : this.members) {
 			if (index > 255) {
@@ -60,6 +58,9 @@ public class Enumeration extends Declaration {
 		}
 	}
 
+	public void validate(Context context) {
+	}
+
 	public boolean addMember(Variable member) {
 		if (this.hasMember(member.name.name)) {
 			return false;
@@ -75,5 +76,14 @@ public class Enumeration extends Declaration {
 			}
 		}
 		return false;
+	}
+
+	public String getValue(String memberName) {
+		for (Variable variable : this.members) {
+			if (variable.name.name.equals(memberName)) {
+				return ((Literal) (variable.value)).value;
+			}
+		}
+		return null;
 	}
 }

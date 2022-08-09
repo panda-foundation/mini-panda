@@ -81,8 +81,11 @@ public class ExpressionBuiler {
         } else if (expression instanceof MemberAccess) {
             MemberAccess memberAccess = (MemberAccess) expression;
             if (memberAccess.parent.getType() == null) {
-                builder.append(memberAccess.qualified.replaceAll("\\.", "_"));
-                //TO-DO Enum?
+                if (memberAccess.enumValue != null) {
+                    builder.append(memberAccess.enumValue);
+                } else {
+                    builder.append(memberAccess.qualified.replaceAll("\\.", "_"));
+                }
             } else {
                 Type type = memberAccess.parent.getType();
                 if (type.isStruct()) {

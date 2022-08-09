@@ -7,6 +7,8 @@ import com.github.panda_io.micro_panda.ast.Node;
 import com.github.panda_io.micro_panda.ast.type.Type;
 import com.github.panda_io.micro_panda.scanner.Token;
 import com.github.panda_io.micro_panda.ast.expression.Expression;
+import com.github.panda_io.micro_panda.ast.expression.Literal;
+import com.github.panda_io.micro_panda.ast.expression.MemberAccess;
 
 public class SwitchStatement extends Statement {
 	public static class Case extends Node {
@@ -21,9 +23,14 @@ public class SwitchStatement extends Statement {
 					if (!expr.getType().equal(operandType)) {
 						context.addError(expr.getOffset(), "case operand type mismatch with switch operand");
 					}
-					if (!expr.isConstant()) {
-						//TO-DO should be literal integer or enum
-						context.addError(expr.getOffset(), "case label expect constant expression");
+					boolean isEnum = false;
+					if (expr instanceof MemberAccess) {
+						if (((MemberAccess) expr).enumValue != null) {
+							isEnum = true;
+						}
+					}
+					if (!(expr instanceof Literal) || !isEnum) {
+						context.addError(expr.getOffset(), "case label expect integer literal or enum");
 					}
 				}
 			}

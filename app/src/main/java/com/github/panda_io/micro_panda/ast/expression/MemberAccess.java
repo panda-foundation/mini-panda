@@ -9,6 +9,7 @@ public class MemberAccess extends Expression {
 	public Identifier member;
 	public String qualified;
 	public boolean isNamespace;
+	public String enumValue;
     boolean lvalue;
     
 	public boolean isLvalue() {
@@ -46,6 +47,7 @@ public class MemberAccess extends Expression {
 							this.type = Type.u8;
 							this.constant = true;
 							this.qualified = String.format("%s.%s", identifier.qualified, this.member.name);
+							this.enumValue = enumeration.getValue(this.member.name);
 						}
 					}
 				}
@@ -72,6 +74,7 @@ public class MemberAccess extends Expression {
 							this.type = Type.u8;
 							this.constant = true;
 							this.qualified = String.format("%s.%s", memberAccess.qualified, this.member.name);
+							this.enumValue = enumeration.getValue(this.member.name);
 						}
 					}
 				}

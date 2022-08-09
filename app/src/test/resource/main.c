@@ -80,7 +80,7 @@ struct test_Gpu
 
 uint8_t test_u8_data = 123;
 
-uint8_t test_my_timer = test_Timer_timer1;
+uint8_t test_my_timer = 1;
 
 struct test_Cpu test_cpu3 = {123, {456}};
 
@@ -247,8 +247,8 @@ void test_test_member_access()
     struct test_Gpu* gpu_array[1];
     gpu_array[0] = &gpu;
     global_assert(gpu_array[0]->pwm->freq == 456, "gpu_array[0].pwm.freq should equal 456\n");
-    global_assert(test_Timer_timer1 == 1, "enum Timer.timer1 should equal 1\n");
-    global_assert(test_Timer_timer2 == 2, "enum Timer.timer2 should equal 2\n");
+    global_assert(1 == 1, "enum Timer.timer1 should equal 1\n");
+    global_assert(2 == 2, "enum Timer.timer2 should equal 2\n");
 }
 
 void test_test_conversion()
@@ -324,15 +324,15 @@ void test_statement()
         count++;
     }
     global_assert(count == 10, "count should equal 10\n");
-    uint8_t timer = test_Timer_timer1;
-    timer = test_Timer_timer4;
+    uint8_t timer = 1;
+    timer = 4;
     switch (timer)
     {
-        case test_Timer_timer1:
-        case test_Timer_timer2:
+        case 1:
+        case 2:
             global_assert(0, "case timer1 or timer2, shouldn't go here");
             break;
-        case test_Timer_timer3:
+        case 3:
             global_assert(0, "case timer3, shouldn't go here");
             break;
         default:

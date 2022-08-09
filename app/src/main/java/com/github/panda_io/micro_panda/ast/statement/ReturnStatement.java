@@ -24,6 +24,5 @@ public class ReturnStatement extends Statement {
                         returnType.string(), this.expression.getType().string()));
             }
         }
-        //TO-DO cannot return struct or array
     }
 }

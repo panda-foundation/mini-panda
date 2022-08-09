@@ -10,6 +10,8 @@ import com.github.panda_io.micro_panda.scanner.Position;
 //TO-DO compile global offset when debug == true
 //TO-DO auto type for declaration
 //TO-DO const declaration and check (built-in, struct, array, pointer?)
+//TO-DO add warning type message
+//TO-DO check unused variable
 
 public class Program {
     static class Error {
