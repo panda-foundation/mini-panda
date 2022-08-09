@@ -29,7 +29,7 @@ public class SwitchStatement extends Statement {
 							isEnum = true;
 						}
 					}
-					if (!(expr instanceof Literal) || !isEnum) {
+					if (!((expr instanceof Literal) || isEnum)) {
 						context.addError(expr.getOffset(), "case label expect integer literal or enum");
 					}
 				}

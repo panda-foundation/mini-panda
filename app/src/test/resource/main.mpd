@@ -1,7 +1,10 @@
 namespace;
 
+using test;
+
 public function main()
 {
-    test.expression();
-    test.statement();
+    test_expression();
+    test_statement();
+    test_declaration();
 }

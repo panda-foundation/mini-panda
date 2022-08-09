@@ -37,3 +37,7 @@ public struct Gpu
 {
     public var pwm pointer<Pwm>;
 }
+
+public function test_declaration() {
+    
+}

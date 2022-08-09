@@ -17,8 +17,7 @@ public class TypeParser {
 			context.next();
 			return type;
 		}
-		if (context.token == Token.Function) {
-			context.next();
+		if (context.token == Token.LeftParen) {
 			return parseFunctionType(context);
 		}
 		if (context.token == Token.LeftBracket) {
@@ -131,7 +130,8 @@ public class TypeParser {
 			function.parameters.add(parseType(context));
 		}
 		context.expect(Token.RightParen);
-		if (context.token != Token.Semi && context.token != Token.Assign) {
+		if (!(context.token == Token.Semi || context.token == Token.Assign || context.token == Token.Comma
+				|| context.token == Token.RightParen)) {
 			function.returnType = parseType(context);
 		}
 		return function;

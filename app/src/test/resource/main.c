@@ -8,7 +8,7 @@ struct test_Gpu;
 
 void main();
 
-void test_expression();
+void test_test_expression();
 
 void test_test_unary();
 
@@ -32,7 +32,9 @@ void test_test_conversion();
 
 void global_assert(uint8_t expression, uint8_t* message);
 
-void test_statement();
+void test_test_declaration();
+
+void test_test_statement();
 
 void console_write_bool(uint8_t value);
 
@@ -86,11 +88,12 @@ struct test_Cpu test_cpu3 = {123, {456}};
 
 void main()
 {
-    test_expression();
-    test_statement();
+    test_test_expression();
+    test_test_statement();
+    test_test_declaration();
 }
 
-void test_expression()
+void test_test_expression()
 {
     console_write_string("============ test expression ============\n");
     test_test_unary();
@@ -280,7 +283,11 @@ void global_assert(uint8_t expression, uint8_t* message)
     }
 }
 
-void test_statement()
+void test_test_declaration()
+{
+}
+
+void test_test_statement()
 {
     console_write_string("============ test  statement ============\n");
     uint8_t a = 10;

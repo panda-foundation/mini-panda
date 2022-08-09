@@ -1,6 +1,6 @@
 namespace test;
 
-public function statement()
+public function test_statement()
 {
     console.write_string("============ test  statement ============\n");
     // if
