@@ -7,6 +7,8 @@ struct test_Cpu;
 
 struct test_Gpu;
 
+typedef int32_t(*test_add_one)(int32_t);
+
 void main();
 
 void test_test_expression();
@@ -34,8 +36,6 @@ void test_test_conversion();
 void global_assert(uint8_t expression, uint8_t* message);
 
 void test_test_declaration();
-
-typedef int32_t(*test_add_one)(int32_t);
 
 int32_t test_do_something(test_add_one func, int32_t value);
 

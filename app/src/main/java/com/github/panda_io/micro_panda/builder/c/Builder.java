@@ -23,7 +23,16 @@ public class Builder {
 
         for (Module module : modules) {
             for (Function function : module.functions) {
-                if (!function.type.isExtern) {
+                if (!function.type.isExtern && function.type.isDefine) {
+                    DeclarationBuiler.writeFunctionDefine(builder, function);
+                    builder.append(";\n\n");
+                }
+            }
+        }
+
+        for (Module module : modules) {
+            for (Function function : module.functions) {
+                if (!function.type.isExtern && !function.type.isDefine) {
                     DeclarationBuiler.writeFunctionDefine(builder, function);
                     builder.append(";\n\n");
                 }

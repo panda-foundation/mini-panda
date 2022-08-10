@@ -43,6 +43,9 @@ public class Function extends Declaration {
 		if (this.parameters.size() > 0) {
 			for (Parameter parameter : this.parameters) {
 				parameter.type = context.resolveType(parameter.type);
+				if (this.type.isDefine && parameter.type instanceof TypeFunction) {
+					context.addError(parameter.getOffset(), "function pointer paramenter is not allowed in function define");
+				}
 				this.type.parameters.add(parameter.type);
 			}
 		}
