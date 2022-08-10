@@ -7,8 +7,13 @@ import com.github.panda_io.micro_panda.ast.declaration.Function.Parameter;
 public class DeclarationBuiler {
     
     static void writeFunctionDefine(StringBuilder builder, Function function) {
+        if (function.type.isDefine) {
+            builder.append("typedef ");
+        }
         TypeBuiler.writeType(builder, function.returnType);
-        if (function.qualified.equals(Constant.programEntry)) {
+        if (function.type.isDefine) {
+            builder.append(String.format("(*%s)(", function.qualified.replaceAll("\\.", "_")));
+        } else if (function.qualified.equals(Constant.programEntry)) {
             builder.append(" main(");
         } else {
             builder.append(String.format(" %s(", function.qualified.replaceAll("\\.", "_")));
@@ -19,7 +24,9 @@ public class DeclarationBuiler {
                 builder.append(", ");
             }
             TypeBuiler.writeType(builder, parameter.type);
-            builder.append(String.format(" %s", parameter.name));            
+            if (!function.type.isDefine) {
+                builder.append(String.format(" %s", parameter.name));
+            }
         }
         builder.append(")");
     }

@@ -39,5 +39,32 @@ public struct Gpu
 }
 
 public function test_declaration() {
-    
+    //var addOne (i32) i32 = increment;
+    //var value i32 = 99;
+    //value = addOne(value);
+    //assert(value == 100, "use function pointer to calculate 99 + 1, should equal 100");
+
+    //function wrapper
 }
+
+public function increment(value i32) i32 {
+    return value + 1;
+}
+
+public function add_one(value i32) i32;
+
+/*
+public var ff void_function = do_something;
+
+public function functions()
+{
+    libc.puts("============ test function ============");
+    var f void_function = do_something;
+    f("do something 1");
+    ff("do something 2");
+}
+
+public function do_something(msg []u8)
+{
+    libc.puts(msg);
+}*/

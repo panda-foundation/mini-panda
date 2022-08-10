@@ -127,11 +127,12 @@ public class StatementBuiler {
 
     static void writeReturnStatement(StringBuilder builder, ReturnStatement statement, int indent) {
         writeIndent(builder, indent);
+        builder.append("return");
         if (statement.expression != null) {
             builder.append(" ");
             ExpressionBuiler.writeExpression(builder, statement.expression);
         }
-        builder.append(";");
+        builder.append(";\n");
     }
 
     static void writeSimpleStatement(StringBuilder builder, Statement statement) {

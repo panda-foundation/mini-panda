@@ -34,6 +34,10 @@ void global_assert(uint8_t expression, uint8_t* message);
 
 void test_test_declaration();
 
+int32_t test_increment(int32_t value);
+
+typedef int32_t(*test_add_one)(int32_t);
+
 void test_test_statement();
 
 void console_write_bool(uint8_t value);
@@ -285,6 +289,11 @@ void global_assert(uint8_t expression, uint8_t* message)
 
 void test_test_declaration()
 {
+}
+
+int32_t test_increment(int32_t value)
+{
+    return value + 1;
 }
 
 void test_test_statement()

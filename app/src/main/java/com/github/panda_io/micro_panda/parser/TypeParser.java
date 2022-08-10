@@ -17,9 +17,6 @@ public class TypeParser {
 			context.next();
 			return type;
 		}
-		if (context.token == Token.LeftParen) {
-			return parseFunctionType(context);
-		}
 		if (context.token == Token.LeftBracket) {
 			return parseTypeArray(context);
 		}
@@ -114,26 +111,5 @@ public class TypeParser {
 		}
 		context.expect(Token.RightParen);
 		return expressions;
-	}
-
-	static TypeFunction parseFunctionType(Context context) throws Exception {
-		TypeFunction function = new TypeFunction();
-		function.setOffset(context.position);
-		context.expect(Token.LeftParen);
-		if (context.token == Token.RightParen) {
-			context.next();
-			return function;
-		}
-		function.parameters.add(parseType(context));
-		while (context.token == Token.Comma) {
-			context.next();
-			function.parameters.add(parseType(context));
-		}
-		context.expect(Token.RightParen);
-		if (!(context.token == Token.Semi || context.token == Token.Assign || context.token == Token.Comma
-				|| context.token == Token.RightParen)) {
-			function.returnType = parseType(context);
-		}
-		return function;
 	}
 }
