@@ -29,7 +29,6 @@ public class Function extends Declaration {
 	}
 
 	public void resolveType(Context context) {
-		this.type = new TypeFunction();
 		this.type.returnType = this.returnType;
 		if (this.hasAttribute(Constant.attriExtern)) {
 			this.type.isExtern = true;
@@ -43,6 +42,7 @@ public class Function extends Declaration {
 		}
 		if (this.parameters.size() > 0) {
 			for (Parameter parameter : this.parameters) {
+				parameter.type = context.resolveType(parameter.type);
 				this.type.parameters.add(parameter.type);
 			}
 		}

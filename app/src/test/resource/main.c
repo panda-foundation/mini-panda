@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 
 struct test_Pwm;
 
@@ -34,9 +35,11 @@ void global_assert(uint8_t expression, uint8_t* message);
 
 void test_test_declaration();
 
-int32_t test_increment(int32_t value);
-
 typedef int32_t(*test_add_one)(int32_t);
+
+int32_t test_do_something(test_add_one func, int32_t value);
+
+int32_t test_increment(int32_t value);
 
 void test_test_statement();
 
@@ -89,6 +92,8 @@ uint8_t test_u8_data = 123;
 uint8_t test_my_timer = 1;
 
 struct test_Cpu test_cpu3 = {123, {456}};
+
+test_add_one test_another_add_one = test_increment;
 
 void main()
 {
@@ -289,6 +294,19 @@ void global_assert(uint8_t expression, uint8_t* message)
 
 void test_test_declaration()
 {
+    test_add_one addOne = test_increment;
+    int32_t value = 99;
+    value = addOne(value);
+    global_assert(value == 100, "use function pointer to calculate 99 + 1, should equal 100");
+    value = test_another_add_one(value);
+    global_assert(value == 101, "use function pointer to calculate 100 + 1, should equal 101");
+    value = test_do_something(test_increment, value);
+    global_assert(value == 102, "use function wrapper to calculate 101 + 1, should equal 102");
+}
+
+int32_t test_do_something(test_add_one func, int32_t value)
+{
+    return func(value);
 }
 
 int32_t test_increment(int32_t value)

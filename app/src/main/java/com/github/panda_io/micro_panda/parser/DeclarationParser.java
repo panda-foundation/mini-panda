@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.github.panda_io.micro_panda.ast.declaration.*;
 import com.github.panda_io.micro_panda.ast.expression.*;
+import com.github.panda_io.micro_panda.ast.type.TypeFunction;
 import com.github.panda_io.micro_panda.scanner.Token;
 
 public class DeclarationParser {
@@ -82,7 +83,7 @@ public class DeclarationParser {
 		return enumeration;
 	}
 
-	static Struct parseStruct(Context context, boolean isPublic, List<Declaration.Attribute> attributes)
+	static Struct parseStruct(Context context, boolean isPublic, List<Declaration.Attribute> attributes, String namespace)
 			throws Exception {
 		Struct struct = new Struct();
 		struct.isPublic = isPublic;
@@ -106,6 +107,8 @@ public class DeclarationParser {
 
 				case Function:
 					Function function = parseFunction(context, isPublicMember, memberAttri);
+					function.type = new TypeFunction();
+					function.qualified = String.format("%s.%s.%s", namespace, struct.name.name, function.name.name);
 					success = struct.addFunction(function);
 					if (!success) {
 						context.addError(function.getOffset(),

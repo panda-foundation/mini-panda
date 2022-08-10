@@ -39,12 +39,18 @@ public struct Gpu
 }
 
 public function test_declaration() {
-    //var addOne (i32) i32 = increment;
-    //var value i32 = 99;
-    //value = addOne(value);
-    //assert(value == 100, "use function pointer to calculate 99 + 1, should equal 100");
+    var addOne add_one = increment;
+    var value i32 = 99;
+    value = addOne(value);
+    assert(value == 100, "use function pointer to calculate 99 + 1, should equal 100");
+    value = another_add_one(value);
+    assert(value == 101, "use function pointer to calculate 100 + 1, should equal 101");
+    value = do_something(increment, value);
+    assert(value == 102, "use function wrapper to calculate 101 + 1, should equal 102");
+}
 
-    //function wrapper
+public function do_something(func add_one, value i32) i32 {
+    return func(value);
 }
 
 public function increment(value i32) i32 {
@@ -53,18 +59,4 @@ public function increment(value i32) i32 {
 
 public function add_one(value i32) i32;
 
-/*
-public var ff void_function = do_something;
-
-public function functions()
-{
-    libc.puts("============ test function ============");
-    var f void_function = do_something;
-    f("do something 1");
-    ff("do something 2");
-}
-
-public function do_something(msg []u8)
-{
-    libc.puts(msg);
-}*/
+public var another_add_one add_one = increment;

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.github.panda_io.micro_panda.ast.Module;
 import com.github.panda_io.micro_panda.ast.Module.Using;
 import com.github.panda_io.micro_panda.ast.declaration.*;
+import com.github.panda_io.micro_panda.ast.type.TypeFunction;
 import com.github.panda_io.micro_panda.ast.Constant;
 import com.github.panda_io.micro_panda.scanner.*;
 
@@ -34,6 +35,8 @@ public class ModuleParser {
 				case Function:
 					Function function = DeclarationParser.parseFunction(context, isPublic, attributes);
 					function.qualified = String.format("%s.%s", module.namespace, function.name.name);
+					function.type = new TypeFunction();
+                    function.type.qualified = function.qualified;
 					module.functions.add(function);
 					context.program.addDeclaration(function);
 					break;
@@ -46,7 +49,7 @@ public class ModuleParser {
 					break;
 
 				case Struct:
-					Struct struct = DeclarationParser.parseStruct(context, isPublic, attributes);
+					Struct struct = DeclarationParser.parseStruct(context, isPublic, attributes, module.namespace);
 					struct.qualified = String.format("%s.%s", module.namespace, struct.name.name);
 					module.structs.add(struct);
 					context.program.addDeclaration(struct);

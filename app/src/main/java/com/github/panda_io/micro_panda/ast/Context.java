@@ -64,11 +64,12 @@ public class Context {
                 this.addError(type.getOffset(), "type not defined");
             } else {
                 if (declaration instanceof Function) {
-                    return ((Function) declaration).type;
+                    typeName.qualified = declaration.qualified;
+                    type = ((Function) declaration).type;
                 } else if (declaration instanceof Struct) {
                     typeName.qualified = declaration.qualified;
                 } else if (declaration instanceof Enumeration) {
-                    return Type.u8;
+                    type = Type.u8;
                 } else {
                     this.addError(type.getOffset(), "type not defined");
                 }

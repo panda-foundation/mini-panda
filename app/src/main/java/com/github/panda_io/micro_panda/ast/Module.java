@@ -34,11 +34,11 @@ public class Module {
         program.module = this;
         Context context = new Context(program);
 
-        for (Variable variable : this.variables) {
-            variable.resolveType(context);
-        }
         for (Function function : this.functions) {
             function.resolveType(context);
+        }
+        for (Variable variable : this.variables) {
+            variable.resolveType(context);
         }
         for (Enumeration enumeration : this.enumerations) {
             enumeration.resolveType(context);

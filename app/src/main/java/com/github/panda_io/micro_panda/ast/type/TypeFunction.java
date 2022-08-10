@@ -5,6 +5,7 @@ import java.util.*;
 public class TypeFunction extends Type {
     public Type returnType;
     public List<Type> parameters;
+    public String qualified;
 
     public boolean isMemberFunction;
     public boolean isExtern;

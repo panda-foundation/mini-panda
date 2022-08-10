@@ -40,7 +40,7 @@ public class TypeBuiler {
         } else if (type instanceof TypeName) {
             builder.append(((TypeName) type).qualified.replaceAll("\\.", "_"));
         } else if (type instanceof TypeFunction) {
-            // TO-DO
+            builder.append(((TypeFunction) type).qualified.replaceAll("\\.", "_"));
         } else if (type instanceof TypePointer) {
             writeType(builder, ((TypePointer) type).elementType);
             builder.append("*");

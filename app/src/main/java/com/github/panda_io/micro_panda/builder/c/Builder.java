@@ -10,7 +10,7 @@ public class Builder {
 
     public static StringBuilder build(Program program) {
         StringBuilder builder = new StringBuilder();
-        builder.append("#include <stdint.h>\n\n");
+        builder.append("#include <stdint.h>\n#include <stdio.h>\n\n");
         Collection<Module> modules = program.getModules();
 
         for (Module module : modules) {
