@@ -29,7 +29,7 @@ public struct Cpu
     public function frequency()
     {
         console.write_u32(123);
-        //console.write_u32(this.osc);
+        console.write_u32(this.osc);
     }
 }
 
@@ -39,6 +39,7 @@ public struct Gpu
 }
 
 public function test_declaration() {
+    // function
     var addOne add_one = increment;
     var value i32 = 99;
     value = addOne(value);
@@ -47,6 +48,8 @@ public function test_declaration() {
     assert(value == 101, "use function pointer to calculate 100 + 1, should equal 101");
     value = do_something(increment, value);
     assert(value == 102, "use function wrapper to calculate 101 + 1, should equal 102");
+
+    // struct
 }
 
 public function do_something(func add_one, value i32) i32 {

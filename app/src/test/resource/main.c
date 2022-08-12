@@ -471,5 +471,6 @@ void console_write_string(uint8_t* string)
 void test_Cpu_frequency()
 {
     console_write_u32(123);
+    console_write_u32(this->osc);
 }
 
