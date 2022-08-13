@@ -70,13 +70,19 @@ public class Function extends Declaration {
 		} else {
 			Context ctx = context.newContext();
 			ctx.setFunction(this);
-			if (this.parent != null) {
-				TypePointer pointer = new TypePointer();
-				pointer.elementType = this.parent.getType();
-				ctx.insertObject(Constant.structThis, pointer);
-			}
 			if (this.type.isExtern) {
 				ctx.addError(this.getOffset(), "extern function has no body");
+			}
+			if (this.parent != null) {
+				if (this.parameters == null) {
+					this.parameters = new ArrayList<>();
+				}
+				Parameter thisParam = new Parameter();
+				thisParam.name = Constant.structThis;
+				TypePointer pointer = new TypePointer();
+				pointer.elementType = this.parent.getType();
+				thisParam.type = pointer;
+				this.parameters.add(0, thisParam);
 			}
 			if (this.parameters != null) {
 				for (Parameter parameter : this.parameters) {

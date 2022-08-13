@@ -15,6 +15,7 @@ public class ExpressionBuiler {
         } else if (expression instanceof Conversion) {
             Conversion conversion = (Conversion) expression;
             builder.append("((");
+            TypeBuiler.writeStructPrefix(builder, conversion.getType());
             TypeBuiler.writeType(builder, conversion.getType());
             builder.append(")(");
             writeExpression(builder, conversion.value);

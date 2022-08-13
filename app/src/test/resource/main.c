@@ -468,7 +468,7 @@ void console_write_string(uint8_t* string)
     }
 }
 
-void test_Cpu_frequency()
+void test_Cpu_frequency(struct test_Cpu* this)
 {
     console_write_u32(123);
     console_write_u32(this->osc);

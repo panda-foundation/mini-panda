@@ -10,6 +10,7 @@ public class DeclarationBuiler {
         if (function.type.isDefine) {
             builder.append("typedef ");
         }
+        TypeBuiler.writeStructPrefix(builder, function.returnType);
         TypeBuiler.writeType(builder, function.returnType);
         if (function.type.isDefine) {
             builder.append(String.format("(*%s)(", function.qualified.replaceAll("\\.", "_")));
@@ -23,6 +24,7 @@ public class DeclarationBuiler {
             if (i > 0) {
                 builder.append(", ");
             }
+            TypeBuiler.writeStructPrefix(builder, parameter.type);
             TypeBuiler.writeType(builder, parameter.type);
             if (!function.type.isDefine) {
                 builder.append(String.format(" %s", parameter.name));
