@@ -107,8 +107,9 @@ public class DeclarationParser {
 
 				case Function:
 					Function function = parseFunction(context, isPublicMember, memberAttri);
-					function.type = new TypeFunction();
 					function.qualified = String.format("%s.%s.%s", namespace, struct.name.name, function.name.name);
+					function.type = new TypeFunction();
+					function.type.qualified = function.qualified;
 					success = struct.addFunction(function);
 					if (!success) {
 						context.addError(function.getOffset(),

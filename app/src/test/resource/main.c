@@ -41,6 +41,12 @@ int32_t test_do_something(test_add_one func, int32_t value);
 
 int32_t test_increment(int32_t value);
 
+void test_call_cpu(struct test_Cpu* cpu);
+
+uint32_t test_Cpu_set_pwm(struct test_Cpu* this, uint32_t freq);
+
+uint32_t test_Cpu_get_osc(struct test_Cpu* this);
+
 void test_test_statement();
 
 void console_write_bool(uint8_t value);
@@ -104,7 +110,7 @@ void main()
 
 void test_test_expression()
 {
-    console_write_string("============ test expression ============\n");
+    console_write_string("============ test  expression ============\n");
     test_test_unary();
     test_test_binary();
     test_test_conversion();
@@ -294,6 +300,7 @@ void global_assert(uint8_t expression, uint8_t* message)
 
 void test_test_declaration()
 {
+    console_write_string("============ test declaration ============\n");
     test_add_one addOne = test_increment;
     int32_t value = 99;
     value = addOne(value);
@@ -302,6 +309,8 @@ void test_test_declaration()
     global_assert(value == 101, "use function pointer to calculate 100 + 1, should equal 101");
     value = test_do_something(test_increment, value);
     global_assert(value == 102, "use function wrapper to calculate 101 + 1, should equal 102");
+    global_assert(test_Cpu_get_osc(&test_cpu3) == 123, "cpu3.get_osc() should equal 123");
+    struct test_Cpu* cpu4 = &test_cpu3;
 }
 
 int32_t test_do_something(test_add_one func, int32_t value)
@@ -314,9 +323,13 @@ int32_t test_increment(int32_t value)
     return value + 1;
 }
 
+void test_call_cpu(struct test_Cpu* cpu)
+{
+}
+
 void test_test_statement()
 {
-    console_write_string("============ test  statement ============\n");
+    console_write_string("============ test   statement ============\n");
     uint8_t a = 10;
     if (a >= 10)
     {
@@ -468,9 +481,14 @@ void console_write_string(uint8_t* string)
     }
 }
 
-void test_Cpu_frequency(struct test_Cpu* this)
+uint32_t test_Cpu_set_pwm(struct test_Cpu* this, uint32_t freq)
 {
-    console_write_u32(123);
-    console_write_u32(this->osc);
+    this->pwm.freq = freq;
+    return this->pwm.freq;
+}
+
+uint32_t test_Cpu_get_osc(struct test_Cpu* this)
+{
+    return this->osc;
 }
 

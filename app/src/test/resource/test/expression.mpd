@@ -5,7 +5,7 @@ var my_timer Timer = Timer.timer1;
 
 public function test_expression()
 {
-    console.write_string("============ test expression ============\n");
+    console.write_string("============ test  expression ============\n");
 
     test_unary();
     test_binary();
@@ -125,6 +125,8 @@ public function test_subscripting()
     var array2 []u8 = array;
     array2[3] = 9;
     assert(array[3] == 9, "array2[3] should equal 9\n");
+
+    //TO-DO test pass array, sub array
 }
 
 public function test_scope()

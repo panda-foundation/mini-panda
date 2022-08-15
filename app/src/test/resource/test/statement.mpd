@@ -2,7 +2,7 @@ namespace test;
 
 public function test_statement()
 {
-    console.write_string("============ test  statement ============\n");
+    console.write_string("============ test   statement ============\n");
     // if
     var a u8 = 10;
     if (a >= 10)

@@ -38,7 +38,7 @@ public class ExpressionBuiler {
             builder.append("++");
 
         } else if (expression instanceof Initializer) {
-            Initializer initializer = (Initializer)expression;
+            Initializer initializer = (Initializer) expression;
             builder.append("{");
             for (int i = 0; i < initializer.expressions.size(); i++) {
                 if (i != 0) {
@@ -47,7 +47,7 @@ public class ExpressionBuiler {
                 writeExpression(builder, initializer.expressions.get(i));
             }
             builder.append("}");
-            
+
         } else if (expression instanceof Invocation) {
             Invocation invocation = (Invocation) expression;
             if (invocation.define.isExtern) {
@@ -81,12 +81,15 @@ public class ExpressionBuiler {
 
         } else if (expression instanceof MemberAccess) {
             MemberAccess memberAccess = (MemberAccess) expression;
+            Type memberAcessType = memberAccess.getType();
             if (memberAccess.parent.getType() == null) {
                 if (memberAccess.enumValue != null) {
                     builder.append(memberAccess.enumValue);
                 } else {
                     builder.append(memberAccess.qualified.replaceAll("\\.", "_"));
                 }
+            } else if (memberAcessType instanceof TypeFunction && ((TypeFunction) memberAcessType).isMemberFunction) {
+                builder.append(((TypeFunction) memberAcessType).qualified.replaceAll("\\.", "_"));
             } else {
                 Type type = memberAccess.parent.getType();
                 if (type.isStruct()) {
@@ -116,7 +119,7 @@ public class ExpressionBuiler {
 
         } else if (expression instanceof This) {
             builder.append("this");
-            
+
         } else if (expression instanceof Unary) {
             Unary unary = (Unary) expression;
             builder.append(unary.operator.toString());

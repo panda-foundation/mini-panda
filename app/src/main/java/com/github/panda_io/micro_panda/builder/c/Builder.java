@@ -37,6 +37,12 @@ public class Builder {
                     builder.append(";\n\n");
                 }
             }
+            for (Struct struct : module.structs) {
+                for (Function function : struct.functions) {
+                    DeclarationBuiler.writeFunctionDefine(builder, function);
+                    builder.append(";\n\n");
+                }
+            }
         }
 
         for (Module module : modules) {

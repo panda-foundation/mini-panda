@@ -12,6 +12,8 @@ import com.github.panda_io.micro_panda.scanner.Position;
 //TO-DO const declaration and check (built-in, struct, array, pointer?)
 //TO-DO add warning type message
 //TO-DO check unused variable
+//TO-DO @include
+//TO-DO @sdcc(prefix, surfix)
 
 public class Program {
     static class Error {

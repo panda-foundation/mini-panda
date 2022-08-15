@@ -26,10 +26,14 @@ public struct Cpu
     public var osc u32;
     public var pwm Pwm;
 
-    public function frequency()
+    public function set_pwm(freq u32) u32
     {
-        console.write_u32(123);
-        console.write_u32(this.osc);
+        this.pwm.freq = freq;
+        return this.pwm.freq;
+    }
+
+    public function get_osc() u32 {
+        return this.osc;
     }
 }
 
@@ -38,7 +42,10 @@ public struct Gpu
     public var pwm pointer<Pwm>;
 }
 
-public function test_declaration() {
+public function test_declaration() 
+{
+    console.write_string("============ test declaration ============\n");
+
     // function
     var addOne add_one = increment;
     var value i32 = 99;
@@ -50,16 +57,81 @@ public function test_declaration() {
     assert(value == 102, "use function wrapper to calculate 101 + 1, should equal 102");
 
     // struct
+    assert(cpu3.get_osc() == 123, "cpu3.get_osc() should equal 123");
+    var cpu4 pointer<Cpu> = &cpu3;
 }
 
-public function do_something(func add_one, value i32) i32 {
+public function do_something(func add_one, value i32) i32 
+{
     return func(value);
 }
 
-public function increment(value i32) i32 {
+public function increment(value i32) i32 
+{
     return value + 1;
 }
 
 public function add_one(value i32) i32;
 
 public var another_add_one add_one = increment;
+
+public function call_cpu(cpu pointer<Cpu>)
+{
+
+}
+
+/*
+
+public const global_printer Printer = {80, {1, 2, 3, 4, 5, 6, 7, 8}, {88}};
+
+public struct Driver
+{
+    public var type u8;
+
+    public function print(message []u8)
+    {
+        libc.puts(message);
+        libc.printf("type:%d \n", this.type);
+    }
+}
+
+public struct Printer
+{
+    public var line i32;
+    public var buffer [8]u8;
+    public var driver Driver;
+
+    public function print(message []u8)
+    {
+        this.driver.print(message);
+    }
+}
+
+public function structs()
+{
+    libc.puts("============ test struct ============");
+    printer.driver.print("hello printer!");
+    printer.print("hello printer!");
+    var p pointer<Printer> = &printer;
+    p.print("hello pointer!");
+
+    pass_struct_pointer(&printer);
+    pass_array(printer.buffer);
+
+    libc.printf("global_printer.line: %d \n", global_printer.line);
+    libc.printf("global_printer.buffer[7]: %d \n", global_printer.buffer[7]);
+    libc.printf("global_printer.driver.type: %d \n", global_printer.driver.type);
+}
+
+public function pass_struct_pointer(printer pointer<Printer>)
+{
+    printer.driver.type = 3;
+    printer.print("hello printer!");
+}
+
+public function pass_array(buffer []u8)
+{
+    buffer[2] = 2;
+    libc.printf("buffer[2]: %d \n", buffer[2]);
+}
+*/
