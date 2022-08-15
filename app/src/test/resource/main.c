@@ -311,6 +311,10 @@ void test_test_declaration()
     global_assert(value == 102, "use function wrapper to calculate 101 + 1, should equal 102");
     global_assert(test_Cpu_get_osc(&test_cpu3) == 123, "cpu3.get_osc() should equal 123");
     struct test_Cpu* cpu4 = &test_cpu3;
+    cpu4->osc = 333;
+    global_assert(test_Cpu_get_osc(cpu4) == 333, "cpu4.get_osc() should equal 333");
+    test_call_cpu(cpu4);
+    global_assert(test_Cpu_get_osc(&test_cpu3) == 555, "cpu3.get_osc() should equal 555");
 }
 
 int32_t test_do_something(test_add_one func, int32_t value)
@@ -325,6 +329,7 @@ int32_t test_increment(int32_t value)
 
 void test_call_cpu(struct test_Cpu* cpu)
 {
+    cpu->osc = 555;
 }
 
 void test_test_statement()

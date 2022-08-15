@@ -59,6 +59,10 @@ public function test_declaration()
     // struct
     assert(cpu3.get_osc() == 123, "cpu3.get_osc() should equal 123");
     var cpu4 pointer<Cpu> = &cpu3;
+    cpu4.osc = 333;
+    assert(cpu4.get_osc() == 333, "cpu4.get_osc() should equal 333");
+    call_cpu(cpu4);
+    assert(cpu3.get_osc() == 555, "cpu3.get_osc() should equal 555");
 }
 
 public function do_something(func add_one, value i32) i32 
@@ -77,61 +81,5 @@ public var another_add_one add_one = increment;
 
 public function call_cpu(cpu pointer<Cpu>)
 {
-
+    cpu.osc = 555;
 }
-
-/*
-
-public const global_printer Printer = {80, {1, 2, 3, 4, 5, 6, 7, 8}, {88}};
-
-public struct Driver
-{
-    public var type u8;
-
-    public function print(message []u8)
-    {
-        libc.puts(message);
-        libc.printf("type:%d \n", this.type);
-    }
-}
-
-public struct Printer
-{
-    public var line i32;
-    public var buffer [8]u8;
-    public var driver Driver;
-
-    public function print(message []u8)
-    {
-        this.driver.print(message);
-    }
-}
-
-public function structs()
-{
-    libc.puts("============ test struct ============");
-    printer.driver.print("hello printer!");
-    printer.print("hello printer!");
-    var p pointer<Printer> = &printer;
-    p.print("hello pointer!");
-
-    pass_struct_pointer(&printer);
-    pass_array(printer.buffer);
-
-    libc.printf("global_printer.line: %d \n", global_printer.line);
-    libc.printf("global_printer.buffer[7]: %d \n", global_printer.buffer[7]);
-    libc.printf("global_printer.driver.type: %d \n", global_printer.driver.type);
-}
-
-public function pass_struct_pointer(printer pointer<Printer>)
-{
-    printer.driver.type = 3;
-    printer.print("hello printer!");
-}
-
-public function pass_array(buffer []u8)
-{
-    buffer[2] = 2;
-    libc.printf("buffer[2]: %d \n", buffer[2]);
-}
-*/
