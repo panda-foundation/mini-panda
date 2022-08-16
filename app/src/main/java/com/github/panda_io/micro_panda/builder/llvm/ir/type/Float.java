@@ -18,7 +18,7 @@ public class Float extends Type {
         }
     };
 
-    Kind kind;
+    public Kind kind;
 
     public Float(Kind kind) {
         this.kind = kind;

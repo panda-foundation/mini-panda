@@ -9,6 +9,7 @@ import (
 	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
+// constant
 type Global struct {
 	ir.GlobalIdent
 	Immutable   bool

@@ -1,233 +1,44 @@
 package com.github.panda_io.micro_panda.builder.llvm.ir;
 
 public class Identifier {
-    String name;
+	String name;
 	int id;
-    boolean isGlobal;
+	boolean isGlobal;
 
-    public Identifier(boolean isGlobal) {
-        this.isGlobal = isGlobal;
-    }
-    
-    public String getName() {
-        if (this.name == null || this.name.isEmpty()) {
-            return Long.toString(this.id);
-        }
-        return this.name;
-    }
+	public Identifier(boolean isGlobal) {
+		this.isGlobal = isGlobal;
+	}
+
+	public String getName() {
+		if (this.name == null || this.name.isEmpty()) {
+			return Long.toString(this.id);
+		}
+		return this.name;
+	}
 
 	public void setName(String name) {
-        this.name = name;
-        this.id = 0;
-    }
+		this.name = name;
+		this.id = 0;
+	}
 
 	public int getId() {
-        return this.id;
-    }
+		return this.id;
+	}
 
 	public void setId(int id) {
-        this.id = id;
-    }
+		this.id = id;
+	}
 
-    public String identifier() {
-        if (this.name == null || this.name.isEmpty()) {
-            if (this.isGlobal) {
-                return String.format("@%s", Integer.toString(this.id));
-            } 
-            return String.format("%%s", Integer.toString(this.id));
-        }
-        if (this.isGlobal) {
-            return String.format("@%s", escapeIdentifier(this.name));
-        }
-        return String.format("%%s", escapeIdentifier(this.name));
-    }
-
-    static String escapeIdentifier(String identifier) {
-        //TO-DO implementation
-        return null;
-    }
-/*
-
-const (
-	// decimal specifies the decimal digit characters.
-	decimal = "0123456789"
-	// upper specifies the uppercase letters.
-	upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	// lower specifies the lowercase letters.
-	lower = "abcdefghijklmnopqrstuvwxyz"
-	// alpha specifies the alphabetic characters.
-	alpha = upper + lower
-	// head is the set of valid characters for the first character of an
-	// identifier.
-	head = alpha + "$-._"
-	// tail is the set of valid characters for the remaining characters of an
-	// identifier (i.e. all characters in the identifier except the first). All
-	// characters of a label may be from the tail set, even the first character.
-	tail = head + decimal
-	// quotedIdent is the set of valid characters in quoted identifiers, which
-	// excludes ASCII control characters, double quote, backslash and extended
-	// ASCII characters.
-	quotedIdent = " !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~"
-)*/
-
-/*
-// escapeIdent replaces any characters which are not valid in identifiers with
-// corresponding hexadecimal escape sequence (\XX).
-func escapeIdent(s string) string {
-	replace := false
-	extra := 0
-	for i := 0; i < len(s); i++ {
-		if strings.IndexByte(tail, s[i]) == -1 {
-			// Check if a replacement is required.
-			//
-			// Note, there are characters which are not valid in an identifier
-			// (e.g. '#') but are valid in a quoted identifier, and therefore
-			// require a replacement (i.e. quoted identifier), but no extra
-			// characters for the escape sequence.
-			replace = true
-		}
-		if strings.IndexByte(quotedIdent, s[i]) == -1 {
-			// Two extra bytes are required for each byte not valid in a quoted
-			// identifier; e.g.
-			//
-			//    "\t" -> `\09`
-			//    "世" -> `\E4\B8\96`
-			extra += 2
-		}
-	}
-	if !replace {
-		return s
-	}
-	// Replace invalid characters.
-	const hextable = "0123456789ABCDEF"
-	buf := make([]byte, len(s)+extra)
-	j := 0
-	for i := 0; i < len(s); i++ {
-		b := s[i]
-		if strings.IndexByte(quotedIdent, b) != -1 {
-			buf[j] = b
-			j++
-			continue
-		}
-		buf[j] = '\\'
-		buf[j+1] = hextable[b>>4]
-		buf[j+2] = hextable[b&0x0F]
-		j += 3
-	}
-	// Add surrounding quotes.
-	return `"` + string(buf) + `"`
-}
-
-// escapeString replaces any characters in s categorized as invalid in string
-// literals with corresponding hexadecimal escape sequence (\XX).
-func escapeString(s []byte) string {
-	valid := func(b byte) bool {
-		return ' ' <= b && b <= '~' && b != '"' && b != '\\'
-	}
-	return string(escape(s, valid))
-}
-
-// escape replaces any characters in s categorized as invalid by the valid
-// function with corresponding hexadecimal escape sequence (\XX).
-func escape(s []byte, valid func(b byte) bool) string {
-	// Check if a replacement is required.
-	extra := 0
-	for i := 0; i < len(s); i++ {
-		if !valid(s[i]) {
-			// Two extra bytes are required for each invalid byte; e.g.
-			//    "#" -> `\23`
-			//    "世" -> `\E4\B8\96`
-			extra += 2
-		}
-	}
-	if extra == 0 {
-		return string(s)
-	}
-	// Replace invalid characters.
-	const hextable = "0123456789ABCDEF"
-	buf := make([]byte, len(s)+extra)
-	j := 0
-	for i := 0; i < len(s); i++ {
-		b := s[i]
-		if valid(b) {
-			buf[j] = b
-			j++
-			continue
-		}
-		buf[j] = '\\'
-		buf[j+1] = hextable[b>>4]
-		buf[j+2] = hextable[b&0x0F]
-		j += 3
-	}
-	return string(buf)
-}
-
-// unescape replaces hexadecimal escape sequences (\xx) in s with their
-// corresponding characters.
-func unescape(s string) []byte {
-	if !strings.ContainsRune(s, '\\') {
-		return []byte(s)
-	}
-	j := 0
-	buf := []byte(s)
-	for i := 0; i < len(s); i++ {
-		b := s[i]
-		if b == '\\' && i+2 < len(s) {
-			if s[i+1] == '\\' {
-				b = '\\'
-				i++
-			} else {
-				x1, ok := unhex(s[i+1])
-				if ok {
-					x2, ok := unhex(s[i+2])
-					if ok {
-						b = x1<<4 | x2
-						i += 2
-					}
-				}
+	public String identifier() {
+		if (this.name == null || this.name.isEmpty()) {
+			if (this.isGlobal) {
+				return String.format("@%s", Integer.toString(this.id));
 			}
+			return String.format("%%s", Integer.toString(this.id));
 		}
-		if i != j {
-			buf[j] = b
+		if (this.isGlobal) {
+			return String.format("@%s", Encode.escapeIdentifier(this.name));
 		}
-		j++
+		return String.format("%%s", Encode.escapeIdentifier(this.name));
 	}
-	return buf[:j]
-}
-
-func Quote(s []byte) string {
-	return `"` + string(escapeString(s)) + `"`
-}
-
-func Unquote(s string) []byte {
-	if len(s) < 2 {
-		panic(fmt.Errorf("invalid length of quoted string; expected >= 2, got %d", len(s)))
-	}
-	if !strings.HasPrefix(s, `"`) {
-		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character prefix", s))
-	}
-	if !strings.HasSuffix(s, `"`) {
-		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character suffix", s))
-	}
-	// Skip double-quotes.
-	s = s[1 : len(s)-1]
-	return unescape(s)
-}
-
-// unhex returns the numeric value represented by the hexadecimal digit b. It
-// returns false if b is not a hexadecimal digit.
-func unhex(b byte) (v byte, ok bool) {
-	// This is an adapted copy of the unhex function from the strconv package,
-	// which is governed by a BSD-style license.
-	switch {
-	case '0' <= b && b <= '9':
-		return b - '0', true
-	case 'a' <= b && b <= 'f':
-		return b - 'a' + 10, true
-	case 'A' <= b && b <= 'F':
-		return b - 'A' + 10, true
-	}
-	return 0, false
-}
-*/
 }

@@ -3,9 +3,9 @@ package com.github.panda_io.micro_panda.builder.llvm.ir.type;
 import java.util.List;
 
 public class Function extends Type {
-    String qualified;
+    public String qualified;
     public Type returnType;
-    List<Type> parameters;
+    public List<Type> parameters;
 
     public Function(String qualified, Type returnType, List<Type> parameters) {
         this.qualified = qualified;

@@ -1,8 +1,8 @@
 package com.github.panda_io.micro_panda.builder.llvm.ir.type;
 
 public class Int extends Type {
-    int bitSize;
-    boolean unsigned;
+    public int bitSize;
+    public boolean unsigned;
 
     public Int(int bitSize, boolean unsigned) {
         this.bitSize = bitSize;

@@ -9,6 +9,7 @@ import (
 	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
 )
 
+// constant
 type Func struct {
 	ir.GlobalIdent
 	Sig    *ir_types.FuncType

@@ -1,7 +1,7 @@
 package com.github.panda_io.micro_panda.builder.llvm.ir.type;
 
 public class Array extends Type {
-    long length;
+    public long length;
     public Type elementType;
 
     public Array(long length, Type elementType) {

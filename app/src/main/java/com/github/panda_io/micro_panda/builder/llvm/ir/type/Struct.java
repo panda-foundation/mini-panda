@@ -3,8 +3,8 @@ package com.github.panda_io.micro_panda.builder.llvm.ir.type;
 import java.util.List;
 
 public class Struct extends Type {
-    String qualified;
-    List<Type> fields;
+    public String qualified;
+    public List<Type> fields;
 
     public Struct(String qualified, List<Type> fields) {
         this.qualified = qualified;
