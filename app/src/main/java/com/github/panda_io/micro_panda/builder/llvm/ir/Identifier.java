@@ -1,96 +1,52 @@
-package ir
+package com.github.panda_io.micro_panda.builder.llvm.ir;
 
-import (
-	"fmt"
-	"strconv"
-	"strings"
-)
+public class Identifier {
+    String name;
+	int id;
+    boolean isGlobal;
 
-// globalName encodes a global name to its LLVM IR assembly representation.
-//
-// Examples:
-//    "foo" -> "@foo"
-//    "a b" -> `@"a b"`
-//    "世" -> `@"\E4\B8\96"`
-//    "2" -> `@"2"`
-func GlobalName(name string) string {
-	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
-		return `@"` + name + `"`
-	}
-	return "@" + escapeIdent(name)
-}
+    public Identifier(boolean isGlobal) {
+        this.isGlobal = isGlobal;
+    }
+    
+    public String getName() {
+        if (this.name == null || this.name.isEmpty()) {
+            return Long.toString(this.id);
+        }
+        return this.name;
+    }
 
-// globalID encodes a global ID to its LLVM IR assembly representation.
-//
-// Examples:
-//    "42" -> "@42"
-func GlobalID(id int64) string {
-	if id < 0 {
-		panic(fmt.Errorf("negative global ID (%d); should be represented as global name", id))
-	}
-	return "@" + strconv.FormatInt(id, 10)
-}
+	public void setName(String name) {
+        this.name = name;
+        this.id = 0;
+    }
 
-// localName encodes a local name to its LLVM IR assembly representation.
-//
-// Examples:
-//    "foo" -> "%foo"
-//    "a b" -> `%"a b"`
-//    "世" -> `%"\E4\B8\96"`
-//    "2" -> `%"2"`
-func LocalName(name string) string {
-	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
-		return `%"` + name + `"`
-	}
-	return "%" + escapeIdent(name)
-}
+	public int getId() {
+        return this.id;
+    }
 
-// localID encodes a local ID to its LLVM IR assembly representation.
-//
-// Examples:
-//    "42" -> "%42"
-func LocalID(id int64) string {
-	if id < 0 {
-		panic(fmt.Errorf("negative local ID (%d); should be represented as local name", id))
-	}
-	return "%" + strconv.FormatInt(id, 10)
-}
+	public void setId(int id) {
+        this.id = id;
+    }
 
-// labelName encodes a label name to its LLVM IR assembly representation.
-//
-// Examples:
-//    "foo" -> "foo:"
-//    "a b" -> `"a b":`
-//    "世" -> `"\E4\B8\96":`
-//    "2" -> `"2":`
-func LabelName(name string) string {
-	if _, err := strconv.ParseUint(name, 10, 64); err == nil {
-		return `"` + name + `":`
-	}
-	return escapeIdent(name) + ":"
-}
+    public String identifier() {
+        if (this.name == null || this.name.isEmpty()) {
+            if (this.isGlobal) {
+                return String.format("@%s", Integer.toString(this.id));
+            } 
+            return String.format("%%s", Integer.toString(this.id));
+        }
+        if (this.isGlobal) {
+            return String.format("@%s", escapeIdentifier(this.name));
+        }
+        return String.format("%%s", escapeIdentifier(this.name));
+    }
 
-// labelID encodes a label ID to its LLVM IR assembly representation.
-//
-// Examples:
-//    "42" -> 42:
-func LabelID(id int64) string {
-	if id < 0 {
-		panic(fmt.Errorf("negative label ID (%d); should be represented as label name", id))
-	}
-	return strconv.FormatInt(id, 10) + ":"
-}
-
-// typeName encodes a type name to its LLVM IR assembly representation.
-//
-// Examples:
-//    "foo" -> "%foo"
-//    "a b" -> `%"a b"`
-//    "世" -> `%"\E4\B8\96"`
-//    "2" -> `%2`
-func typeName(name string) string {
-	return "%" + escapeIdent(name)
-}
+    static String escapeIdentifier(String identifier) {
+        //TO-DO implementation
+        return null;
+    }
+/*
 
 const (
 	// decimal specifies the decimal digit characters.
@@ -112,8 +68,9 @@ const (
 	// excludes ASCII control characters, double quote, backslash and extended
 	// ASCII characters.
 	quotedIdent = " !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~"
-)
+)*/
 
+/*
 // escapeIdent replaces any characters which are not valid in identifiers with
 // corresponding hexadecimal escape sequence (\XX).
 func escapeIdent(s string) string {
@@ -271,4 +228,6 @@ func unhex(b byte) (v byte, ok bool) {
 		return b - 'A' + 10, true
 	}
 	return 0, false
+}
+*/
 }
