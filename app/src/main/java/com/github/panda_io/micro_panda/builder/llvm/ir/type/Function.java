@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Function extends Type {
     String qualified;
-    Type returnType;
+    public Type returnType;
     List<Type> parameters;
 
     public Function(String qualified, Type returnType, List<Type> parameters) {
