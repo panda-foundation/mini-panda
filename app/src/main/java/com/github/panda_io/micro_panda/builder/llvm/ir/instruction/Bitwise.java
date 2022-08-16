@@ -8,7 +8,7 @@ public class Bitwise extends Instruction {
     public enum Operator {
         Shl("shl"),
         LShr("lshl"),
-        AShr("ashl"),
+        AShr("ashr"),
         And("and"),
         Or("or"),
         Xor("xor");
