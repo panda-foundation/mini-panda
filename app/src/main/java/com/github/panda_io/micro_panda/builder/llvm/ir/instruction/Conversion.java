@@ -29,7 +29,6 @@ public class Conversion extends Instruction {
     }
 
     Operator operator;
-    Identifier identifier;
     Value from;
     Type to;
 

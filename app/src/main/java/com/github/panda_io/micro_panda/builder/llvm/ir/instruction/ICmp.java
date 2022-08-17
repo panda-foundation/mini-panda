@@ -30,7 +30,6 @@ public class ICmp extends Instruction {
     }
 
     Operand operand;
-    Identifier identifier;
     Value x;
     Value y;
     Type type;

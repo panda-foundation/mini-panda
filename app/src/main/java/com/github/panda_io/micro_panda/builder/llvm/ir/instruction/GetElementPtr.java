@@ -23,7 +23,6 @@ public class GetElementPtr extends Instruction {
         }
     }
 
-    Identifier identifier;
     Type elementType;
     Value source;
     List<Value> indexes;

@@ -11,6 +11,29 @@ public class Encode {
         //TO-DO implementation
         return null;
     }
+
+	static String localName(String name) {
+		// Positive numeric local names are quoted to distinguish local names from
+		// local IDs; e.g.
+		//
+		//    %"2"
+		/*
+		if _, err := strconv.ParseUint(name, 10, 64); err == nil {
+			return `%"` + name + `"`
+		}
+		return "%" + EscapeIdent(name)*/
+		return null;
+	}
+
+	static String localID(long id) {
+		/*
+		if id < 0 {
+			panic(fmt.Errorf("negative local ID (%d); should be represented as local name", id))
+		}
+		return "%" + strconv.FormatInt(id, 10)*/
+		return null;
+	}
+	
     
 /*
 const (

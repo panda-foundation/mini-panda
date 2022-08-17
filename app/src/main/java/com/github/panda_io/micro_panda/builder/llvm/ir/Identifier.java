@@ -7,6 +7,8 @@ public class Identifier {
 
 	public Identifier(boolean isGlobal) {
 		this.isGlobal = isGlobal;
+		this.name = "";
+		this.id = 0;
 	}
 
 	public String getName() {

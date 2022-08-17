@@ -36,7 +36,6 @@ public class FCmp extends Instruction {
     }
 
     Operand operand;
-    Identifier identifier;
     Value x;
     Value y;
     Type type;

@@ -5,7 +5,6 @@ import com.github.panda_io.micro_panda.builder.llvm.ir.Value;
 import com.github.panda_io.micro_panda.builder.llvm.ir.type.Type;
 
 public class Load extends Instruction {
-    Identifier identifier;
     Type elementType;
     Value source;
 

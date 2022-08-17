@@ -5,7 +5,6 @@ import com.github.panda_io.micro_panda.builder.llvm.ir.type.Pointer;
 import com.github.panda_io.micro_panda.builder.llvm.ir.type.Type;
 
 public class Alloca extends Instruction {
-    Identifier identifier;
     Type elementType;
     Type type;
 

@@ -5,7 +5,6 @@ import com.github.panda_io.micro_panda.builder.llvm.ir.Value;
 import com.github.panda_io.micro_panda.builder.llvm.ir.type.Type;
 
 public class FNeg extends Instruction {
-    Identifier identifier;
     Value x;
     Type type;
 

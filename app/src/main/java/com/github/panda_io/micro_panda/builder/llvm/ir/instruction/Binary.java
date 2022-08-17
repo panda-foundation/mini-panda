@@ -32,7 +32,6 @@ public class Binary extends Instruction {
     }
 
     Operator operator;
-    Identifier identifier;
     Value x;
     Value y;
     Type type;

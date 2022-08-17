@@ -26,7 +26,6 @@ public class Bitwise extends Instruction {
     }
 
     Operator operator;
-    Identifier identifier;
     Value x;
     Value y;
     Type type;
