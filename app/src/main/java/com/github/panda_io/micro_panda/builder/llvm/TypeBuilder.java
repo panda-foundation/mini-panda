@@ -17,7 +17,7 @@ import com.github.panda_io.micro_panda.builder.llvm.ir.type.Struct;
 import com.github.panda_io.micro_panda.builder.llvm.ir.type.Type;
 import com.github.panda_io.micro_panda.scanner.Token;
 
-public class TypeIR {
+public class TypeBuilder {
     static Map<Token, Type> builtinTypes;
     static {
         builtinTypes = new HashMap<>();
@@ -36,7 +36,7 @@ public class TypeIR {
         builtinTypes.put(Token.Void, Type.Void);
     }
 
-    public static Type getTypeIR(com.github.panda_io.micro_panda.ast.type.Type type) {
+    public static Type buildType(com.github.panda_io.micro_panda.ast.type.Type type) {
         if (type instanceof TypeBuiltin) {
             return builtinTypes.get(((TypeBuiltin) type).token);
 
@@ -44,11 +44,11 @@ public class TypeIR {
             return new Struct(((TypeName) type).qualified, null);
             
         } else if (type instanceof TypePointer) {
-            return new Pointer(getTypeIR(((TypePointer) type).elementType));
+            return new Pointer(buildType(((TypePointer) type).elementType));
 
         } else if (type instanceof TypeArray) {
             TypeArray arrayType = (TypeArray) type;
-            Type elementType = getTypeIR(arrayType.elementType);
+            Type elementType = buildType(arrayType.elementType);
             if (arrayType.dimensions.get(0) == 0) {
                 if (arrayType.dimensions.size() == 1) {
                     return new Pointer(elementType);
@@ -71,11 +71,11 @@ public class TypeIR {
             TypeFunction functionType = (TypeFunction) type;
             List<Type> parameterTypes = new ArrayList<>();
             for (com.github.panda_io.micro_panda.ast.type.Type parameter : functionType.parameters) {
-                parameterTypes.add(getTypeIR(parameter));
+                parameterTypes.add(buildType(parameter));
             }
             Type returnType = Type.Void;
             if (functionType.returnType != null) {
-                returnType = getTypeIR(functionType.returnType);
+                returnType = buildType(functionType.returnType);
             }
             return new Pointer(new Function(functionType.qualified, returnType, parameterTypes));
         }
