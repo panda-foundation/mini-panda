@@ -1,13 +1,28 @@
-package llvm
+package com.github.panda_io.micro_panda.builder.llvm;
 
-import (
-	"github.com/panda-io/micro-panda/ast/ast"
-	"github.com/panda-io/micro-panda/target/llvm/ir"
-	"github.com/panda-io/micro-panda/target/llvm/ir/instruction"
-	ir_core "github.com/panda-io/micro-panda/target/llvm/ir/ir"
-	"github.com/panda-io/micro-panda/target/llvm/ir/ir_types"
-)
+import com.github.panda_io.micro_panda.builder.llvm.ir.Value;
 
+public class Context {
+    public Context() {
+
+    }
+
+    public Context createContext() {
+        return null;
+    }
+
+    public void addObject(String name, Value value) {
+    }
+
+    public Value findObject(String name) {
+        return null;
+    }
+    
+    public Value autoLoad(Value value) {
+        return null;
+    }
+    /*
+//TO-DO
 func NewContext(p *Program) *Context {
 	return &Context{
 		Program: p,
@@ -92,4 +107,6 @@ func (c *Context) AutoLoad(value ir_core.Value) ir_core.Value {
 		return load
 	}
 	return value
+}
+*/
 }

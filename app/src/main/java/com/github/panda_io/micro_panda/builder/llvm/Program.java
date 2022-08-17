@@ -1,16 +1,7 @@
-package llvm
+package com.github.panda_io.micro_panda.builder.llvm;
 
-import (
-	"bytes"
-	"crypto/md5"
-	"fmt"
-	"sort"
-
-	"github.com/panda-io/micro-panda/ast"
-	"github.com/panda-io/micro-panda/target/llvm/ir"
-	"github.com/panda-io/micro-panda/target/llvm/ir/constant"
-)
-
+public class Program {
+    /*
 type Program struct {
 	Program      *ir.Program
 	Strings      map[string]constant.Constant
@@ -117,7 +108,7 @@ func (list Keys) Less(i, j int) bool {
 	return list[i] < list[j]
 }
 
-/*
+
 func (c *Compiler) GenerateIR(file string) {
 		p := llvm.NewProgram()
 		content := p.GenerateIR(c.program)
@@ -146,3 +137,4 @@ func (c *Compiler) GenerateIR(file string) {
 			return
 		}
 }*/
+}
