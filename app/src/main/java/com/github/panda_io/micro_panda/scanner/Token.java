@@ -94,8 +94,8 @@ public enum Token {
 
     private static final Map<String, Token> tokens = new HashMap<>();
     static {
-        for (Token t : values()) {
-            tokens.put(t.token, t);
+        for (Token token : values()) {
+            tokens.put(token.token, token);
         }
 
         OperatorNode.root = new OperatorNode();
