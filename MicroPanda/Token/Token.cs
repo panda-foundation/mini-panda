@@ -1,6 +1,7 @@
 namespace MicroPanda.Token;
 
 using System.Collections.Generic;
+using System.Text;
 
 internal enum Token
 {
@@ -81,14 +82,16 @@ internal enum Token
 	Minus,
 	Mul,
 	Div,
+	Less,
+	Greater,
 	Rem,
 	BitAnd,
 	BitOr,
 	BitXor,
 	Complement,
 	Not,
-	Less,
-	Greater,
+	LeftShift,
+	RightShift,
 
 	_assignBegin,
 	Assign,
@@ -100,8 +103,6 @@ internal enum Token
 	XorAssign,
 	AndAssign,
 	OrAssign,
-	LeftShift,
-	RightShift,
 	LeftShiftAssign,
 	RightShiftAssign,
 	_assignEnd,
@@ -160,6 +161,80 @@ internal class TokenUtil
 	internal static string ToString(Token token)
 	{
 		return _token2String[token];
+	}
+
+	internal static (Token Token, int Length) ReadOperator(Span<byte> bytes)
+	{
+		var token = Token.ILLEGAL;
+		var length = 0;
+		for (var i = 0; i < 3; i++)
+		{
+			var literal = Encoding.UTF8.GetString(bytes.Slice(0, i + 1));
+			if (_string2Token.ContainsKey(literal))
+			{
+				token = _string2Token[literal];
+				length = i + 1;
+			}
+		}
+		return (token, length);
+	}
+
+	internal static int Precedence(Token token)
+	{
+		switch (token)
+		{
+			case Token.Assign:
+			case Token.MulAssign:
+			case Token.DivAssign:
+			case Token.RemAssign:
+			case Token.PlusAssign:
+			case Token.MinusAssign:
+			case Token.LeftShiftAssign:
+			case Token.RightShiftAssign:
+			case Token.AndAssign:
+			case Token.OrAssign:
+			case Token.XorAssign:
+				return 1;
+
+			case Token.Or:
+				return 2;
+
+			case Token.And:
+				return 3;
+
+			case Token.BitOr:
+				return 4;
+
+			case Token.BitXor:
+				return 5;
+
+			case Token.BitAnd:
+				return 6;
+
+			case Token.Equal:
+			case Token.NotEqual:
+				return 7;
+
+			case Token.Less:
+			case Token.LessEqual:
+			case Token.Greater:
+			case Token.GreaterEqual:
+				return 8;
+
+			case Token.LeftShift:
+			case Token.RightShift:
+				return 9;
+
+			case Token.Plus:
+			case Token.Minus:
+				return 10;
+
+			case Token.Mul:
+			case Token.Div:
+			case Token.Rem:
+				return 11;
+		}
+		return 0;
 	}
 
 	internal static Dictionary<Token, string> _token2String = new()
@@ -222,14 +297,16 @@ internal class TokenUtil
 		{ Token.Minus, "-" },
 		{ Token.Mul, "*" },
 		{ Token.Div, "/" },
+		{ Token.Less, "<" },
+		{ Token.Greater, ">" },
 		{ Token.Rem, "%" },
 		{ Token.BitAnd, "&" },
 		{ Token.BitOr, "|" },
 		{ Token.BitXor, "^" },
 		{ Token.Complement, "~" },
 		{ Token.Not, "!" },
-		{ Token.Less, "<" },
-		{ Token.Greater, ">" },
+		{ Token.LeftShift, "<<" },
+		{ Token.RightShift, ">>" },
 
 		{ Token.Assign, "=" },
 		{ Token.PlusAssign, "+=" },
@@ -240,10 +317,8 @@ internal class TokenUtil
 		{ Token.XorAssign, "^=" },
 		{ Token.AndAssign, "&=" },
 		{ Token.OrAssign, "|=" },
-		{ Token.LeftShift, "<<" },
-		{ Token.RightShift, ">>" },
-		{ Token.LeftShiftAssign, "<<|" },
-		{ Token.RightShiftAssign, ">>|" },
+		{ Token.LeftShiftAssign, "<<=" },
+		{ Token.RightShiftAssign, ">>=" },
 
 		{ Token.Equal, "==" },
 		{ Token.NotEqual, "!=" },
@@ -320,14 +395,16 @@ internal class TokenUtil
 		{ "-", Token.Minus },
 		{ "*", Token.Mul },
 		{ "/", Token.Div },
+		{ "<", Token.Less },
+		{ ">", Token.Greater },
 		{ "%", Token.Rem },
 		{ "&", Token.BitAnd },
 		{ "|", Token.BitOr },
 		{ "^", Token.BitXor },
 		{ "~", Token.Complement },
 		{ "!", Token.Not },
-		{ "<", Token.Less },
-		{ ">", Token.Greater },
+		{ "<<", Token.LeftShift },
+		{ ">>", Token.RightShift },
 
 		{ "=", Token.Assign },
 		{ "+=", Token.PlusAssign },
@@ -338,10 +415,8 @@ internal class TokenUtil
 		{ "^=", Token.XorAssign },
 		{ "&=", Token.AndAssign },
 		{ "|=", Token.OrAssign },
-		{ "<<", Token.LeftShift },
-		{ ">>", Token.RightShift },
-		{ "<<|", Token.LeftShiftAssign },
-		{ ">>|", Token.RightShiftAssign },
+		{ "<<=", Token.LeftShiftAssign },
+		{ ">>=", Token.RightShiftAssign },
 
 		{ "==", Token.Equal },
 		{ "!=", Token.NotEqual },
