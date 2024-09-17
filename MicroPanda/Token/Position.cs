@@ -1,129 +1,146 @@
-/**
+namespace MicroPanda.Token;
 
-package token
+internal class Position
+{
+    readonly File File;
+	internal readonly int Offset;
 
-import (
-	"fmt"
-)
-
-type Position struct {
-	file   *File
-	offset int
-}
-
-func (p Position) String() string {
-	path := p.file.Name
-	line, column := p.file.location(p.offset)
-	return fmt.Sprintf("%s:%d:%d", path, line, column)
-}
-
-func (p Position) Global() int {
-	return p.file.Base + p.offset
-}
-
-type File struct {
-	Name  string
-	Size  int
-	Base  int
-	lines []int
-}
-
-func NewFile(filename string, size int) *File {
-	return &File{
-		Name:  filename,
-		Size:  size,
-		lines: []int{0},
+	internal Position(File file, int offset)
+	{
+		File = file;
+		Offset = offset;
 	}
-}
 
-func (f *File) AddLine(offset int) {
-	f.lines = append(f.lines, offset)
-}
-
-func (f *File) Lines() int {
-	return len(f.lines)
-}
-
-func (f *File) Truncate(lines int) {
-	f.lines = f.lines[:lines]
-}
-
-func (f *File) Position(offset int) *Position {
-	return &Position{
-		file:   f,
-		offset: offset,
+	public override string ToString()
+	{
+		var path = File.Name;
+		var (line, column) = File.GetLocation(Offset);
+		return $"{path}:{line}:{column}";
 	}
+
+	internal int GlobalOffset() => File.FileOffset + Offset;
 }
 
-func (f *File) Global(offset int) int {
-	return f.Base + offset
+internal class File
+{
+	internal readonly string Name;
+	internal int Size;
+	internal int FileOffset;
+	readonly List<int> LinesOffset = [];
+
+	internal File(string name, int size)
+	{
+		Name = name;
+		Size = size;
+		LinesOffset.Add(0);
+	}
+
+	internal (int Line, int Column) GetLocation(int offset)
+	{
+		var i = 0;
+		var j = LinesOffset.Count;
+		while (i < j)
+		{
+			var h = i + (j - i) / 2;
+			if (LinesOffset[h] <= offset)
+			{
+				i = h + 1;
+			}
+			else
+			{
+				j = h;
+			}
+		}
+		i--;
+		if (i >= 0)
+		{
+			return (i + 1, offset - LinesOffset[i] + 1);
+		}
+		return (0, 0);
+	}
+
+	internal void AddLine(int offset)
+	{
+		LinesOffset.Add(offset);
+	}
+
+	internal int LinesCount() => LinesOffset.Count;
+
+	internal void TruncateLines(int lines)
+	{
+		LinesOffset.RemoveRange(lines, LinesOffset.Count - lines);
+	}
+
+	internal Position GetPosition(int offset) => new(this, offset);
+
+	internal int GetGlobalOffset(int offset) => FileOffset + offset;
 }
 
-func (f *File) location(offset int) (line, column int) {
-	i, j := 0, len(f.lines)
-	for i < j {
-		h := i + (j-i)/2
-		if f.lines[h] <= offset {
-			i = h + 1
-		} else {
-			j = h
+internal class FileSet
+{
+    readonly List<File> Files = [];
+	int FileOffset;
+
+	internal File AddFile(string name, int size)
+	{
+		foreach (var file in Files)
+		{
+			if (file.Name == name)
+			{
+				throw new InvalidOperationException($"file {name} already added");
+			}
+		}
+
+        var newFile = new File(name, size)
+        {
+            FileOffset = FileOffset
+        };
+        FileOffset += size + 1;
+		Files.Add(newFile);
+		return newFile;
+	}
+
+	internal File? GetFile(int globalOffset)
+	{
+		foreach (var file in Files)
+		{
+			if (globalOffset <= file.FileOffset + file.Size)
+			{
+				return file;
+			}
+		}
+		return null;
+	}
+
+	internal Position? GetPosition(int globalOffset)
+	{
+		var file = GetFile(globalOffset);
+		if (file != null)
+		{
+			return file.GetPosition(globalOffset - file.FileOffset);
+		}
+		return null;
+	}
+
+	internal void UpdateFileSize(string name, int size)
+	{
+		var found = false;
+		foreach (var file in Files)
+		{
+			if (file.Name == name)
+			{
+				found = true;
+				file.Size = size;
+			}
+		}
+		if (found)
+		{
+			FileOffset = 0;
+			foreach (var file in Files)
+			{
+				file.FileOffset = FileOffset;
+				FileOffset += file.Size + 1;
+			}
 		}
 	}
-	i = i - 1
-	if i >= 0 {
-		line, column = i+1, offset-f.lines[i]+1
-	}
-	return
 }
-
-type FileSet struct {
-	files []*File
-	base  int
-}
-
-func (s *FileSet) AddFile(filename string, size int) *File {
-	for _, f := range s.files {
-		if f.Name == filename {
-			panic(fmt.Sprintf("file %s already added \n", filename))
-		}
-	}
-	f := NewFile(filename, size)
-	f.Base = s.base
-	s.base += size + 1
-	s.files = append(s.files, f)
-	return f
-}
-
-func (s *FileSet) UpdateFile(filename string, size int) {
-	found := false
-	for _, f := range s.files {
-		if f.Name == filename {
-			found = true
-			f.Size = size
-		}
-	}
-	if found {
-		s.base = 0
-		for _, f := range s.files {
-			f.Base = s.base
-			s.base += f.Size + 1
-		}
-	}
-}
-
-func (s *FileSet) File(position int) *File {
-	for _, f := range s.files {
-		if position <= f.Base+f.Size {
-			return f
-		}
-	}
-	return nil
-}
-
-func (s *FileSet) Position(position int) *Position {
-	if f := s.File(position); f != nil {
-		return f.Position(position - f.Base)
-	}
-	return nil
-}
-*/

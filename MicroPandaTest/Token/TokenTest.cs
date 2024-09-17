@@ -54,7 +54,7 @@ public class TokenTest
         Assert.AreEqual(2, TokenUtil.Precedence(Token.Or));
     }
 
-    private Span<byte> GetSpan(string str)
+    private static Span<byte> GetSpan(string str)
     {
         byte[] byteArray = Encoding.UTF8.GetBytes(str);
         return new Span<byte>(byteArray);
