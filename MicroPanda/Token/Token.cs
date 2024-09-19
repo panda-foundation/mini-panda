@@ -168,7 +168,7 @@ internal static class TokenHelper
 	{
 		var token = Token.ILLEGAL;
 		var length = 0;
-		for (var i = 0; i < 3; i++)
+		for (var i = 0; i < 3 && offset + i + 1 <= bytes.Length; i++)
 		{
 			var literal = Encoding.UTF8.GetString(bytes[offset..(offset + i + 1)]);
 			if (_string2Token.TryGetValue(literal, out Token value))

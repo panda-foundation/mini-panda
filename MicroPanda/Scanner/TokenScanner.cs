@@ -140,7 +140,7 @@ internal partial class Scanner
         var rune = _reader.Rune;
         if (rune == '\n' || rune < 0)
         {
-            Error(_reader.CutFrom, "char literal not terminated");
+            Error(_reader.CutFrom, "char not terminated");
         }
         _reader.Read();
         if (rune == '\\')
@@ -149,7 +149,7 @@ internal partial class Scanner
         }
         if (_reader.Rune != '\'')
         {
-            Error(_reader.CutFrom, "illegal rune literal");
+            Error(_reader.CutFrom, "illegal char literal");
         }
         _reader.Read();
         return _reader.CutOut(_reader.Offset);
@@ -164,7 +164,7 @@ internal partial class Scanner
             var rune = _reader.Rune;
             if (rune == '\n' || rune < 0)
             {
-                Error(_reader.CutFrom, "string literal not terminated");
+                Error(_reader.CutFrom, "string not terminated");
             }
             _reader.Read();
             if (rune == '"')
@@ -182,10 +182,6 @@ internal partial class Scanner
 
     private void BypassEscape()
     {
-        int offset = _reader.Offset;
-        int numberBase;
-        int numberMax;
-        int numberBytes;
         switch (_reader.Rune)
         {
             case '\'':
@@ -203,48 +199,14 @@ internal partial class Scanner
                 _reader.Read();
                 return;
 
-            case 'u':
-                _reader.Read();
-                numberBytes = 4;
-                numberBase = 16;
-                numberMax = 0xFFFF;
-                break;
-
-            case 'U':
-                _reader.Read();
-                numberBytes = 8;
-                numberBase = 16;
-                numberMax = 0x10FFFF; // Unicode.MaxRune
-                break;
-
             default:
                 string message = "unknown escape sequence";
                 if (_reader.Rune < 0)
                 {
                     message = "escape sequence not terminated";
                 }
-                Error(offset, message);
+                Error(_reader.Offset, message);
                 return;
-        }
-
-        int value = 0;
-        while (numberBytes > 0)
-        {
-            int d = RuneHelper.DigitValue(_reader.Rune);
-            if (d < 0 || d >= numberBase)
-            {
-                string message = $"illegal character {(char) _reader.Rune} in escape sequence";
-                Error(offset, message);
-                return;
-            }
-            value = value * numberBase + d;
-            _reader.Read();
-            numberBytes--;
-        }
-
-        if (value > numberMax)
-        {
-            Error(offset, "escape sequence is invalid Unicode code point");
         }
     }
 
@@ -257,7 +219,7 @@ internal partial class Scanner
             var rune = _reader.Rune;
             if (rune < 0)
             {
-                Error(_reader.CutFrom, "raw string literal not terminated");
+                Error(_reader.CutFrom, "string not terminated");
             }
             _reader.Read();
             if (rune == '`')
@@ -272,7 +234,7 @@ internal partial class Scanner
     internal (Token, string) ScanOperators()
     {
         _reader.CutIn(_reader.Offset - 1);
-        (Token t, int length) = TokenHelper.ReadOperator(_reader.Source, _reader.Offset);
+        (Token t, int length) = TokenHelper.ReadOperator(_reader.Source, _reader.Offset - 1);
         string literal = string.Empty;
 
         if (length > 0)

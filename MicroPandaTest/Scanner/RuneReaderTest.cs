@@ -94,6 +94,6 @@ public class RuneReaderTest
         Assert.IsTrue(RuneHelper.DigitValue('9') == 9);
         Assert.IsTrue(RuneHelper.DigitValue('a') == 10);
         Assert.IsTrue(RuneHelper.DigitValue('f') == 15);
-        Assert.ThrowsException<Exception>(() => RuneHelper.DigitValue('g'));
+        Assert.IsTrue(RuneHelper.DigitValue('+') == 16);
     }
 }

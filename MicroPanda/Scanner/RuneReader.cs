@@ -106,6 +106,6 @@ internal static class RuneHelper
         {
             return Lower(rune) - 'a' + 10;
         }
-        throw new Exception("invalid digit");
+        return 16; // return invalid value for invalid digit
     }
 }
