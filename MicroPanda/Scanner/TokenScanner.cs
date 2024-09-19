@@ -37,7 +37,7 @@ internal partial class Scanner
                 Error(_reader.CutFrom, "comment not terminated");
             }
         }
-        return _reader.CutOut();
+        return _reader.CutOut(_reader.Offset);
     }
 
     internal string ScanIdentifier()
@@ -47,7 +47,7 @@ internal partial class Scanner
         {
             _reader.Read();
         }
-        return _reader.CutOut();
+        return _reader.CutOut(_reader.Offset);
     }
 
     public (Token, string) ScanNumber()
@@ -123,7 +123,7 @@ internal partial class Scanner
             }
         }
 
-        return (token, _reader.CutOut());
+        return (token, _reader.CutOut(_reader.Offset));
     }
 
     private void BypassDigits(int numberBase)
@@ -152,7 +152,7 @@ internal partial class Scanner
             Error(_reader.CutFrom, "illegal rune literal");
         }
         _reader.Read();
-        return _reader.CutOut();
+        return _reader.CutOut(_reader.Offset);
     }
 
     internal string ScanString()
@@ -177,7 +177,7 @@ internal partial class Scanner
             }
         }
 
-        return _reader.CutOut();
+        return _reader.CutOut(_reader.Offset);
     }
 
     private void BypassEscape()
@@ -266,7 +266,7 @@ internal partial class Scanner
             }
         }
 
-        return _reader.CutOut();
+        return _reader.CutOut(_reader.Offset);
     }
 
     internal (Token, string) ScanOperators()
@@ -281,7 +281,7 @@ internal partial class Scanner
             {
                 _reader.Read();
             }
-            literal = _reader.CutOut();
+            literal = _reader.CutOut(_reader.Offset);
         }
 
         return (t, literal);

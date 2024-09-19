@@ -16,14 +16,14 @@ internal partial class Scanner
 
     internal (int offset, Token token, string literal) Scan()
     {
-        while(_reader.Rune == '\t' || _reader.Rune == '\n' || _reader.Rune == '\r')
+        while(_reader.Rune == ' ' || _reader.Rune == '\t' || _reader.Rune == '\n' || _reader.Rune == '\r')
         {
             _reader.Read();
         }
 
         var offset = _reader.Offset;
-        var token = Token.ILLEGAL;
         var literal = string.Empty;
+        Token token;
 
         if (RuneHelper.IsLetter(_reader.Rune))
         {
@@ -62,8 +62,9 @@ internal partial class Scanner
                 case '/':
                     if (_reader.Rune == '/' || _reader.Rune == '*')
                     {
-                        ScanComment();
-                        return Scan();
+                        token = Token.COMMENT;
+                        literal = ScanComment();
+                        break;
                     }
                     (token, literal) = ScanOperators();
                     break;

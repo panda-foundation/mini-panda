@@ -7,6 +7,7 @@ internal enum Token
 {
 	ILLEGAL,
 	EOF,
+	COMMENT,
 	ANNOTATION,
 
 	// literals
@@ -241,6 +242,7 @@ internal static class TokenHelper
 	{
 		{ Token.ILLEGAL, "ILLEGAL" },
 		{ Token.EOF, "EOF" },
+		{ Token.COMMENT, "COMMENT" },
 		{ Token.ANNOTATION, "ANNOTATION" },
 
 		{ Token.IDENT, "identifier" },
@@ -339,6 +341,7 @@ internal static class TokenHelper
 	{
 		{ "ILLEGAL", Token.ILLEGAL },
 		{ "EOF", Token.EOF },
+		{ "COMMENT", Token.COMMENT },
 		{ "ANNOTATION", Token.ANNOTATION },
 
 		{ "identifier", Token.IDENT },

@@ -8,7 +8,8 @@ internal class RuneReader
 
     private readonly File _file;
     private readonly byte[] _source;
-    private int _offset;
+    private int _offset = EOF;
+    private int _readOffset;
     private int _cutIn;
     private int _rune = EOF;
 
@@ -20,30 +21,43 @@ internal class RuneReader
 
     internal int Read()
     {
-        if (_source.Length == 0 || _offset >= _source.Length)
+        if (_source.Length == 0)
         {
+            _offset = 0;
+            _rune = EOF;
+            return _rune;
+        }
+        else if (_readOffset >= _source.Length)
+        {
+            _offset = _source.Length;
+            if (_rune == '\n')
+            {
+                _file.AddLine(_offset);
+            }
             _rune = EOF;
             return _rune;
         }
 
-        System.Text.Rune.DecodeFromUtf8(new ReadOnlySpan<byte>(_source)[_offset..], out var rune, out var bytesConsumed);
-        _offset += bytesConsumed;
-        _rune = rune.Value;
+        _offset = _readOffset;
         if (_rune == '\n')
         {
-            _file.AddLine(_offset);
+             _file.AddLine(_offset);
         }
+        System.Text.Rune.DecodeFromUtf8(new ReadOnlySpan<byte>(_source)[_readOffset..], out var rune, out var bytesConsumed);
+        _readOffset += bytesConsumed;
+        _rune = rune.Value;
+
         return _rune;
     }
 
     internal int Peek()
     {
-        if (_source.Length == 0 || _offset >= _source.Length)
+        if (_source.Length == 0 || _readOffset >= _source.Length)
         {
             return EOF;
         }
 
-        System.Text.Rune.DecodeFromUtf8(new ReadOnlySpan<byte>(_source)[_offset..], out var rune, out _);
+        System.Text.Rune.DecodeFromUtf8(new ReadOnlySpan<byte>(_source)[_readOffset..], out var rune, out _);
         return rune.Value;
     }
 
@@ -52,9 +66,9 @@ internal class RuneReader
         _cutIn = offset;
     }
 
-    internal string CutOut()
+    internal string CutOut(int offset)
     {
-        var cut = _source[_cutIn.._offset];
+        var cut = _source[_cutIn..offset];
         return System.Text.Encoding.UTF8.GetString(cut);
     }
 
