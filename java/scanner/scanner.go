@@ -21,7 +21,7 @@ const (
 	// TO-DO add logical operator support for preprocessor
 	// TO-DO separate preprocessor
 	// () == != ! && ||
-	// #macro
+	// #macro / AKA define (inline function?)
 )
 
 type preprocessor struct {

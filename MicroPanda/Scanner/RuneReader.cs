@@ -10,7 +10,7 @@ internal class RuneReader
     private readonly byte[] _source;
     private int _offset;
     private int _cutPosition;
-    private int _rune;
+    private int _rune = EOF;
 
     internal RuneReader(File file, byte[] source)
     {
@@ -22,7 +22,8 @@ internal class RuneReader
     {
         if (_source.Length == 0 || _offset >= _source.Length)
         {
-            return EOF;
+            _rune = EOF;
+            return _rune;
         }
 
         System.Text.Rune.DecodeFromUtf8(new ReadOnlySpan<byte>(_source)[_offset..], out var rune, out var bytesConsumed);
@@ -54,7 +55,6 @@ internal class RuneReader
     internal string Cut()
     {
         var cut = _source[_cutPosition.._offset];
-        _cutPosition = _offset;
         return System.Text.Encoding.UTF8.GetString(cut);
     }
 
