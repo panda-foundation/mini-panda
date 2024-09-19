@@ -17,7 +17,7 @@ public class RuneReaderTest
         Assert.AreEqual('a', reader.Peek());
 
         reader.Read();
-        reader.SetCutPosition(reader.Offset);
+        reader.CutIn(reader.Offset);
         Assert.AreEqual(1, reader.Offset);
         Assert.AreEqual('a', reader.Rune);
 
@@ -28,18 +28,18 @@ public class RuneReaderTest
         Assert.AreEqual(5, reader.Offset);
         Assert.AreEqual('e', reader.Rune);
         Assert.AreEqual('你', reader.Peek());
-        Assert.AreEqual("bcde", reader.Cut());
+        Assert.AreEqual("bcde", reader.CutOut());
 
         reader.Read();
         Assert.AreEqual(8, reader.Offset);
         Assert.AreEqual('你', reader.Rune);
         Assert.AreEqual('好', reader.Peek());
-        Assert.AreEqual("bcde你", reader.Cut());
+        Assert.AreEqual("bcde你", reader.CutOut());
 
         reader.Read();
         Assert.AreEqual(11, reader.Offset);
         Assert.AreEqual('好', reader.Rune);
-        Assert.AreEqual("bcde你好", reader.Cut());
+        Assert.AreEqual("bcde你好", reader.CutOut());
         Assert.AreEqual(RuneReader.EOF, reader.Peek());
 
         reader.Read();

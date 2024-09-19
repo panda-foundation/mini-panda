@@ -6,7 +6,7 @@ internal partial class Scanner
 {
     internal string ScanComment()
     {
-        _reader.SetCutPosition(_reader.Offset - 1);
+        _reader.CutIn(_reader.Offset - 1);
         if (_reader.Rune == '/')
         {
             // Single-line comment
@@ -34,25 +34,25 @@ internal partial class Scanner
             }
             if (!terminated)
             {
-                Error(_reader.CutPosition, "comment not terminated");
+                Error(_reader.CutFrom, "comment not terminated");
             }
         }
-        return _reader.Cut();
+        return _reader.CutOut();
     }
 
     internal string ScanIdentifier()
     {
-        _reader.SetCutPosition(_reader.Offset);
+        _reader.CutIn(_reader.Offset);
         while (RuneHelper.IsLetter(_reader.Rune) || RuneHelper.IsDecimal(_reader.Rune))
         {
             _reader.Read();
         }
-        return _reader.Cut();
+        return _reader.CutOut();
     }
 
     public (Token, string) ScanNumber()
     {
-        _reader.SetCutPosition(_reader.Offset);
+        _reader.CutIn(_reader.Offset);
         Token token = Token.INT;
 
         if (_reader.Rune != '.')
@@ -78,7 +78,7 @@ internal partial class Scanner
                         default:
                             if (RuneHelper.IsDecimal(_reader.Rune))
                             {
-                                Error(_reader.CutPosition, "invalid integer");
+                                Error(_reader.CutFrom, "invalid integer");
                                 token = Token.ILLEGAL;
                             }
                             else
@@ -91,15 +91,15 @@ internal partial class Scanner
                     {
                         _reader.Read();
                         BypassDigits(numberBase);
-                        if (_reader.Offset - _reader.CutPosition <= 2)
+                        if (_reader.Offset - _reader.CutFrom <= 2)
                         {
                             token = Token.ILLEGAL;
-                            Error(_reader.CutPosition, "illegal number");
+                            Error(_reader.CutFrom, "illegal number");
                         }
                         if (_reader.Rune == '.')
                         {
                             token = Token.ILLEGAL;
-                            Error(_reader.CutPosition, "invalid radix point");
+                            Error(_reader.CutFrom, "invalid radix point");
                         }
                     }
                 }
@@ -119,11 +119,11 @@ internal partial class Scanner
             if (offsetFraction == _reader.Offset - 1)
             {
                 token = Token.ILLEGAL;
-                Error(_reader.CutPosition, "float has no digits after .");
+                Error(_reader.CutFrom, "float has no digits after .");
             }
         }
 
-        return (token, _reader.Cut());
+        return (token, _reader.CutOut());
     }
 
     private void BypassDigits(int numberBase)
@@ -136,11 +136,11 @@ internal partial class Scanner
 
     internal string ScanChar()
     {
-        _reader.SetCutPosition(_reader.Offset - 1);
+        _reader.CutIn(_reader.Offset - 1);
         var rune = _reader.Rune;
         if (rune == '\n' || rune < 0)
         {
-            Error(_reader.CutPosition, "char literal not terminated");
+            Error(_reader.CutFrom, "char literal not terminated");
         }
         _reader.Read();
         if (rune == '\\')
@@ -149,22 +149,22 @@ internal partial class Scanner
         }
         if (_reader.Rune != '\'')
         {
-            Error(_reader.CutPosition, "illegal rune literal");
+            Error(_reader.CutFrom, "illegal rune literal");
         }
         _reader.Read();
-        return _reader.Cut();
+        return _reader.CutOut();
     }
 
     internal string ScanString()
     {
-        _reader.SetCutPosition(_reader.Offset - 1);
+        _reader.CutIn(_reader.Offset - 1);
 
         while (true)
         {
             var rune = _reader.Rune;
             if (rune == '\n' || rune < 0)
             {
-                Error(_reader.CutPosition, "string literal not terminated");
+                Error(_reader.CutFrom, "string literal not terminated");
             }
             _reader.Read();
             if (rune == '"')
@@ -177,7 +177,7 @@ internal partial class Scanner
             }
         }
 
-        return _reader.Cut();
+        return _reader.CutOut();
     }
 
     private void BypassEscape()
@@ -250,14 +250,14 @@ internal partial class Scanner
 
     internal string ScanRawString()
     {
-        _reader.SetCutPosition(_reader.Offset - 1);
+        _reader.CutIn(_reader.Offset - 1);
 
         while (true)
         {
             var rune = _reader.Rune;
             if (rune < 0)
             {
-                Error(_reader.CutPosition, "raw string literal not terminated");
+                Error(_reader.CutFrom, "raw string literal not terminated");
             }
             _reader.Read();
             if (rune == '`')
@@ -266,12 +266,12 @@ internal partial class Scanner
             }
         }
 
-        return _reader.Cut();
+        return _reader.CutOut();
     }
 
     internal (Token, string) ScanOperators()
     {
-        _reader.SetCutPosition(_reader.Offset - 1);
+        _reader.CutIn(_reader.Offset - 1);
         (Token t, int length) = TokenHelper.ReadOperator(_reader.Source, _reader.Offset);
         string literal = string.Empty;
 
@@ -281,7 +281,7 @@ internal partial class Scanner
             {
                 _reader.Read();
             }
-            literal = _reader.Cut();
+            literal = _reader.CutOut();
         }
 
         return (t, literal);

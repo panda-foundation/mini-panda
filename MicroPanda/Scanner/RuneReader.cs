@@ -9,7 +9,7 @@ internal class RuneReader
     private readonly File _file;
     private readonly byte[] _source;
     private int _offset;
-    private int _cutPosition;
+    private int _cutIn;
     private int _rune = EOF;
 
     internal RuneReader(File file, byte[] source)
@@ -47,19 +47,19 @@ internal class RuneReader
         return rune.Value;
     }
 
-    internal void SetCutPosition(int offset)
+    internal void CutIn(int offset)
     {
-        _cutPosition = offset;
+        _cutIn = offset;
     }
 
-    internal string Cut()
+    internal string CutOut()
     {
-        var cut = _source[_cutPosition.._offset];
+        var cut = _source[_cutIn.._offset];
         return System.Text.Encoding.UTF8.GetString(cut);
     }
 
     internal int Offset => _offset;
-    internal int CutPosition => _cutPosition;
+    internal int CutFrom => _cutIn;
     internal int Rune => _rune;
     internal byte[] Source => _source;
 }
