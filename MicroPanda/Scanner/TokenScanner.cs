@@ -10,24 +10,24 @@ internal partial class Scanner
         if (_reader.Rune == '/')
         {
             // Single-line comment
-            _reader.Read();
+            _reader.Consume();
             while (_reader.Rune != '\n' && _reader.Rune >= 0)
             {
-                _reader.Read();
+                _reader.Consume();
             }
         }
         else
         {
             // Multi-line comment
             bool terminated = false;
-            _reader.Read();
+            _reader.Consume();
             while (_reader.Rune >= 0)
             {
                 int charBefore = _reader.Rune;
-                _reader.Read();
+                _reader.Consume();
                 if (charBefore == '*' && _reader.Rune == '/')
                 {
-                    _reader.Read();
+                    _reader.Consume();
                     terminated = true;
                     break;
                 }
@@ -45,7 +45,7 @@ internal partial class Scanner
         _reader.CutIn(_reader.Offset);
         while (RuneHelper.IsLetter(_reader.Rune) || RuneHelper.IsDecimal(_reader.Rune))
         {
-            _reader.Read();
+            _reader.Consume();
         }
         return _reader.CutOut(_reader.Offset);
     }
@@ -59,7 +59,7 @@ internal partial class Scanner
         {
             if (_reader.Rune == '0')
             {
-                _reader.Read();
+                _reader.Consume();
                 if (_reader.Rune != '.')
                 {
                     int numberBase = 10;
@@ -89,7 +89,7 @@ internal partial class Scanner
                     }
                     if (token != Token.ILLEGAL)
                     {
-                        _reader.Read();
+                        _reader.Consume();
                         BypassDigits(numberBase);
                         if (_reader.Offset - _reader.CutFrom <= 2)
                         {
@@ -114,7 +114,7 @@ internal partial class Scanner
         {
             int offsetFraction = _reader.Offset;
             token = Token.FLOAT;
-            _reader.Read();
+            _reader.Consume();
             BypassDigits(10);
             if (offsetFraction == _reader.Offset - 1)
             {
@@ -130,7 +130,7 @@ internal partial class Scanner
     {
         while (RuneHelper.DigitValue(_reader.Rune) < numberBase)
         {
-            _reader.Read();
+            _reader.Consume();
         }
     }
 
@@ -142,7 +142,7 @@ internal partial class Scanner
         {
             Error(_reader.CutFrom, "char not terminated");
         }
-        _reader.Read();
+        _reader.Consume();
         if (rune == '\\')
         {
             BypassEscape();
@@ -151,7 +151,7 @@ internal partial class Scanner
         {
             Error(_reader.CutFrom, "illegal char literal");
         }
-        _reader.Read();
+        _reader.Consume();
         return _reader.CutOut(_reader.Offset);
     }
 
@@ -166,7 +166,7 @@ internal partial class Scanner
             {
                 Error(_reader.CutFrom, "string not terminated");
             }
-            _reader.Read();
+            _reader.Consume();
             if (rune == '"')
             {
                 break;
@@ -196,7 +196,7 @@ internal partial class Scanner
             case 'r':
             case 't':
             case 'v':
-                _reader.Read();
+                _reader.Consume();
                 return;
 
             default:
@@ -221,7 +221,7 @@ internal partial class Scanner
             {
                 Error(_reader.CutFrom, "string not terminated");
             }
-            _reader.Read();
+            _reader.Consume();
             if (rune == '`')
             {
                 break;
@@ -241,7 +241,7 @@ internal partial class Scanner
         {
             for (int i = 1; i < length; i++)
             {
-                _reader.Read();
+                _reader.Consume();
             }
             literal = _reader.CutOut(_reader.Offset);
         }

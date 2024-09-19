@@ -11,14 +11,14 @@ internal partial class Scanner
     {
         _file = file;
         _reader = new RuneReader(file, source);
-        _reader.Read();
+        _reader.Consume();
     }
 
     internal (int offset, Token token, string literal) Scan()
     {
         while(_reader.Rune == ' ' || _reader.Rune == '\t' || _reader.Rune == '\n' || _reader.Rune == '\r')
         {
-            _reader.Read();
+            _reader.Consume();
         }
 
         var offset = _reader.Offset;
@@ -37,7 +37,7 @@ internal partial class Scanner
         else
         {
             var rune = _reader.Rune;
-            _reader.Read();
+            _reader.Consume();
             switch (rune)
             {
                 case RuneReader.EOF:
@@ -84,7 +84,7 @@ internal partial class Scanner
                     if (token == Token.ILLEGAL)
                     {
                         Error(offset, "invalid token");
-                        _reader.Read();
+                        _reader.Consume();
                     }
                     break;
             }

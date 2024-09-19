@@ -19,7 +19,7 @@ internal class RuneReader
         _source = source;
     }
 
-    internal int Read()
+    internal int Consume()
     {
         if (_source.Length == 0)
         {
