@@ -7,7 +7,7 @@ internal enum Token
 {
 	ILLEGAL,
 	EOF,
-	METADATA,
+	ANNOTATION,
 
 	// literals
 	_literalBegin,
@@ -123,7 +123,7 @@ internal enum Token
 	_operatorEnd
 }
 
-internal class TokenUtil
+internal static class TokenHelper
 {
 	internal static bool IsLiteral(Token token) => Token._literalBegin < token && token < Token._literalEnd;
 
@@ -163,16 +163,16 @@ internal class TokenUtil
 		return _token2String[token];
 	}
 
-	internal static (Token Token, int Length) ReadOperator(Span<byte> bytes)
+	internal static (Token Token, int Length) ReadOperator(byte[] bytes, int offset)
 	{
 		var token = Token.ILLEGAL;
 		var length = 0;
 		for (var i = 0; i < 3; i++)
 		{
-			var literal = Encoding.UTF8.GetString(bytes.Slice(0, i + 1));
-			if (_string2Token.ContainsKey(literal))
+			var literal = Encoding.UTF8.GetString(bytes[offset..(offset + i + 1)]);
+			if (_string2Token.TryGetValue(literal, out Token value))
 			{
-				token = _string2Token[literal];
+				token = value;
 				length = i + 1;
 			}
 		}
@@ -241,7 +241,7 @@ internal class TokenUtil
 	{
 		{ Token.ILLEGAL, "ILLEGAL" },
 		{ Token.EOF, "EOF" },
-		{ Token.METADATA, "METADATA" },
+		{ Token.ANNOTATION, "ANNOTATION" },
 
 		{ Token.IDENT, "identifier" },
 		{ Token.BOOL, "bool_literal" },
@@ -339,7 +339,7 @@ internal class TokenUtil
 	{
 		{ "ILLEGAL", Token.ILLEGAL },
 		{ "EOF", Token.EOF },
-		{ "METADATA", Token.METADATA },
+		{ "ANNOTATION", Token.ANNOTATION },
 
 		{ "identifier", Token.IDENT },
 		{ "bool_literal", Token.BOOL },

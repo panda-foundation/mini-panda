@@ -66,11 +66,6 @@ internal class File
 
 	internal int LinesCount() => LinesOffset.Count;
 
-	internal void TruncateLines(int lines)
-	{
-		LinesOffset.RemoveRange(lines, LinesOffset.Count - lines);
-	}
-
 	internal Position GetPosition(int offset) => new(this, offset);
 
 	internal int GetGlobalOffset(int offset) => FileOffset + offset;
