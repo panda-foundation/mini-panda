@@ -26,7 +26,7 @@ internal class File
 	internal readonly string Name;
 	internal int Size;
 	internal int FileOffset;
-	readonly List<int> LinesOffset = [];
+	private readonly List<int> LinesOffset = [];
 
 	internal File(string name, int size)
 	{
@@ -73,8 +73,8 @@ internal class File
 
 internal class FileSet
 {
-    readonly List<File> Files = [];
-	int FileOffset;
+    private readonly List<File> Files = [];
+	private int FileOffset;
 
 	internal File AddFile(string name, int size)
 	{

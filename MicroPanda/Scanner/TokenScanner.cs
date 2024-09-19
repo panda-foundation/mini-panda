@@ -4,7 +4,7 @@ using Token;
 
 internal partial class Scanner
 {
-    internal string ScanComment()
+    private string ScanComment()
     {
         _reader.CutIn(_reader.Offset - 1);
         if (_reader.Rune == '/')
@@ -40,7 +40,7 @@ internal partial class Scanner
         return _reader.CutOut(_reader.Offset);
     }
 
-    internal string ScanIdentifier()
+    private string ScanIdentifier()
     {
         _reader.CutIn(_reader.Offset);
         while (RuneHelper.IsLetter(_reader.Rune) || RuneHelper.IsDecimal(_reader.Rune))
@@ -50,7 +50,7 @@ internal partial class Scanner
         return _reader.CutOut(_reader.Offset);
     }
 
-    public (Token, string) ScanNumber()
+    private (Token, string) ScanNumber()
     {
         _reader.CutIn(_reader.Offset);
         Token token = Token.INT;
@@ -134,7 +134,7 @@ internal partial class Scanner
         }
     }
 
-    internal string ScanChar()
+    private string ScanChar()
     {
         _reader.CutIn(_reader.Offset - 1);
         var rune = _reader.Rune;
@@ -155,7 +155,7 @@ internal partial class Scanner
         return _reader.CutOut(_reader.Offset);
     }
 
-    internal string ScanString()
+    private string ScanString()
     {
         _reader.CutIn(_reader.Offset - 1);
 
@@ -210,7 +210,7 @@ internal partial class Scanner
         }
     }
 
-    internal string ScanRawString()
+    private string ScanRawString()
     {
         _reader.CutIn(_reader.Offset - 1);
 
@@ -231,7 +231,7 @@ internal partial class Scanner
         return _reader.CutOut(_reader.Offset);
     }
 
-    internal (Token, string) ScanOperators()
+    private (Token, string) ScanOperators()
     {
         _reader.CutIn(_reader.Offset - 1);
         (Token t, int length) = TokenHelper.ReadOperator(_reader.Source, _reader.Offset - 1);

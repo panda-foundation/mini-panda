@@ -92,7 +92,7 @@ internal partial class Scanner
         return (offset, token, literal);
     }
 
-    internal void Error(int offset, string message)
+    private void Error(int offset, string message)
     {
         throw new Exception($"error: {_file.GetPosition(offset).ToString} {message}");
     }
