@@ -37,7 +37,7 @@ internal partial class Scanner
             }
             if (!terminated)
             {
-                Error(offset, "comment not terminated");
+                Error(offset, "Comment not terminated");
                 return _reader.CutOut();
             }
         }
@@ -84,7 +84,7 @@ internal partial class Scanner
                             if (RuneHelper.IsDecimal(rune))
                             {
                                 token = Token.ILLEGAL;
-                                Error(offset, "illegal integer");
+                                Error(offset, "Illegal integer");
                                 return (token, _reader.CutOut());
                             }
                             return (token, "0");
@@ -94,14 +94,14 @@ internal partial class Scanner
                     if (digitLength == 0)
                     {
                         token = Token.ILLEGAL;
-                        Error(offset, "illegal integer");
+                        Error(offset, "Illegal integer");
                         return (token, _reader.CutOut());
                     }
                     rune = _reader.Peek();
                     if (rune == '.')
                     {
                         token = Token.ILLEGAL;
-                        Error(offset, "illegal radix point");
+                        Error(offset, "Illegal radix point");
                         return (token, _reader.CutOut());
                     }
                 }
@@ -124,7 +124,7 @@ internal partial class Scanner
             if (fractionLength == 0)
             {
                 token = Token.ILLEGAL;
-                Error(offset, "illegal fraction");
+                Error(offset, "Illegal fraction");
                 return (token, _reader.CutOut());
             }
         }
@@ -150,7 +150,7 @@ internal partial class Scanner
         var rune = _reader.Peek();
         if (rune == '\n' || rune < 0)
         {
-            Error(offset, "char not terminated");
+            Error(offset, "Char not terminated");
             return _reader.CutOut();
         }
         _reader.Consume();
@@ -161,7 +161,7 @@ internal partial class Scanner
         rune = _reader.Peek();
         if (rune != '\'')
         {
-            Error(offset, "illegal char");
+            Error(offset, "Illegal char");
             return _reader.CutOut();
         }
         _reader.Consume();
@@ -175,7 +175,7 @@ internal partial class Scanner
             var rune = _reader.Peek();
             if (rune == '\n' || rune < 0)
             {
-                Error(offset, "string not terminated");
+                Error(offset, "String not terminated");
                 return _reader.CutOut();
             }
             _reader.Consume();
@@ -214,10 +214,10 @@ internal partial class Scanner
                 return;
 
             default:
-                string message = "unknown escape sequence";
+                string message = "Unknown escape sequence";
                 if (rune < 0)
                 {
-                    message = "escape sequence not terminated";
+                    message = "Escape sequence not terminated";
                 }
                 Error(offset, message);
                 return;
@@ -231,7 +231,7 @@ internal partial class Scanner
         {
             if (rune < 0)
             {
-                Error(offset, "string not terminated");
+                Error(offset, "String not terminated");
                 return _reader.CutOut();
             }
             if (rune == '`')

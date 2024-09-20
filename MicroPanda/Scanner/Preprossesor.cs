@@ -21,100 +21,182 @@ internal partial class Scanner
     private readonly Stack<Preprocessor> _preprocessors = new();
 }
 
-internal class Preprocessor(string keyword, string expression)
+internal class Preprocessor(string keyword, bool evaluated)
 {
-    internal string Keyword { get; } = keyword;
-    internal string Expression { get; } = expression;
+    internal string Keyword { get; set; } = keyword;
+    internal bool Evaluated { get; set; } = evaluated;
 }
-
-/*
-internal class Preprocessor
-{
-    private readonly Scanner _scanner;
-    private readonly HashSet<string> _flags = new();
-
-    public Preprocessor(Scanner scanner)
-    {
-        _scanner = scanner;
-    }
-
-    public void Process()
-    {
-        while (true)
-        {
-            var (offset, token, literal) = _scanner.Scan();
-            if (token == Token.EOF)
-            {
-                break;
-            }
-
-            if (token == Token.IDENTIFIER && literal == KEYWORD_IF)
-            {
-                var expression = ParseExpression();
-                if (expression.Evaluate(_flags))
-                {
-                    Process();
-                }
-                else
-                {
-                    Skip();
-                }
-            }
-            else if (token == Token.IDENTIFIER && literal == KEYWORD_ELIF)
-            {
-                Skip();
-                var expression = ParseExpression();
-                if (expression.Evaluate(_flags))
-                {
-                    Process();
-                }
-                else
-                {
-                    Skip();
-                }
-            }
-            else if (token == Token.IDENTIFIER && literal == KEYWORD_ELSE)
-            {
-                Skip();
-                Process();
-            }
-            else if (token == Token.IDENTIFIER && literal == KEYWORD_END)
-            {
-                break;
-            }
-            else
-            {
-                _scanner.SkipLine();
-            }
-        }
-    }
-
-    private void Skip()
-    {
-        while (true)
-        {
-            var (offset, token, literal) = _scanner.Scan();
-            if (token == Token.EOF)
-            {
-                break;
-            }
-
-            if (token == Token.IDENTIFIER && literal == KEYWORD_END)
-            {
-                break;
-            }
-        }
-    }*/
 
 internal partial class Scanner
 {
-    /*
-    private Expression ParseExpression()
+    private void Preprocess()
     {
-        var expression = ParseOr();
-        return expression;
+        var offset = _reader.CutIn();
+        _reader.Consume();
+
+        if (!RuneHelper.IsLetter(_reader.Peek()))
+        {
+            Error(offset, "Unexpected preprocessor");
+        }
+        var keyword = ScanIdentifier();
+        if (keyword == KEYWORD_IF)
+        {
+            var evaluated = ParseExpression().Evaluate(_flags);
+            _preprocessors.Push(new Preprocessor(KEYWORD_IF, evaluated));
+            if (!evaluated)
+            {
+                SkipPreprocessor();
+            }
+        }
+        else if (keyword == KEYWORD_ELIF)
+        {
+            if (_preprocessors.Count == 0 || _preprocessors.Peek().Keyword == KEYWORD_ELSE)
+            {
+                Error(offset, "Unexpected #elif");
+            }
+            else if (_preprocessors.Peek().Evaluated)
+            {
+                SkipPreprocessor();
+            }
+            else 
+            {
+                var evaluated = ParseExpression().Evaluate(_flags);
+                _preprocessors.Peek().Evaluated = evaluated;
+                if (!evaluated)
+                {
+                    SkipPreprocessor();
+                }
+            }
+            _preprocessors.Peek().Keyword = KEYWORD_ELIF;
+        }
+        else if (keyword == KEYWORD_ELSE)
+        {
+            if (_preprocessors.Count == 0 || _preprocessors.Peek().Keyword == KEYWORD_ELSE)
+            {
+                Error(offset, "Unexpected #else");
+            }
+            else if (_preprocessors.Peek().Evaluated)
+            {
+                SkipPreprocessor();
+            }
+            _preprocessors.Peek().Keyword = KEYWORD_ELSE;
+        }
+        else if (keyword == KEYWORD_END)
+        {
+            if (_preprocessors.Count == 0)
+            {
+                Error(offset, "Unexpected #end");
+            }
+            _preprocessors.Pop();
+        }
+        else
+        {
+            Error(offset, "Unexpected preprocessor");
+        }
     }
 
+    private void SkipPreprocessor()
+    {
+        var count = _preprocessors.Count;
+
+        while (true)
+        {
+            while (_reader.Peek() >= 0 && _reader.Peek() != '#')
+            {
+                _reader.Consume();
+            }
+            if (_reader.Peek() < 0)
+            {
+                Error(_reader.CutIn(), "Preprocessor not terminated, expecting #end");
+            }
+
+            var offset = _reader.CutIn();
+            _reader.Consume();
+            if (!RuneHelper.IsLetter(_reader.Peek()))
+            {
+                Error(offset, "Unexpected preprocessor");
+            }
+
+            var keyword = ScanIdentifier();
+            if (keyword == KEYWORD_IF)
+            {
+                _preprocessors.Push(new Preprocessor(KEYWORD_IF, false));
+            }
+            else if (keyword == KEYWORD_ELIF)
+            {
+                if (_preprocessors.Count == count)
+                {
+                    _reader.Back(5);
+                    break;
+                }
+                if (_preprocessors.Peek().Keyword == KEYWORD_ELSE)
+                {
+                    Error(offset, "Unexpected #elif");
+                }
+                _preprocessors.Peek().Keyword = KEYWORD_ELIF;
+            }
+            else if (keyword == KEYWORD_ELSE)
+            {
+                if (_preprocessors.Count == count)
+                {
+                    _reader.Back(5);
+                    break;
+                }
+                if (_preprocessors.Peek().Keyword == KEYWORD_ELSE)
+                {
+                    Error(offset, "Unexpected #else");
+                }
+                _preprocessors.Peek().Keyword = KEYWORD_ELSE;
+            }
+            else if (keyword == KEYWORD_END)
+            {
+                if (_preprocessors.Count == count)
+                {
+                    _reader.Back(4);
+                    break;
+                }
+                _preprocessors.Pop();
+            }
+            else
+            {
+                Error(offset, "Unexpected preprocessor");
+            }
+        }
+    }
+    
+    /*
+    func (s *Scanner) ParseExpression() bool {
+        for s.char == ' ' || s.char == '\t' {
+            s.next()
+        }
+
+        if s.isLetter(s.char) {
+            flag := s.scanIdentifier()
+
+            for s.char == ' ' || s.char == '\t' || s.char == '\r' {
+                s.next()
+            }
+            if s.char != '\n' {
+                s.error(s.offset, "unexpected: "+string(s.char))
+            }
+
+            result := false
+            if _, ok := s.flags[flag]; ok {
+                result = true
+            }
+            return result
+        }
+
+        s.error(s.offset, "unexpected: "+string(s.char))
+        return false
+    }*/
+    private Expression ParseExpression()
+    {
+        return new Identifier("dummy");
+        //var expression = ParseOr();
+        //return expression;
+    }
+/*
     private Expression ParseOr()
     {
         var left = ParseAnd();

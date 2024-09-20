@@ -31,10 +31,15 @@ internal class RuneReader
 
     internal void Back()
     {
+        Back(1);
+    }
+
+    internal void Back(int step)
+    {
         // won't back an UTF-8 character, only ASCII
-        if (_offset > 0)
+        if (_offset >= step)
         {
-            _offset--;
+            _offset -= step;
         }
     }
 

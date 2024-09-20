@@ -39,7 +39,7 @@ public class ScannerTest
     public void TestScanner(string source, string expectedToken, string expectedLiteral)
     {
         var bytes = System.Text.Encoding.UTF8.GetBytes(source);
-        var scanner = new Scanner(new File("air-compile-source.mpd", bytes.Length), bytes);
+        var scanner = new Scanner(new File("air-compile-source.mpd", bytes.Length), bytes, []);
 
         var (_, token, literal) = scanner.Scan();
         Assert.AreEqual(expectedToken, token.ToString());
@@ -47,21 +47,21 @@ public class ScannerTest
     }
 
     [TestMethod]
-    [DataRow("'aa'", "illegal char")]
-    [DataRow("'\na'", "char not terminated")]
-    [DataRow("'a", "illegal char")]
-    [DataRow("\"string not terminated", "string not terminated")]
-    [DataRow("`raw string not terminated", "string not terminated")]
-    [DataRow("123.", "illegal fraction")]
-    [DataRow("0x", "illegal integer")]
-    [DataRow("0x123.456", "illegal radix point")]
-    [DataRow("00", "illegal integer")]
-    [DataRow("/* comment", "comment not terminated")]
-    [DataRow("你好\n", "invalid token")]
+    [DataRow("'aa'", "Illegal char")]
+    [DataRow("'\na'", "Char not terminated")]
+    [DataRow("'a", "Illegal char")]
+    [DataRow("\"string not terminated", "String not terminated")]
+    [DataRow("`raw string not terminated", "String not terminated")]
+    [DataRow("123.", "Illegal fraction")]
+    [DataRow("0x", "Illegal integer")]
+    [DataRow("0x123.456", "Illegal radix point")]
+    [DataRow("00", "Illegal integer")]
+    [DataRow("/* comment", "Comment not terminated")]
+    [DataRow("你好\n", "Invalid token")]
     public void TestScannerWithInvalidToken(string source, string expectedException)
     {
         var bytes = System.Text.Encoding.UTF8.GetBytes(source);
-        var scanner = new Scanner(new File("air-compile-source.mpd", bytes.Length), bytes);
+        var scanner = new Scanner(new File("air-compile-source.mpd", bytes.Length), bytes, []);
 
         var exception = Assert.ThrowsException<Exception>(() => scanner.Scan());
         Assert.IsTrue(exception.Message.Contains(expectedException));

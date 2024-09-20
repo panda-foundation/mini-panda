@@ -6,11 +6,13 @@ internal partial class Scanner
 {
     readonly File _file;
     readonly RuneReader _reader;
+    readonly HashSet<string> _flags = [];
 
-    internal Scanner(File file, byte[] source)
+    internal Scanner(File file, byte[] source, HashSet<string> flags)
     {
         _file = file;
         _reader = new RuneReader(file, source);
+        _flags = flags;
     }
 
     internal (int offset, Token token, string literal) Scan()
@@ -99,11 +101,15 @@ internal partial class Scanner
                     literal = ".";
                     break;
 
+                case '#':
+                    Preprocess();
+                    return Scan();
+
                 default:
                     (token, literal) = ScanOperators();
                     if (token == Token.ILLEGAL)
                     {
-                        Error(offset, "invalid token");
+                        Error(offset, "Invalid token");
                         return (offset, token, literal);
                     }
                     break;
@@ -114,6 +120,6 @@ internal partial class Scanner
 
     private void Error(int offset, string message)
     {
-        throw new Exception($"error: {_file.GetPosition(offset).ToString} {message}");
+        throw new Exception($"Error: {_file.GetPosition(offset).ToString} {message}");
     }
 }

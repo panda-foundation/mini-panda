@@ -82,7 +82,7 @@ internal class FileSet
 		{
 			if (file.Name == name)
 			{
-				throw new InvalidOperationException($"file {name} already added");
+				throw new InvalidOperationException($"File {name} already added");
 			}
 		}
 
