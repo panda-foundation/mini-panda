@@ -5,20 +5,19 @@ using Token;
 internal partial class Scanner
 {
     //#if #else #elif #end
-	// TO-DO add preprocessor expressions
-	// () == != ! && ||
 
     // ||
     // &&
     // == !=
-    // !  Unary > Binary
+    // !
 
-    private const string KEYWORD_IF = "if";
-    private const string KEYWORD_ELSE = "else";
-    private const string KEYWORD_ELIF = "elif";
-    private const string KEYWORD_END = "end";
+    private const string PREPROSSESOR_IF = "if";
+    private const string PREPROSSESOR_ELIF = "elif";
+    private const string PREPROSSESOR_ELSE = "else";
+    private const string PREPROSSESOR_END = "end";
 
     private readonly Stack<Preprocessor> _preprocessors = new();
+    private (int offset, Token token, string literal) _preprocessorToken = new(0, Token.ILLEGAL, "");
 }
 
 internal class Preprocessor(string keyword, bool evaluated)
@@ -39,18 +38,18 @@ internal partial class Scanner
             Error(offset, "Unexpected preprocessor");
         }
         var keyword = ScanIdentifier();
-        if (keyword == KEYWORD_IF)
+        if (keyword == PREPROSSESOR_IF)
         {
             var evaluated = ParseExpression().Evaluate(_flags);
-            _preprocessors.Push(new Preprocessor(KEYWORD_IF, evaluated));
+            _preprocessors.Push(new Preprocessor(PREPROSSESOR_IF, evaluated));
             if (!evaluated)
             {
                 SkipPreprocessor();
             }
         }
-        else if (keyword == KEYWORD_ELIF)
+        else if (keyword == PREPROSSESOR_ELIF)
         {
-            if (_preprocessors.Count == 0 || _preprocessors.Peek().Keyword == KEYWORD_ELSE)
+            if (_preprocessors.Count == 0 || _preprocessors.Peek().Keyword == PREPROSSESOR_ELSE)
             {
                 Error(offset, "Unexpected #elif");
             }
@@ -67,11 +66,11 @@ internal partial class Scanner
                     SkipPreprocessor();
                 }
             }
-            _preprocessors.Peek().Keyword = KEYWORD_ELIF;
+            _preprocessors.Peek().Keyword = PREPROSSESOR_ELIF;
         }
-        else if (keyword == KEYWORD_ELSE)
+        else if (keyword == PREPROSSESOR_ELSE)
         {
-            if (_preprocessors.Count == 0 || _preprocessors.Peek().Keyword == KEYWORD_ELSE)
+            if (_preprocessors.Count == 0 || _preprocessors.Peek().Keyword == PREPROSSESOR_ELSE)
             {
                 Error(offset, "Unexpected #else");
             }
@@ -79,9 +78,9 @@ internal partial class Scanner
             {
                 SkipPreprocessor();
             }
-            _preprocessors.Peek().Keyword = KEYWORD_ELSE;
+            _preprocessors.Peek().Keyword = PREPROSSESOR_ELSE;
         }
-        else if (keyword == KEYWORD_END)
+        else if (keyword == PREPROSSESOR_END)
         {
             if (_preprocessors.Count == 0)
             {
@@ -118,37 +117,37 @@ internal partial class Scanner
             }
 
             var keyword = ScanIdentifier();
-            if (keyword == KEYWORD_IF)
+            if (keyword == PREPROSSESOR_IF)
             {
-                _preprocessors.Push(new Preprocessor(KEYWORD_IF, false));
+                _preprocessors.Push(new Preprocessor(PREPROSSESOR_IF, false));
             }
-            else if (keyword == KEYWORD_ELIF)
+            else if (keyword == PREPROSSESOR_ELIF)
             {
                 if (_preprocessors.Count == count)
                 {
                     _reader.Back(5);
                     break;
                 }
-                if (_preprocessors.Peek().Keyword == KEYWORD_ELSE)
+                if (_preprocessors.Peek().Keyword == PREPROSSESOR_ELSE)
                 {
                     Error(offset, "Unexpected #elif");
                 }
-                _preprocessors.Peek().Keyword = KEYWORD_ELIF;
+                _preprocessors.Peek().Keyword = PREPROSSESOR_ELIF;
             }
-            else if (keyword == KEYWORD_ELSE)
+            else if (keyword == PREPROSSESOR_ELSE)
             {
                 if (_preprocessors.Count == count)
                 {
                     _reader.Back(5);
                     break;
                 }
-                if (_preprocessors.Peek().Keyword == KEYWORD_ELSE)
+                if (_preprocessors.Peek().Keyword == PREPROSSESOR_ELSE)
                 {
                     Error(offset, "Unexpected #else");
                 }
-                _preprocessors.Peek().Keyword = KEYWORD_ELSE;
+                _preprocessors.Peek().Keyword = PREPROSSESOR_ELSE;
             }
-            else if (keyword == KEYWORD_END)
+            else if (keyword == PREPROSSESOR_END)
             {
                 if (_preprocessors.Count == count)
                 {
@@ -164,45 +163,20 @@ internal partial class Scanner
         }
     }
     
-    /*
-    func (s *Scanner) ParseExpression() bool {
-        for s.char == ' ' || s.char == '\t' {
-            s.next()
-        }
-
-        if s.isLetter(s.char) {
-            flag := s.scanIdentifier()
-
-            for s.char == ' ' || s.char == '\t' || s.char == '\r' {
-                s.next()
-            }
-            if s.char != '\n' {
-                s.error(s.offset, "unexpected: "+string(s.char))
-            }
-
-            result := false
-            if _, ok := s.flags[flag]; ok {
-                result = true
-            }
-            return result
-        }
-
-        s.error(s.offset, "unexpected: "+string(s.char))
-        return false
-    }*/
     private Expression ParseExpression()
     {
-        return new Identifier("dummy");
-        //var expression = ParseOr();
-        //return expression;
+        _preprocessorToken = Scan();
+        var expression = ParseOr();
+        return expression;
     }
-/*
+
     private Expression ParseOr()
     {
         var left = ParseAnd();
-        while (_scanner.Match(Token.OR))
+        if (_preprocessorToken.token == Token.Or)
         {
-            var op = _scanner.Token;
+            var op = _preprocessorToken.token;
+            _preprocessorToken = Scan();
             var right = ParseAnd();
             left = new Binary(left, right, op);
         }
@@ -212,9 +186,10 @@ internal partial class Scanner
     private Expression ParseAnd()
     {
         var left = ParseEquality();
-        while (_scanner.Match(Token.AND))
+        if (_preprocessorToken.token == Token.And)
         {
-            var op = _scanner.Token;
+            var op = _preprocessorToken.token;
+            _preprocessorToken = Scan();
             var right = ParseEquality();
             left = new Binary(left, right, op);
         }
@@ -224,9 +199,10 @@ internal partial class Scanner
     private Expression ParseEquality()
     {
         var left = ParseUnary();
-        while (_scanner.Match(Token.EQUAL, Token.NOT_EQUAL))
+        if (_preprocessorToken.token == Token.Equal || _preprocessorToken.token == Token.NotEqual)
         {
-            var op = _scanner.Token;
+            var op = _preprocessorToken.token;
+            _preprocessorToken = Scan();
             var right = ParseUnary();
             left = new Binary(left, right, op);
         }
@@ -235,10 +211,11 @@ internal partial class Scanner
 
     private Expression ParseUnary()
     {
-        if (_reader.Peek() == '!')
+        if (_preprocessorToken.token == Token.Not)
         {
-            var op = _scanner.Token;
-            var expression = ParseUnary();
+            var op = _preprocessorToken.token;
+            _preprocessorToken = Scan();
+            var expression = ParsePrimary();
             return new Unary(expression, op);
         }
         return ParsePrimary();
@@ -246,19 +223,25 @@ internal partial class Scanner
 
     private Expression ParsePrimary()
     {
-        if (_scanner.Match(Token.IDENTIFIER))
+        if (_preprocessorToken.token == Token.IDENT)
         {
-            var name = _scanner.Literal;
+            var name = _preprocessorToken.literal;
+            _preprocessorToken = Scan();
             return new Identifier(name);
         }
-        if (_scanner.Match(Token.LPAREN))
+        if (_preprocessorToken.token == Token.LeftParen)
         {
             var expression = ParseExpression();
-            _scanner.Consume(Token.RPAREN);
+            if (_preprocessorToken.token != Token.RightParen)
+            {
+                Error(_preprocessorToken.offset, "Expecting ')'");
+                return new Identifier("Invalid expression");
+            }
             return new Parentheses(expression);
         }
-        throw new Exception("Invalid expression");
-    }*/
+        Error(_preprocessorToken.offset, "Invalid expression");
+        return new Identifier("Invalid expression");
+    }
 }
 
 internal abstract class Expression

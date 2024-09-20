@@ -66,4 +66,15 @@ public class ScannerTest
         var exception = Assert.ThrowsException<Exception>(() => scanner.Scan());
         Assert.IsTrue(exception.Message.Contains(expectedException));
     }
+
+    [TestMethod]
+    [DataRow("#hello", "Unexpected preprocessor")]
+    public void TestScannerWithInvalidPreprossesor(string source, string expectedException)
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes(source);
+        var scanner = new Scanner(new File("air-compile-source.mpd", bytes.Length), bytes, []);
+
+        var exception = Assert.ThrowsException<Exception>(() => scanner.Scan());
+        Assert.IsTrue(exception.Message.Contains(expectedException));
+    }
 }

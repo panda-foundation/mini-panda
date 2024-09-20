@@ -17,13 +17,8 @@ internal partial class Scanner
 
     internal (int offset, Token token, string literal) Scan()
     {
+        SkipSpace();
         var rune = _reader.Peek();
-        while (rune == ' ' || rune == '\t' || rune == '\r')
-        {
-            _reader.Consume();
-            rune = _reader.Peek();
-        }
-
         var offset = _reader.CutIn();
         var literal = string.Empty;
         Token token;
@@ -116,6 +111,16 @@ internal partial class Scanner
             }
         }
         return (offset, token, literal);
+    }
+
+    private void SkipSpace()
+    {
+        var rune = _reader.Peek();
+        while (rune == ' ' || rune == '\t' || rune == '\r')
+        {
+            _reader.Consume();
+            rune = _reader.Peek();
+        }
     }
 
     private void Error(int offset, string message)
