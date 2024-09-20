@@ -11,72 +11,92 @@ internal partial class Scanner
     {
         _file = file;
         _reader = new RuneReader(file, source);
-        _reader.Consume();
     }
 
     internal (int offset, Token token, string literal) Scan()
     {
-        while(_reader.Rune == ' ' || _reader.Rune == '\t' || _reader.Rune == '\n' || _reader.Rune == '\r')
+        var rune = _reader.Peek();
+        while (rune == ' ' || rune == '\t' || rune == '\r')
         {
             _reader.Consume();
+            rune = _reader.Peek();
         }
 
-        var offset = _reader.Offset;
+        var offset = _reader.CutIn();
         var literal = string.Empty;
         Token token;
 
-        if (RuneHelper.IsLetter(_reader.Rune))
+        if (RuneHelper.IsLetter(rune))
         {
             literal = ScanIdentifier();
             token = TokenHelper.FromString(literal);
         }
-        else if (RuneHelper.IsDecimal(_reader.Rune) || (_reader.Rune == '.' && RuneHelper.IsDecimal(_reader.Peek())))
+        else if (RuneHelper.IsDecimal(rune))
         {
-            (token, literal) = ScanNumber();
+            (token, literal) = ScanNumber(offset);
         }
         else
         {
-            var rune = _reader.Rune;
-            _reader.Consume();
             switch (rune)
             {
                 case RuneReader.EOF:
                     token = Token.EOF;
+                    _reader.Consume();
+                    break;
+
+                case '\n':
+                    token = Token.NEWLINE;
+                    _reader.Consume();
+                    literal = "\n";
                     break;
 
                 case '\'':
                     token = Token.CHAR;
-                    literal = ScanChar();
+                    _reader.Consume();
+                    literal = ScanChar(offset);
                     break;
 
                 case '"':
                     token = Token.STRING;
-                    literal = ScanString();
+                    _reader.Consume();
+                    literal = ScanString(offset);
                     break;
 
                 case '`':
                     token = Token.STRING;
-                    literal = ScanRawString();
+                    _reader.Consume();
+                    literal = ScanRawString(offset);
                     break;
 
                 case '/':
-                    if (_reader.Rune == '/' || _reader.Rune == '*')
+                    _reader.Consume();
+                    rune = _reader.Peek();
+                    if (rune == '/' || rune == '*')
                     {
                         token = Token.COMMENT;
-                        literal = ScanComment();
+                        literal = ScanComment(offset);
                         break;
                     }
+                    _reader.Back();
                     (token, literal) = ScanOperators();
                     break;
 
                 case '@':
                     token = Token.ANNOTATION;
                     literal = "@";
+                    _reader.Consume();
                     break;
 
-                case ';':
-                    token = Token.Semi;
-                    literal = ";";
+                case '.':
+                    _reader.Consume();
+                    if (RuneHelper.IsDecimal(_reader.Peek()))
+                    {
+                        _reader.Back();
+                        (token, literal) = ScanNumber(offset);
+                        break;
+                    }
+                    token = Token.Dot;
+                    literal = ".";
                     break;
 
                 default:
@@ -84,7 +104,7 @@ internal partial class Scanner
                     if (token == Token.ILLEGAL)
                     {
                         Error(offset, "invalid token");
-                        _reader.Consume();
+                        return (offset, token, literal);
                     }
                     break;
             }

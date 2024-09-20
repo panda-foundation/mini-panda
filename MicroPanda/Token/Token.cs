@@ -9,6 +9,7 @@ internal enum Token
 	EOF,
 	COMMENT,
 	ANNOTATION,
+	NEWLINE,
 
 	// literals
 	_literalBegin,
@@ -71,7 +72,7 @@ internal enum Token
 	_scalarEnd,
 
 	// operators
-	operatorBegin,
+	_operatorBegin,
 	LeftParen,
 	RightParen,
 	LeftBracket,
@@ -128,7 +129,7 @@ internal static class TokenHelper
 {
 	internal static bool IsLiteral(Token token) => Token._literalBegin < token && token < Token._literalEnd;
 
-	internal static bool IsOperator(Token token) => Token.operatorBegin < token && token < Token._operatorEnd;
+	internal static bool IsOperator(Token token) => Token._operatorBegin < token && token < Token._operatorEnd;
 
 	internal static bool IsKeyword(Token token) => Token._keywordBegin < token && token < Token._keywordEnd;
 
@@ -141,6 +142,8 @@ internal static class TokenHelper
 	internal static bool IsNumber(Token token) => Token._numberBegin < token && token < Token._numberEnd;
 
 	internal static bool IsAssign(Token token) => Token._assignBegin < token && token < Token._assignEnd;
+
+	internal static bool IsOperator(string literal) => _operations.Contains(literal);
 
 	internal static Token FromString(string literal)
 	{
@@ -164,86 +167,48 @@ internal static class TokenHelper
 		return _token2String[token];
 	}
 
-	internal static (Token Token, int Length) ReadOperator(byte[] bytes, int offset)
-	{
-		var token = Token.ILLEGAL;
-		var length = 0;
-		for (var i = 0; i < 3 && offset + i + 1 <= bytes.Length; i++)
-		{
-			var literal = Encoding.UTF8.GetString(bytes[offset..(offset + i + 1)]);
-			if (_string2Token.TryGetValue(literal, out Token value))
-			{
-				token = value;
-				length = i + 1;
-			}
-		}
-		return (token, length);
-	}
-
 	internal static int Precedence(Token token)
 	{
-		switch (token)
+        return token switch
+        {
+            Token.Assign or Token.MulAssign or Token.DivAssign or Token.RemAssign or Token.PlusAssign or Token.MinusAssign or Token.LeftShiftAssign or Token.RightShiftAssign or Token.AndAssign or Token.OrAssign or Token.XorAssign => 1,
+            Token.Or => 2,
+            Token.And => 3,
+            Token.BitOr => 4,
+            Token.BitXor => 5,
+            Token.BitAnd => 6,
+            Token.Equal or Token.NotEqual => 7,
+            Token.Less or Token.LessEqual or Token.Greater or Token.GreaterEqual => 8,
+            Token.LeftShift or Token.RightShift => 9,
+            Token.Plus or Token.Minus => 10,
+            Token.Mul or Token.Div or Token.Rem => 11,
+            _ => 0,
+        };
+    }
+
+	static TokenHelper()
+	{
+		foreach (var pair in _token2String)
 		{
-			case Token.Assign:
-			case Token.MulAssign:
-			case Token.DivAssign:
-			case Token.RemAssign:
-			case Token.PlusAssign:
-			case Token.MinusAssign:
-			case Token.LeftShiftAssign:
-			case Token.RightShiftAssign:
-			case Token.AndAssign:
-			case Token.OrAssign:
-			case Token.XorAssign:
-				return 1;
-
-			case Token.Or:
-				return 2;
-
-			case Token.And:
-				return 3;
-
-			case Token.BitOr:
-				return 4;
-
-			case Token.BitXor:
-				return 5;
-
-			case Token.BitAnd:
-				return 6;
-
-			case Token.Equal:
-			case Token.NotEqual:
-				return 7;
-
-			case Token.Less:
-			case Token.LessEqual:
-			case Token.Greater:
-			case Token.GreaterEqual:
-				return 8;
-
-			case Token.LeftShift:
-			case Token.RightShift:
-				return 9;
-
-			case Token.Plus:
-			case Token.Minus:
-				return 10;
-
-			case Token.Mul:
-			case Token.Div:
-			case Token.Rem:
-				return 11;
+			_string2Token[pair.Value] = pair.Key;
 		}
-		return 0;
+
+		for (var i = Token._operatorBegin + 1; i < Token._operatorEnd; i++)
+		{
+			if (i != Token._assignBegin && i != Token._assignEnd)
+			{
+				_operations.Add(_token2String[i]);
+			}
+		}
 	}
 
-	internal static Dictionary<Token, string> _token2String = new()
+	private static readonly Dictionary<Token, string> _token2String = new()
 	{
 		{ Token.ILLEGAL, "ILLEGAL" },
 		{ Token.EOF, "EOF" },
 		{ Token.COMMENT, "COMMENT" },
 		{ Token.ANNOTATION, "ANNOTATION" },
+		{ Token.NEWLINE, "NEWLINE" },
 
 		{ Token.IDENT, "identifier" },
 		{ Token.BOOL, "bool_literal" },
@@ -337,102 +302,7 @@ internal static class TokenHelper
 		{ Token.Dot, "." }
 	};
 
-	internal static Dictionary<string, Token> _string2Token = new()
-	{
-		{ "ILLEGAL", Token.ILLEGAL },
-		{ "EOF", Token.EOF },
-		{ "COMMENT", Token.COMMENT },
-		{ "ANNOTATION", Token.ANNOTATION },
+	private static readonly Dictionary<string, Token> _string2Token = [];
 
-		{ "identifier", Token.IDENT },
-		{ "bool_literal", Token.BOOL },
-		{ "char_literal", Token.CHAR },
-		{ "int_literal", Token.INT },
-		{ "float_literal", Token.FLOAT },
-		{ "string_literal", Token.STRING },
-		{ "null", Token.NULL },
-
-		{ "break", Token.Break },
-		{ "case", Token.Case },
-		{ "const", Token.Const },
-		{ "continue", Token.Continue },
-		{ "default", Token.Default },
-		{ "else", Token.Else },
-		{ "enum", Token.Enum },
-		{ "for", Token.For },
-		{ "function", Token.Function },
-		{ "if", Token.If },
-		{ "import", Token.Import },
-		{ "namespace", Token.Namespace },
-		{ "pointer", Token.Pointer },
-		{ "public", Token.Public },
-		{ "return", Token.Return },
-		{ "sizeof", Token.Sizeof },
-		{ "struct", Token.Struct },
-		{ "switch", Token.Switch },
-		{ "this", Token.This },
-		{ "var", Token.Var },
-
-		{ "bool", Token.Bool },
-		{ "i8", Token.Int8 },
-		{ "i16", Token.Int16 },
-		{ "i32", Token.Int32 },
-		{ "i64", Token.Int64 },
-		{ "u8", Token.Uint8 },
-		{ "u16", Token.Uint16 },
-		{ "u32", Token.Uint32 },
-		{ "u64", Token.Uint64 },
-		{ "f16", Token.Float16 },
-		{ "f32", Token.Float32 },
-		{ "f64", Token.Float64 },
-		{ "void", Token.Void },
-
-		{ "(", Token.LeftParen },
-		{ ")", Token.RightParen },
-		{ "[", Token.LeftBracket },
-		{ "]", Token.RightBracket },
-		{ "{", Token.LeftBrace },
-		{ "}", Token.RightBrace },
-
-		{ "+", Token.Plus },
-		{ "-", Token.Minus },
-		{ "*", Token.Mul },
-		{ "/", Token.Div },
-		{ "<", Token.Less },
-		{ ">", Token.Greater },
-		{ "%", Token.Rem },
-		{ "&", Token.BitAnd },
-		{ "|", Token.BitOr },
-		{ "^", Token.BitXor },
-		{ "~", Token.Complement },
-		{ "!", Token.Not },
-		{ "<<", Token.LeftShift },
-		{ ">>", Token.RightShift },
-
-		{ "=", Token.Assign },
-		{ "+=", Token.PlusAssign },
-		{ "-=", Token.MinusAssign },
-		{ "*=", Token.MulAssign },
-		{ "/=", Token.DivAssign },
-		{ "%=", Token.RemAssign },
-		{ "^=", Token.XorAssign },
-		{ "&=", Token.AndAssign },
-		{ "|=", Token.OrAssign },
-		{ "<<=", Token.LeftShiftAssign },
-		{ ">>=", Token.RightShiftAssign },
-
-		{ "==", Token.Equal },
-		{ "!=", Token.NotEqual },
-		{ "<=", Token.LessEqual },
-		{ ">=", Token.GreaterEqual },
-		{ "&&", Token.And },
-		{ "||", Token.Or },
-		{ "++", Token.PlusPlus },
-		{ "--", Token.MinusMinus },
-
-		{ ",", Token.Comma },
-		{ ":", Token.Colon },
-		{ ";", Token.Semi },
-		{ ".", Token.Dot }
-	};
+	private static readonly HashSet<string> _operations = [];
 }

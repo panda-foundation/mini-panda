@@ -1,5 +1,6 @@
 namespace MicroPanda.Scanner;
 
+using Microsoft.VisualBasic;
 using Token;
 
 internal class RuneReader
@@ -8,10 +9,8 @@ internal class RuneReader
 
     private readonly File _file;
     private readonly byte[] _source;
-    private int _offset = EOF;
-    private int _readOffset;
+    private int _offset;
     private int _cutIn;
-    private int _rune = EOF;
 
     internal RuneReader(File file, byte[] source)
     {
@@ -21,61 +20,54 @@ internal class RuneReader
 
     internal int Consume()
     {
-        if (_source.Length == 0)
-        {
-            _offset = 0;
-            _rune = EOF;
-            return _rune;
-        }
-        else if (_readOffset >= _source.Length)
-        {
-            _offset = _source.Length;
-            if (_rune == '\n')
-            {
-                _file.AddLine(_offset);
-            }
-            _rune = EOF;
-            return _rune;
-        }
-
-        _offset = _readOffset;
-        if (_rune == '\n')
+        var rune = Peek(out var bytesConsumed);
+        if (rune == '\n')
         {
              _file.AddLine(_offset);
         }
-        System.Text.Rune.DecodeFromUtf8(new ReadOnlySpan<byte>(_source)[_readOffset..], out var rune, out var bytesConsumed);
-        _readOffset += bytesConsumed;
-        _rune = rune.Value;
-
-        return _rune;
+        _offset += bytesConsumed;
+        return rune;
     }
 
-    internal int Peek()
+    internal void Back()
     {
-        if (_source.Length == 0 || _readOffset >= _source.Length)
+        // won't back an UTF-8 character, only ASCII
+        if (_offset > 0)
         {
+            _offset--;
+        }
+    }
+
+    internal int Peek() => Peek(out _);
+
+    internal int Peek(out int bytesConsumed)
+    {
+        if (_source.Length == 0 || _offset >= _source.Length)
+        {
+            bytesConsumed = 0;
             return EOF;
         }
+        if (_source[_offset] < 0x80)
+        {
+            bytesConsumed = 1;
+            return _source[_offset];
+        }
 
-        System.Text.Rune.DecodeFromUtf8(new ReadOnlySpan<byte>(_source)[_readOffset..], out var rune, out _);
+        System.Text.Rune.DecodeFromUtf8(new ReadOnlySpan<byte>(_source)[_offset..], out var rune, out bytesConsumed);
         return rune.Value;
     }
 
-    internal void CutIn(int offset)
+    internal int CutIn()
     {
-        _cutIn = offset;
+        _cutIn = _offset;
+        return _cutIn;
     }
 
-    internal string CutOut(int offset)
+    internal string CutOut()
     {
-        var cut = _source[_cutIn..offset];
+        var cut = _source[_cutIn.._offset];
         return System.Text.Encoding.UTF8.GetString(cut);
     }
-
-    internal int Offset => _offset;
-    internal int CutFrom => _cutIn;
-    internal int Rune => _rune;
-    internal byte[] Source => _source;
 }
 
 internal static class RuneHelper

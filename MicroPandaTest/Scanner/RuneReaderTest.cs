@@ -9,50 +9,38 @@ public class RuneReaderTest
     [TestMethod]
     public void TestRuneReader()
     {
-        var file = new File("Test", 5);
+        var file = new File("Test", 11);
         var reader = new RuneReader(file, "abcde你好"u8.ToArray());
 
-        Assert.AreEqual(RuneReader.EOF, reader.Offset);
-        Assert.AreEqual(RuneReader.EOF, reader.Rune);
-        Assert.AreEqual(11, reader.Source.Length);
         Assert.AreEqual('a', reader.Peek());
-
-        reader.Consume();
-        Assert.AreEqual(0, reader.Offset);
-        Assert.AreEqual('a', reader.Rune);
-
-        reader.Consume();
-        reader.CutIn(reader.Offset);
-        reader.Consume();
-        reader.Consume();
-        reader.Consume();
-        Assert.AreEqual(4, reader.Offset);
-        Assert.AreEqual('e', reader.Rune);
+        Assert.AreEqual('a', reader.Consume());
+        Assert.AreEqual(1, reader.CutIn());
+        Assert.AreEqual('b', reader.Peek());
+        Assert.AreEqual('b', reader.Consume());
+        Assert.AreEqual('c', reader.Consume());
+        Assert.AreEqual('d', reader.Peek());
+        reader.Back();
+        Assert.AreEqual('c', reader.Peek());
+        Assert.AreEqual('c', reader.Consume());
+        Assert.AreEqual('d', reader.Consume());
+        Assert.AreEqual("bcd", reader.CutOut());
+        Assert.AreEqual('e', reader.Peek());
+        Assert.AreEqual('e', reader.Consume());
         Assert.AreEqual('你', reader.Peek());
-        Assert.AreEqual("bcd", reader.CutOut(reader.Offset));
-
-        reader.Consume();
-        Assert.AreEqual(5, reader.Offset);
-        Assert.AreEqual('你', reader.Rune);
+        Assert.AreEqual("bcde", reader.CutOut());
+        Assert.AreEqual('你', reader.Consume());
         Assert.AreEqual('好', reader.Peek());
-        Assert.AreEqual("bcde", reader.CutOut(reader.Offset));
-
-        reader.Consume();
-        Assert.AreEqual(8, reader.Offset);
-        Assert.AreEqual('好', reader.Rune);
-        Assert.AreEqual("bcde你", reader.CutOut(reader.Offset));
+        Assert.AreEqual("bcde你", reader.CutOut());
+        Assert.AreEqual('好', reader.Consume());
+        Assert.AreEqual("bcde你好", reader.CutOut());
         Assert.AreEqual(RuneReader.EOF, reader.Peek());
 
-        reader.Consume();
-        Assert.AreEqual(11, reader.Offset);
-        Assert.AreEqual(RuneReader.EOF, reader.Rune);
-        Assert.AreEqual("bcde你好", reader.CutOut(reader.Offset));
+        Assert.AreEqual(RuneReader.EOF, reader.Consume());
+        Assert.AreEqual("bcde你好", reader.CutOut());
         Assert.AreEqual(RuneReader.EOF, reader.Peek());
 
-        reader.Consume();
-        Assert.AreEqual(11, reader.Offset);
-        Assert.AreEqual(RuneReader.EOF, reader.Rune);
-        Assert.AreEqual("bcde你好", reader.CutOut(reader.Offset));
+        Assert.AreEqual(RuneReader.EOF, reader.Consume());
+        Assert.AreEqual("bcde你好", reader.CutOut());
         Assert.AreEqual(RuneReader.EOF, reader.Peek());
     }
 

@@ -4,16 +4,18 @@ using Token;
 
 internal partial class Scanner
 {
-    private string ScanComment()
+    private string ScanComment(int offset)
     {
-        _reader.CutIn(_reader.Offset - 1);
-        if (_reader.Rune == '/')
+        var rune = _reader.Peek();
+        if (rune == '/')
         {
             // Single-line comment
             _reader.Consume();
-            while (_reader.Rune != '\n' && _reader.Rune >= 0)
+            rune = _reader.Peek();
+            while (rune != '\n' && rune >= 0)
             {
                 _reader.Consume();
+                rune = _reader.Peek();
             }
         }
         else
@@ -21,49 +23,52 @@ internal partial class Scanner
             // Multi-line comment
             bool terminated = false;
             _reader.Consume();
-            while (_reader.Rune >= 0)
+            rune = _reader.Peek();
+            while (rune >= 0)
             {
-                int charBefore = _reader.Rune;
                 _reader.Consume();
-                if (charBefore == '*' && _reader.Rune == '/')
+                if (rune == '*' && _reader.Peek() == '/')
                 {
                     _reader.Consume();
                     terminated = true;
                     break;
                 }
+                rune = _reader.Peek();
             }
             if (!terminated)
             {
-                Error(_reader.CutFrom, "comment not terminated");
+                Error(offset, "comment not terminated");
+                return _reader.CutOut();
             }
         }
-        return _reader.CutOut(_reader.Offset);
+        return _reader.CutOut();
     }
 
     private string ScanIdentifier()
     {
-        _reader.CutIn(_reader.Offset);
-        while (RuneHelper.IsLetter(_reader.Rune) || RuneHelper.IsDecimal(_reader.Rune))
+        _reader.Consume();
+        var rune = _reader.Peek();
+        while (RuneHelper.IsLetter(rune) || RuneHelper.IsDecimal(rune))
         {
             _reader.Consume();
+            rune = _reader.Peek();
         }
-        return _reader.CutOut(_reader.Offset);
+        return _reader.CutOut();
     }
 
-    private (Token, string) ScanNumber()
+    private (Token, string) ScanNumber(int offset)
     {
-        _reader.CutIn(_reader.Offset);
         Token token = Token.INT;
-
-        if (_reader.Rune != '.')
+        var rune = _reader.Consume();
+        if (rune != '.')
         {
-            if (_reader.Rune == '0')
+            if (rune == '0')
             {
-                _reader.Consume();
-                if (_reader.Rune != '.')
+                rune = _reader.Consume();
+                if (rune != '.')
                 {
-                    int numberBase = 10;
-                    switch (RuneHelper.Lower(_reader.Rune))
+                    int numberBase;
+                    switch (RuneHelper.Lower(rune))
                     {
                         case 'x':
                             numberBase = 16;
@@ -76,113 +81,122 @@ internal partial class Scanner
                             numberBase = 8;
                             break;
                         default:
-                            if (RuneHelper.IsDecimal(_reader.Rune))
+                            if (RuneHelper.IsDecimal(rune))
                             {
-                                Error(_reader.CutFrom, "invalid integer");
                                 token = Token.ILLEGAL;
+                                Error(offset, "illegal integer");
+                                return (token, _reader.CutOut());
                             }
-                            else
-                            {
-                                return (token, "0");
-                            }
-                            break;
+                            return (token, "0");
                     }
-                    if (token != Token.ILLEGAL)
+                    
+                    var digitLength = BypassDigits(numberBase);
+                    if (digitLength == 0)
                     {
-                        _reader.Consume();
-                        BypassDigits(numberBase);
-                        if (_reader.Offset - _reader.CutFrom <= 2)
-                        {
-                            token = Token.ILLEGAL;
-                            Error(_reader.CutFrom, "illegal number");
-                        }
-                        if (_reader.Rune == '.')
-                        {
-                            token = Token.ILLEGAL;
-                            Error(_reader.CutFrom, "invalid radix point");
-                        }
+                        token = Token.ILLEGAL;
+                        Error(offset, "illegal integer");
+                        return (token, _reader.CutOut());
+                    }
+                    rune = _reader.Peek();
+                    if (rune == '.')
+                    {
+                        token = Token.ILLEGAL;
+                        Error(offset, "illegal radix point");
+                        return (token, _reader.CutOut());
                     }
                 }
             }
             else
             {
                 BypassDigits(10);
+                rune = _reader.Peek();
+                if (rune == '.')
+                {
+                    _reader.Consume();
+                }
             }
         }
 
-        if (_reader.Rune == '.')
+        if (rune == '.')
         {
-            int offsetFraction = _reader.Offset;
             token = Token.FLOAT;
-            _reader.Consume();
-            BypassDigits(10);
-            if (offsetFraction == _reader.Offset - 1)
+            var fractionLength = BypassDigits(10);
+            if (fractionLength == 0)
             {
                 token = Token.ILLEGAL;
-                Error(_reader.CutFrom, "float has no digits after .");
+                Error(offset, "illegal fraction");
+                return (token, _reader.CutOut());
             }
         }
 
-        return (token, _reader.CutOut(_reader.Offset));
+        return (token, _reader.CutOut());
     }
 
-    private void BypassDigits(int numberBase)
+    private int BypassDigits(int numberBase)
     {
-        while (RuneHelper.DigitValue(_reader.Rune) < numberBase)
+        var length = 0;
+        var rune = _reader.Peek();
+        while (RuneHelper.DigitValue(rune) < numberBase)
         {
             _reader.Consume();
+            rune = _reader.Peek();
+            length++;
         }
+        return length;
     }
 
-    private string ScanChar()
+    private string ScanChar(int offset)
     {
-        _reader.CutIn(_reader.Offset - 1);
-        var rune = _reader.Rune;
+        var rune = _reader.Peek();
         if (rune == '\n' || rune < 0)
         {
-            Error(_reader.CutFrom, "char not terminated");
+            Error(offset, "char not terminated");
+            return _reader.CutOut();
         }
         _reader.Consume();
         if (rune == '\\')
         {
-            BypassEscape();
+            BypassEscape(offset);
         }
-        if (_reader.Rune != '\'')
+        rune = _reader.Peek();
+        if (rune != '\'')
         {
-            Error(_reader.CutFrom, "illegal char literal");
+            Error(offset, "illegal char");
+            return _reader.CutOut();
         }
         _reader.Consume();
-        return _reader.CutOut(_reader.Offset);
+        return _reader.CutOut();
     }
 
-    private string ScanString()
+    private string ScanString(int offset)
     {
-        _reader.CutIn(_reader.Offset - 1);
-
         while (true)
         {
-            var rune = _reader.Rune;
+            var rune = _reader.Peek();
             if (rune == '\n' || rune < 0)
             {
-                Error(_reader.CutFrom, "string not terminated");
+                Error(offset, "string not terminated");
+                return _reader.CutOut();
             }
             _reader.Consume();
+            rune = _reader.Peek();
             if (rune == '"')
             {
+                _reader.Consume();
                 break;
             }
             if (rune == '\\')
             {
-                BypassEscape();
+                BypassEscape(offset);
             }
         }
-
-        return _reader.CutOut(_reader.Offset);
+        return _reader.CutOut();
     }
 
-    private void BypassEscape()
+    private void BypassEscape(int offset)
     {
-        switch (_reader.Rune)
+        var rune = _reader.Peek();
+        switch (rune)
         {
             case '\'':
             case '\"':
@@ -201,51 +215,60 @@ internal partial class Scanner
 
             default:
                 string message = "unknown escape sequence";
-                if (_reader.Rune < 0)
+                if (rune < 0)
                 {
                     message = "escape sequence not terminated";
                 }
-                Error(_reader.Offset, message);
+                Error(offset, message);
                 return;
         }
     }
 
-    private string ScanRawString()
+    private string ScanRawString(int offset)
     {
-        _reader.CutIn(_reader.Offset - 1);
-
+        var rune = _reader.Peek();
         while (true)
         {
-            var rune = _reader.Rune;
             if (rune < 0)
             {
-                Error(_reader.CutFrom, "string not terminated");
+                Error(offset, "string not terminated");
+                return _reader.CutOut();
             }
-            _reader.Consume();
             if (rune == '`')
             {
+                _reader.Consume();
                 break;
             }
+            _reader.Consume();
+            rune = _reader.Peek();
         }
-
-        return _reader.CutOut(_reader.Offset);
+        return _reader.CutOut();
     }
 
     private (Token, string) ScanOperators()
     {
-        _reader.CutIn(_reader.Offset - 1);
-        (Token t, int length) = TokenHelper.ReadOperator(_reader.Source, _reader.Offset - 1);
-        string literal = string.Empty;
-
-        if (length > 0)
+        var token = Token.ILLEGAL;
+        if (_reader.Peek() < 0)
         {
-            for (int i = 1; i < length; i++)
+            return (token, _reader.CutOut());
+        }
+        while(_reader.Peek() >= 0)
+        {
+            _reader.Consume();
+            var literal = _reader.CutOut();
+
+			if (TokenHelper.IsOperator(literal))
             {
-                _reader.Consume();
+                token = TokenHelper.FromString(literal);
             }
-            literal = _reader.CutOut(_reader.Offset);
+            else
+            {
+                _reader.Back();
+                literal = _reader.CutOut();
+                return (token, literal);
+            }
         }
 
-        return (t, literal);
+		return (token, _reader.CutOut());
     }
 }
