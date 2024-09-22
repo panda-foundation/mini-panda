@@ -40,7 +40,13 @@ internal partial class Scanner
         var keyword = ScanIdentifier();
         if (keyword == PREPROSSESOR_IF)
         {
-            var evaluated = ParseExpression().Evaluate(_flags);
+            _preprocessorToken = Scan();
+            var expression = ParseExpression();
+            var evaluated = expression.Evaluate(_flags);
+            if (_preprocessorToken.token != Token.NEWLINE)
+            {
+                Error(_preprocessorToken.offset, "Expect newline after expression");
+            }
             _preprocessors.Push(new Preprocessor(PREPROSSESOR_IF, evaluated));
             if (!evaluated)
             {
@@ -59,7 +65,13 @@ internal partial class Scanner
             }
             else 
             {
-                var evaluated = ParseExpression().Evaluate(_flags);
+                _preprocessorToken = Scan();
+                var expression = ParseExpression();
+                var evaluated = expression.Evaluate(_flags);
+                if (_preprocessorToken.token != Token.NEWLINE)
+                {
+                    Error(_preprocessorToken.offset, "Expect newline after expression");
+                }
                 _preprocessors.Peek().Evaluated = evaluated;
                 if (!evaluated)
                 {
@@ -165,7 +177,6 @@ internal partial class Scanner
     
     private Expression ParseExpression()
     {
-        _preprocessorToken = Scan();
         var expression = ParseOr();
         return expression;
     }
@@ -173,7 +184,7 @@ internal partial class Scanner
     private Expression ParseOr()
     {
         var left = ParseAnd();
-        if (_preprocessorToken.token == Token.Or)
+        while (_preprocessorToken.token == Token.Or)
         {
             var op = _preprocessorToken.token;
             _preprocessorToken = Scan();
@@ -186,7 +197,7 @@ internal partial class Scanner
     private Expression ParseAnd()
     {
         var left = ParseEquality();
-        if (_preprocessorToken.token == Token.And)
+        while (_preprocessorToken.token == Token.And)
         {
             var op = _preprocessorToken.token;
             _preprocessorToken = Scan();
@@ -231,6 +242,7 @@ internal partial class Scanner
         }
         if (_preprocessorToken.token == Token.LeftParen)
         {
+            _preprocessorToken = Scan();
             var expression = ParseExpression();
             if (_preprocessorToken.token != Token.RightParen)
             {

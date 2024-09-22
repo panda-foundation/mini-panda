@@ -90,7 +90,7 @@ public class ScannerTest
         4
         #end
 
-        #if a && b
+        #if a && b && c
         5
         #elif b || c
         6
@@ -134,12 +134,13 @@ public class ScannerTest
         21
         #end
     """;
+
     [TestMethod]
     [DataRow(new string[] { "a" }, new int[] { 0, 1, 7, 9, 12, 16, 17, 21 })]
     [DataRow(new string[] { "a", "b", "c" }, new int[] { 0, 1, 5, 8, 11, 14, 17, 18, 19, 20, 21 })]
     [DataRow(new string[] { "b" }, new int[] { 0, 2, 6, 10, 13, 16 })]
     [DataRow(new string[] { "b", "c" }, new int[] { 0, 2, 6, 8, 12, 15 })]
-    [DataRow(new string[] { "a", "b" }, new int[] { 0, 1, 5, 8, 11, 14, 17, 18, 20, 21 })]
+    [DataRow(new string[] { "a", "b" }, new int[] { 0, 1, 6, 8, 11, 14, 17, 18, 20, 21 })]
     public void TestPreprossesor(string[] flags, int[] expected)
     {
         var bytes = System.Text.Encoding.UTF8.GetBytes(Source);
@@ -158,9 +159,31 @@ public class ScannerTest
                 results.Add(int.Parse(literal));
             }
         }
-
         CollectionAssert.AreEqual(expected, results);
     }
 
-    //Invalid preprossor test
+    [TestMethod]
+    [DataRow("#if \n", "Invalid expression")]
+    [DataRow("#if a + b \n #end", "Expect newline after expression")]
+    [DataRow("#if a \n", "Preprocessor not terminated, expecting #end")]
+    [DataRow("#if a \n #else \n #elif b\n #end", "Unexpected #elif")]
+    [DataRow("#if a \n #if b \n #end", "Preprocessor not terminated, expecting #end")]
+    public void TestInvalidPreprossesor(string source, string expectedException)
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes(source);
+        var scanner = new Scanner(new File("air-compile-source.mpd", bytes.Length), bytes, []);
+
+        var exception = Assert.ThrowsException<Exception>(() =>
+        {
+            while (true)
+            {
+                var (_, token, _) = scanner.Scan();
+                if (token == Token.EOF)
+                {
+                    break;
+                }
+            }
+        });
+        Assert.IsTrue(exception.Message.Contains(expectedException));
+    }
 }
