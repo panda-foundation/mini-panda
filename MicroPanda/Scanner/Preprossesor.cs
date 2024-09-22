@@ -11,10 +11,10 @@ internal partial class Scanner
     // == !=
     // !
 
-    private const string PREPROSSESOR_IF = "if";
-    private const string PREPROSSESOR_ELIF = "elif";
-    private const string PREPROSSESOR_ELSE = "else";
-    private const string PREPROSSESOR_END = "end";
+    private const string PREPROSSESOR_IF = "#if";
+    private const string PREPROSSESOR_ELIF = "#elif";
+    private const string PREPROSSESOR_ELSE = "#else";
+    private const string PREPROSSESOR_END = "#end";
 
     private readonly Stack<Preprocessor> _preprocessors = new();
     private (int offset, Token token, string literal) _preprocessorToken = new(0, Token.ILLEGAL, "");
@@ -237,6 +237,7 @@ internal partial class Scanner
                 Error(_preprocessorToken.offset, "Expecting ')'");
                 return new Identifier("Invalid expression");
             }
+            _preprocessorToken = Scan();
             return new Parentheses(expression);
         }
         Error(_preprocessorToken.offset, "Invalid expression");

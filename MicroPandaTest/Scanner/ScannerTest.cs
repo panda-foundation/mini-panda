@@ -77,4 +77,84 @@ public class ScannerTest
         var exception = Assert.ThrowsException<Exception>(() => scanner.Scan());
         Assert.IsTrue(exception.Message.Contains(expectedException));
     }
+
+    public const string Source = """
+        0
+        #if a
+        1
+        #elif b
+        2
+        #elif c
+        3
+        #else
+        4
+        #end
+
+        #if a && b
+        5
+        #elif b || c
+        6
+        #else
+        7
+        #end
+
+        #if a && b || c
+        8
+        #elif a || b && c
+        9
+        #else
+        10
+        #end
+
+        #if a && b || c && d
+        11
+        #elif a || b && c || d
+        12
+        #else
+        13
+        #end
+
+        #if a && (b || c)
+        14
+        #elif (a || b) && c
+        15
+        #else
+        16
+        #end
+
+        #if a
+        17
+        #if b
+        18
+        #if c
+        19
+        #end
+        20
+        #end
+        21
+        #end
+    """;
+    [TestMethod]
+    [DataRow(new string[] { "a" }, new int[] { 0, 1, 7, 9, 12, 16, 17, 21 })]
+    public void TestPreprossesor(string[] flags, int[] expected)
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes(Source);
+        var scanner = new Scanner(new File("air-compile-source.mpd", bytes.Length), bytes, new HashSet<string>(flags));
+
+        var results = new List<int>();
+        while (true)
+        {
+            var (_, token, literal) = scanner.Scan();
+            if (token == Token.EOF)
+            {
+                break;
+            }
+            if (token == Token.INT)
+            {
+                results.Add(int.Parse(literal));
+            }
+        }
+
+        CollectionAssert.AreEqual(expected, results);
+    }
 }
