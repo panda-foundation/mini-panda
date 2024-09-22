@@ -136,6 +136,10 @@ public class ScannerTest
     """;
     [TestMethod]
     [DataRow(new string[] { "a" }, new int[] { 0, 1, 7, 9, 12, 16, 17, 21 })]
+    [DataRow(new string[] { "a", "b", "c" }, new int[] { 0, 1, 5, 8, 11, 14, 17, 18, 19, 20, 21 })]
+    [DataRow(new string[] { "b" }, new int[] { 0, 2, 6, 10, 13, 16 })]
+    [DataRow(new string[] { "b", "c" }, new int[] { 0, 2, 6, 8, 12, 15 })]
+    [DataRow(new string[] { "a", "b" }, new int[] { 0, 1, 5, 8, 11, 14, 17, 18, 20, 21 })]
     public void TestPreprossesor(string[] flags, int[] expected)
     {
         var bytes = System.Text.Encoding.UTF8.GetBytes(Source);
@@ -157,4 +161,6 @@ public class ScannerTest
 
         CollectionAssert.AreEqual(expected, results);
     }
+
+    //Invalid preprossor test
 }
