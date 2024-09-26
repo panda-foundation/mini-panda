@@ -34,7 +34,6 @@ internal enum Token
 	For,
 	Function,
 	If,
-	Import,
 	Namespace,
 	Pointer,
 	Public,
@@ -43,6 +42,7 @@ internal enum Token
 	Struct,
 	Switch,
 	This,
+	Using,
 	Var,
 	_keywordEnd,
 
@@ -228,7 +228,6 @@ internal static class TokenHelper
 		{ Token.For, "for" },
 		{ Token.Function, "function" },
 		{ Token.If, "if" },
-		{ Token.Import, "import" },
 		{ Token.Namespace, "namespace" },
 		{ Token.Pointer, "pointer" },
 		{ Token.Public, "public" },
@@ -237,6 +236,7 @@ internal static class TokenHelper
 		{ Token.Struct, "struct" },
 		{ Token.Switch, "switch" },
 		{ Token.This, "this" },
+		{ Token.Using, "using" },
 		{ Token.Var, "var" },
 
 		{ Token.Bool, "bool" },

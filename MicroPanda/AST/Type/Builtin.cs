@@ -11,7 +11,7 @@ internal class TypeBuiltin : Type
         Token = token;
     }
     
-    override internal bool Equal(Type type)
+    internal override bool Equal(Type type)
     {
         if (type is TypeBuiltin typeBuiltin)
         {

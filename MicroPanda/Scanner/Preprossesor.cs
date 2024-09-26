@@ -11,10 +11,10 @@ internal partial class Scanner
     // == !=
     // !
 
-    private const string PREPROSSESOR_IF = "#if";
-    private const string PREPROSSESOR_ELIF = "#elif";
-    private const string PREPROSSESOR_ELSE = "#else";
-    private const string PREPROSSESOR_END = "#end";
+    private const string PreprossesorIf = "#if";
+    private const string PreprossesorElif = "#elif";
+    private const string PreprossesorElse = "#else";
+    private const string PreprossesorEnd = "#end";
 
     private readonly Stack<Preprocessor> _preprocessors = new();
     private (int offset, Token token, string literal) _preprocessorToken = new(0, Token.ILLEGAL, "");
@@ -38,7 +38,7 @@ internal partial class Scanner
             Error(offset, "Unexpected preprocessor");
         }
         var keyword = ScanIdentifier();
-        if (keyword == PREPROSSESOR_IF)
+        if (keyword == PreprossesorIf)
         {
             _preprocessorToken = Scan();
             var expression = ParseExpression();
@@ -47,15 +47,15 @@ internal partial class Scanner
             {
                 Error(_preprocessorToken.offset, "Expect newline after expression");
             }
-            _preprocessors.Push(new Preprocessor(PREPROSSESOR_IF, evaluated));
+            _preprocessors.Push(new Preprocessor(PreprossesorIf, evaluated));
             if (!evaluated)
             {
                 SkipPreprocessor();
             }
         }
-        else if (keyword == PREPROSSESOR_ELIF)
+        else if (keyword == PreprossesorElif)
         {
-            if (_preprocessors.Count == 0 || _preprocessors.Peek().Keyword == PREPROSSESOR_ELSE)
+            if (_preprocessors.Count == 0 || _preprocessors.Peek().Keyword == PreprossesorElse)
             {
                 Error(offset, "Unexpected #elif");
             }
@@ -78,11 +78,11 @@ internal partial class Scanner
                     SkipPreprocessor();
                 }
             }
-            _preprocessors.Peek().Keyword = PREPROSSESOR_ELIF;
+            _preprocessors.Peek().Keyword = PreprossesorElif;
         }
-        else if (keyword == PREPROSSESOR_ELSE)
+        else if (keyword == PreprossesorElse)
         {
-            if (_preprocessors.Count == 0 || _preprocessors.Peek().Keyword == PREPROSSESOR_ELSE)
+            if (_preprocessors.Count == 0 || _preprocessors.Peek().Keyword == PreprossesorElse)
             {
                 Error(offset, "Unexpected #else");
             }
@@ -90,9 +90,9 @@ internal partial class Scanner
             {
                 SkipPreprocessor();
             }
-            _preprocessors.Peek().Keyword = PREPROSSESOR_ELSE;
+            _preprocessors.Peek().Keyword = PreprossesorElse;
         }
-        else if (keyword == PREPROSSESOR_END)
+        else if (keyword == PreprossesorEnd)
         {
             if (_preprocessors.Count == 0)
             {
@@ -129,37 +129,37 @@ internal partial class Scanner
             }
 
             var keyword = ScanIdentifier();
-            if (keyword == PREPROSSESOR_IF)
+            if (keyword == PreprossesorIf)
             {
-                _preprocessors.Push(new Preprocessor(PREPROSSESOR_IF, false));
+                _preprocessors.Push(new Preprocessor(PreprossesorIf, false));
             }
-            else if (keyword == PREPROSSESOR_ELIF)
+            else if (keyword == PreprossesorElif)
             {
                 if (_preprocessors.Count == count)
                 {
                     _reader.Back(5);
                     break;
                 }
-                if (_preprocessors.Peek().Keyword == PREPROSSESOR_ELSE)
+                if (_preprocessors.Peek().Keyword == PreprossesorElse)
                 {
                     Error(offset, "Unexpected #elif");
                 }
-                _preprocessors.Peek().Keyword = PREPROSSESOR_ELIF;
+                _preprocessors.Peek().Keyword = PreprossesorElif;
             }
-            else if (keyword == PREPROSSESOR_ELSE)
+            else if (keyword == PreprossesorElse)
             {
                 if (_preprocessors.Count == count)
                 {
                     _reader.Back(5);
                     break;
                 }
-                if (_preprocessors.Peek().Keyword == PREPROSSESOR_ELSE)
+                if (_preprocessors.Peek().Keyword == PreprossesorElse)
                 {
                     Error(offset, "Unexpected #else");
                 }
-                _preprocessors.Peek().Keyword = PREPROSSESOR_ELSE;
+                _preprocessors.Peek().Keyword = PreprossesorElse;
             }
-            else if (keyword == PREPROSSESOR_END)
+            else if (keyword == PreprossesorEnd)
             {
                 if (_preprocessors.Count == count)
                 {

@@ -2,16 +2,16 @@ namespace MicroPanda.AST.Type;
 
 internal class Array : Type
 {
-    internal Type ElementType { get; set; }
-    internal List<int> Dimension { get; set; }
+    internal Type? ElementType { get; set; }
 
-    internal Array(Type elementType, List<int> dimension)
-    {
-        ElementType = elementType;
-        Dimension = dimension;
-    }
+    // The elements are the size of that dimension
+    // if the array is int[2][3] then Dimension = [2, 3]
+    // of the size is 0, means pointer instead
+    // Dimension[0] pointer to elemnt
+    // Dimension[0][10] pointer to array of 10 elements
+    internal List<int> Dimension = [];
 
-    override internal bool Equal(Type type)
+    internal override bool Equal(Type type)
     {
         if (type is Array typeArray)
         {
@@ -31,7 +31,7 @@ internal class Array : Type
         {
             if (Dimension.Count == 1)
             {
-                return ElementType.Equal(typePointer.ElementType);
+                return ElementType!.Equal(typePointer.ElementType);
             }
         }
         return false;

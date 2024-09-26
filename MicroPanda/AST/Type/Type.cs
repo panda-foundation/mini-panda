@@ -18,7 +18,7 @@ internal class TypeHelper
     internal static TypeBuiltin TypeF32 = new(Token.Float32);
     internal static Pointer TypePointer = new(TypeU8);
 
-    internal static bool IsInteger(Type type)
+    internal static bool IsInteger(Type? type)
     {
         if (type is TypeBuiltin typeBuiltin)
         {
@@ -27,7 +27,7 @@ internal class TypeHelper
         return false;
     }
 
-    internal static bool IsFloat(Type type)
+    internal static bool IsFloat(Type? type)
     {
         if (type is TypeBuiltin typeBuiltin)
         {
@@ -36,7 +36,7 @@ internal class TypeHelper
         return false;
     }
 
-    internal static bool IsNumber(Type type)
+    internal static bool IsNumber(Type? type)
     {
         if (type is TypeBuiltin typeBuiltin)
         {
@@ -45,7 +45,7 @@ internal class TypeHelper
         return false;
     }
 
-    internal static bool IsBool(Type type)
+    internal static bool IsBool(Type? type)
     {
         if (type is TypeBuiltin typeBuiltin)
         {
@@ -54,7 +54,7 @@ internal class TypeHelper
         return false;
     }
 
-    internal static bool IsStruct(Type type)
+    internal static bool IsStruct(Type? type)
     {
         if (type is TypeName typeName)
         {
@@ -63,7 +63,7 @@ internal class TypeHelper
         return false;
     }
 
-    internal static bool IsArray(Type type)
+    internal static bool IsArray(Type? type)
     {
         if (type is Array typeArray)
         {
@@ -72,12 +72,12 @@ internal class TypeHelper
         return false;
     }
 
-    internal static bool IsFunction(Type type)
+    internal static bool IsFunction(Type? type)
     {
         return type is TypeFunction;
     }
 
-    internal static bool IsPointer(Type type)
+    internal static bool IsPointer(Type? type)
     {
         if (type is Pointer)
         {
@@ -90,9 +90,9 @@ internal class TypeHelper
         return false;
     }
 
-    internal static int TypeBuiltinBits(TypeBuiltin t)
+    internal static int TypeBuiltinBits(TypeBuiltin type)
     {
-        return t.Token switch
+        return type.Token switch
         {
             Token.Bool => 1,
             Token.Int8 or Token.Uint8 => 8,
@@ -103,38 +103,20 @@ internal class TypeHelper
         };
     }
 
-    internal static int TypeBuiltinSize(TypeBuiltin t)
+    internal static int TypeBuiltinSize(TypeBuiltin type)
     {
-        switch (t.Token)
+        return type.Token switch
         {
-            case Token.Bool:
-                return 1;
-
-            case Token.Int8:
-            case Token.Uint8:
-                return 1;
-
-            case Token.Int16:
-            case Token.Uint16:
-            case Token.Float16:
-                return 2;
-
-            case Token.Int32:
-            case Token.Uint32:
-            case Token.Float32:
-                return 4;
-
-            case Token.Int64:
-            case Token.Uint64:
-            case Token.Float64:
-                return 8;
-
-            default:
-                return 0;
-        }
+            Token.Bool => 1,
+            Token.Int8 or Token.Uint8 => 1,
+            Token.Int16 or Token.Uint16 or Token.Float16 => 2,
+            Token.Int32 or Token.Uint32 or Token.Float32 => 4,
+            Token.Int64 or Token.Uint64 or Token.Float64 => 8,
+            _ => 0,
+        };
     }
 
-    internal static Type? ElementType(Type type)
+    internal static Type? ElementType(Type? type)
     {
         if (type is Pointer typePointer)
         {

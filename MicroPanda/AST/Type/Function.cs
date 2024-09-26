@@ -5,14 +5,14 @@ namespace MicroPanda.AST.Type;
 internal class TypeFunction : Type
 {
     internal Type? ReturnType { get; set; }
-    internal List<Type>? Parameters { get; set; }
+    internal List<Type> Parameters = [];
 
     internal bool MemberFunction { get; set; }
     internal bool Extern { get; set; }
     internal string? ExternName { get; set; }
     internal bool TypeDefine { get; set; }
 
-    override internal bool Equal(Type type)
+    internal override bool Equal(Type type)
     {
         if (type is TypeFunction typeFunction)
         {
