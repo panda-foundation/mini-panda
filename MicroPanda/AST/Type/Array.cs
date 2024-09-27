@@ -31,7 +31,7 @@ internal class Array : Type
         {
             if (Dimension.Count == 1)
             {
-                return ElementType!.Equal(typePointer.ElementType);
+                return ElementType!.Equal(typePointer.ElementType!);
             }
         }
         return false;

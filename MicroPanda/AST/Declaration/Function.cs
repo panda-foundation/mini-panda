@@ -7,17 +7,17 @@ using Statement;
 
 internal class Function : Declaration
 {
-    public List<Parameter> Parameters { get; set; } = new List<Parameter>();
-    public Type ReturnType { get; set; }
-    public Block Body { get; set; }
+    internal List<Parameter> Parameters = [];
+    internal Type? ReturnType { get; set; }
+    internal Block? Body { get; set; }
 
-    public Struct Parent { get; set; }
-    public TypeFunction Type { get; set; }
+    internal Struct? Parent { get; set; }
+    internal TypeFunction? Type { get; set; }
 
-    public void ValidateType(Context c)
+    internal override void ValidateType(Context context)
     {
-        Type.ReturnType = ReturnType;
-        if (HasAttribute("Extern"))
+        Type!.ReturnType = ReturnType;
+        if (HasAnnotation(Annotation.Extern))
         {
             Type.Extern = true;
         }
@@ -25,78 +25,61 @@ internal class Function : Declaration
         {
             Type.TypeDefine = true;
         }
-        if (GetAttributeValue("Extern", "Variadic") is Literal l && l.Bool() is bool variadic)
-        {
-            Type.Variadic = variadic;
-        }
         if (Parent != null)
         {
             Type.MemberFunction = true;
             Type.Parameters.Add(Parent.PointerType());
         }
-        if (Parameters != null)
+        foreach (var param in Parameters)
         {
-            foreach (var param in Parameters)
-            {
-                Type.Parameters.Add(param.Type);
-            }
+            Type.Parameters.Add(param.Type!);
         }
-        ValidateType(Type, c.Program);
+        context.Program.ValidateType(Type);
     }
 
-    public void Validate(Context ctx)
+    internal override void Validate(Context context)
     {
         if (Body == null)
         {
             if (Parent != null)
             {
-                ctx.Program.Error(Position, "function body is required for member function");
+                context.Program.Error(Position, "function body is required for member function");
             }
-            if (Type.Extern)
+            if (Type!.Extern)
             {
-                if (GetAttributeValue("Extern", "Name") is Literal l && l.String() is string n)
-                {
-                    Type.ExternName = n;
-                }
+                Type.ExternName = GetAnnotationField(Annotation.Extern, Annotation.ExternName)!.AsString(context);
                 if (string.IsNullOrEmpty(Type.ExternName))
                 {
-                    ctx.Program.Error(Position, "'name' of meta data is required for extern function");
+                    context.Program.Error(Position, "'name' of meta data is required for extern function");
                 }
             }
         }
         else
         {
-            var c = ctx.NewContext();
-            c.Function = this;
+            var ctx = context.NewContext();
+            ctx.Function = this;
             if (Parent != null)
             {
-                var p = new TypePointer
+                var pointer = new Pointer
                 {
                     ElementType = Parent.Type(),
                     Position = Parent.Position
                 };
-                c.AddObject("StructThis", p);
-                if (Type.Variadic)
+                ctx.AddObject(Program.This, pointer);
+            }
+            if (Type!.Extern)
+            {
+                context.Program.Error(Position, "extern function has no body");
+            }
+            foreach (var param in Parameters)
+            {
+                var added = ctx.AddObject(param.Name!, param.Type!);
+                if (!added)
                 {
-                    c.Program.Error(Position, "member function cannot be 'extern' or 'variadic'");
+                    context.Program.Error(param.Position, $"redeclared variable: {param.Name}");
                 }
             }
-            if (Type.Extern)
-            {
-                c.Program.Error(Position, "extern function has no body");
-            }
-            if (Parameters != null)
-            {
-                foreach (var param in Parameters)
-                {
-                    var err = c.AddObject(param.Name, param.Type);
-                    if (err != null)
-                    {
-                        c.Program.Error(param.Position, err.Message);
-                    }
-                }
-            }
-            Body.Validate(c);
+            Body.Validate(ctx);
         }
         // TODO check terminated
         // c.Program.Error(Position, "missing return");
