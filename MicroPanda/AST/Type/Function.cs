@@ -2,7 +2,7 @@ namespace MicroPanda.AST.Type;
 
 
 
-internal class TypeFunction : Type
+internal class Function : Type
 {
     internal Type? ReturnType { get; set; }
     internal List<Type> Parameters = [];
@@ -14,7 +14,7 @@ internal class TypeFunction : Type
 
     internal override bool Equal(Type type)
     {
-        if (type is TypeFunction typeFunction)
+        if (type is Function typeFunction)
         {
             if (ReturnType != null && typeFunction.ReturnType != null)
             {

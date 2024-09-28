@@ -1,7 +1,6 @@
 namespace MicroPanda.AST;
 
-using System;
-using System.Collections.Generic;
+using Declaration;
 
 internal class Program
 {
@@ -12,18 +11,10 @@ internal class Program
     internal const string FunctionExit = "exit";
     internal const string ProgramEntry = "global.main";
 
-    private Dictionary<string, Module> _modules;
-    private Module _module = null!;
-
-    private Dictionary<string, Declaration.Declaration> _declarations;
-    private List<Error> _errors;
-
-    internal Program()
-    {
-        _modules = [];
-        _declarations = [];
-        _errors = [];
-    }
+    private Dictionary<string, Module> _modules = [];
+    private Dictionary<string, Declaration.Declaration> _declarations = [];
+    private List<Error> _errors = [];
+    private Module? _module;
 
     internal void Reset()
     {
@@ -31,65 +22,63 @@ internal class Program
         _declarations = [];
         _errors = [];
     }
-/*
-    public (string, Declaration) FindSelector(string selector, string member)
+
+    internal Declaration.Declaration? FindSelector(string? selector, string member)
     {
         if (string.IsNullOrEmpty(selector))
         {
             return FindMember(member);
         }
-        foreach (var i in Module.Usings)
+        foreach (var import in _module!.Imports)
         {
-            if (i.Alias == selector)
+            if (import.Alias == selector)
             {
-                var qualified = i.Namespace + "." + member;
-                return (qualified, Declarations.ContainsKey(qualified) ? Declarations[qualified] : null);
+                var qualifiedName = $"{import.Package}.{member}";
+                return _declarations[qualifiedName];
             }
         }
-        return (null, null);
+        return null;
     }
 
-    public (string, Declaration) FindMember(string member)
+    internal Declaration.Declaration? FindMember(string member)
     {
-        var qualified = Module.Namespace + "." + member;
-        if (Declarations.ContainsKey(qualified))
+        var qualifiedName = $"{_module!.Package}.{member}";
+        if (_declarations.TryGetValue(qualifiedName, out Declaration.Declaration? value))
         {
-            return (qualified, Declarations[qualified]);
+            return value;
         }
-        qualified = Constants.Global + "." + member;
-        if (Declarations.ContainsKey(qualified))
-        {
-            return (qualified, Declarations[qualified]);
-        }
-        return (null, null);
+        qualifiedName = $"{Program.Global}.{member}";
+        return _declarations[qualifiedName];
     }
 
-    public Declaration FindType(TypeName t)
+    internal Declaration.Declaration? FindByTypeName(Type.TypeName typeName)
     {
-        var (q, d) = FindSelector(t.Selector, t.Name);
-        if (d is Enum)
+        var declaration = FindSelector(typeName.Selector, typeName.Name!);
+        if (declaration is Enum)
         {
-            t.IsEnum = true;
+            typeName.IsEnum = true;
         }
-        t.Qualified = q;
-        return d;
+        if (declaration != null)
+        {
+            typeName.QualifiedName = declaration!.QualifiedName;
+        }
+        return declaration;
     }
 
-    internal Declaration FindQualified(string qualified)
+    internal Declaration.Declaration? FindByQualifiedName(string qualifiedName)
     {
-        return Declarations.ContainsKey(qualified) ? Declarations[qualified] : null;
-    }*/
+        return _declarations[qualifiedName];
+    }
 
-    internal bool IsNamespace(string name)
+    internal bool IsPackage(string package)
     {
-        /*
-        foreach (var i in Module.Usings)
+        foreach (var import in _module!.Imports)
         {
-            if (i.Alias == name)
+            if (import.Alias == package)
             {
                 return true;
             }
-        }*/
+        }
         return false;
     }
 
@@ -97,24 +86,87 @@ internal class Program
     {
         foreach (var module in _modules.Values)
         {
-            // TO-DO check if Using is valid // must be valid, cannot Using self, cannot duplicated
-            //module.ValidateType(this);
+            // TO-DO check if Import is valid, cannot Import self, cannot duplicated
+            _module = module;
+            module.ValidateType(this);
         }
         foreach (var module in _modules.Values)
         {
-            //module.Validate(this);
+            _module = module;
+            module.Validate(this);
         }
     }
 
-    internal Type.Type? ValidateType(Type.Type v)
+    internal Type.Type? ValidateType(Type.Type type)
     {
-        // TODO
-        return null;
+        switch (type)
+        {
+            case Type.TypeName typeName:
+                var declaration = FindByTypeName(typeName);
+                if (declaration == null)
+                {
+                    Error(type.Position, "type not defined");
+                }
+                else
+                {
+                    if (declaration is Function function)
+                    {
+                        return function.Type;
+                    }
+                    else if (declaration is Struct)
+                    {
+                        typeName.QualifiedName = declaration.QualifiedName;
+                    }
+                    else
+                    {
+                        Error(type.Position, "type not defined");
+                    }
+                }
+                return typeName;
+
+            case Type.Array array:
+                array.ElementType = ValidateType(array.ElementType!);
+                if (array.Dimension[0] < 0)
+                {
+                    Error(type.Position, "invalid array index");
+                }
+                for (int i = 1; i < array.Dimension.Count; i++)
+                {
+                    if (array.Dimension[i] < 1)
+                    {
+                        Error(type.Position, "invalid array index");
+                    }
+                }
+                return array;
+
+            case Type.Pointer pointer:
+                pointer.ElementType = ValidateType(pointer.ElementType!);
+                return pointer;
+
+            case Type.Function function:
+                function.ReturnType = ValidateType(function.ReturnType!);
+                for (int i = 0; i < function.Parameters.Count; i++)
+                {
+                    function.Parameters[i] = ValidateType(function.Parameters[i])!;
+                    if (Type.TypeHelper.IsStruct(function.Parameters[i]))
+                    {
+                        Error(function.Parameters[i].Position, "struct is not allowed as parameter, use pointer instead");
+                    }
+                    if (Type.TypeHelper.IsArray(function.Parameters[i]))
+                    {
+                        Error(function.Parameters[i].Position, "array is not allowed as parameter, use pointer instead");
+                    }
+                }
+                return function;
+
+            default:
+                return type;
+        }
     }
 
     internal void Error(int offset, string message)
     {
-        //_errors.Add(new Error(Module.File.Position(offset), message));
+        _errors.Add(new Error(_module!.File.GetPosition(offset), message));
     }
 
     internal bool PrintErrors()

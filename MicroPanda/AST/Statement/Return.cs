@@ -8,17 +8,18 @@ internal class Return : Statement
 
     internal override void Validate(Context context)
     {
+        //TODO cannot return struct?
         if (Expression == null)
         {
-            if (context.Function.ReturnType != null)
+            if (context.Function!.ReturnType != null)
             {
                 context.Program.Error(Position, "mismatch return type, expect 'null'");
             }
         }
         else
         {
-            Expression!.Validate(context, context.Function.ReturnType);
-            if (Expression.Type != null && !Expression.Type.Equal(context.Function.ReturnType))
+            Expression!.Validate(context, context.Function!.ReturnType);
+            if (Expression.Type != null && !Expression.Type.Equal(context.Function.ReturnType!))
             {
                 context.Program.Error(Position, "mismatch return type");
             }

@@ -103,7 +103,7 @@ internal class Struct : Declaration
         foreach (var function in Functions)
         {
             function.ValidateType(context);
-            function.QualifiedName = QualifiedName + "." + function.Name!.Name!;
+            function.QualifiedName = $"{QualifiedName}.{function.Name!.Name!}";
         }
     }
 

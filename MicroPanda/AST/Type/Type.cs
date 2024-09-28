@@ -10,17 +10,17 @@ internal abstract class Type : Node
 
 internal class TypeHelper
 {
-    internal static TypeBuiltin TypeBool = new(Token.Bool);
-    internal static TypeBuiltin TypeU8 = new(Token.Uint8);
-    internal static TypeBuiltin TypeU32 = new(Token.Uint32);
-    internal static TypeBuiltin TypeI32 = new(Token.Int32);
-    internal static TypeBuiltin TypeF16 = new(Token.Float16);
-    internal static TypeBuiltin TypeF32 = new(Token.Float32);
-    internal static Pointer TypePointer = new(TypeU8);
+    internal static Builtin TypeBool = new(Token.Bool);
+    internal static Builtin TypeU8 = new(Token.Uint8);
+    internal static Builtin TypeU32 = new(Token.Uint32);
+    internal static Builtin TypeI32 = new(Token.Int32);
+    internal static Builtin TypeF16 = new(Token.Float16);
+    internal static Builtin TypeF32 = new(Token.Float32);
+    internal static Pointer TypePointer = new() { ElementType = TypeU8};
 
     internal static bool IsInteger(Type? type)
     {
-        if (type is TypeBuiltin typeBuiltin)
+        if (type is Builtin typeBuiltin)
         {
             return TokenHelper.IsInteger(typeBuiltin.Token);
         }
@@ -29,7 +29,7 @@ internal class TypeHelper
 
     internal static bool IsFloat(Type? type)
     {
-        if (type is TypeBuiltin typeBuiltin)
+        if (type is Builtin typeBuiltin)
         {
             return TokenHelper.IsFloat(typeBuiltin.Token);
         }
@@ -38,7 +38,7 @@ internal class TypeHelper
 
     internal static bool IsNumber(Type? type)
     {
-        if (type is TypeBuiltin typeBuiltin)
+        if (type is Builtin typeBuiltin)
         {
             return TokenHelper.IsNumber(typeBuiltin.Token);
         }
@@ -47,7 +47,7 @@ internal class TypeHelper
 
     internal static bool IsBool(Type? type)
     {
-        if (type is TypeBuiltin typeBuiltin)
+        if (type is Builtin typeBuiltin)
         {
             return typeBuiltin.Token == Token.Bool;
         }
@@ -74,7 +74,7 @@ internal class TypeHelper
 
     internal static bool IsFunction(Type? type)
     {
-        return type is TypeFunction;
+        return type is Function;
     }
 
     internal static bool IsPointer(Type? type)
@@ -90,7 +90,7 @@ internal class TypeHelper
         return false;
     }
 
-    internal static int TypeBuiltinBits(TypeBuiltin type)
+    internal static int TypeBuiltinBits(Builtin type)
     {
         return type.Token switch
         {
@@ -103,7 +103,7 @@ internal class TypeHelper
         };
     }
 
-    internal static int TypeBuiltinSize(TypeBuiltin type)
+    internal static int TypeBuiltinSize(Builtin type)
     {
         return type.Token switch
         {
@@ -130,7 +130,7 @@ internal class TypeHelper
             }
             else
             {
-                var array = new Array(typeArray.ElementType, []);
+                var array = new Array(){ ElementType = typeArray.ElementType };
                 for (int i = 1; i < typeArray.Dimension.Count; i++)
                 {
                     array.Dimension.Add(typeArray.Dimension[i]);
@@ -140,71 +140,4 @@ internal class TypeHelper
         }
         return null;
     }
-/*
-    internal static Type ValidateType(Type v, Program p)
-    {
-        switch (v)
-        {
-            case TypeName t:
-                var d = p.FindType(t);
-                if (d == null)
-                {
-                    p.Error(v.GetPosition(), "type not defined");
-                }
-                else
-                {
-                    if (d is Function f)
-                    {
-                        return f.Type;
-                    }
-                    else if (d is Struct)
-                    {
-                        t.Qualified = d.QualifiedName();
-                    }
-                    else
-                    {
-                        p.Error(v.GetPosition(), "type not defined");
-                    }
-                }
-                return t;
-
-            case TypeArray t:
-                t.ElementType = ValidateType(t.ElementType, p);
-                if (t.Dimension[0] < 0)
-                {
-                    p.Error(v.GetPosition(), "invalid array index");
-                }
-                for (int i = 1; i < t.Dimension.Count; i++)
-                {
-                    if (t.Dimension[i] < 1)
-                    {
-                        p.Error(v.GetPosition(), "invalid array index");
-                    }
-                }
-                return t;
-
-            case TypePointer t:
-                t.ElementType = ValidateType(t.ElementType, p);
-                return t;
-
-            case TypeFunction t:
-                t.ReturnType = ValidateType(t.ReturnType, p);
-                for (int i = 0; i < t.Parameters.Count; i++)
-                {
-                    t.Parameters[i] = ValidateType(t.Parameters[i], p);
-                    if (TypeHelper.IsStruct(t.Parameters[i]))
-                    {
-                        p.Error(t.Parameters[i].GetPosition(), "struct is not allowed as parameter, use pointer instead");
-                    }
-                    if (TypeHelper.IsArray(t.Parameters[i]))
-                    {
-                        p.Error(t.Parameters[i].GetPosition(), "array is not allowed as parameter, use pointer instead");
-                    }
-                }
-                return t;
-
-            default:
-                return v;
-        }
-    }*/
 }
